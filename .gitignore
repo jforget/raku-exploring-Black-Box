@@ -1,0 +1,13 @@
+*~
+*.html1
+*.tex
+*.tex1
+*.dvi
+*.log
+*.aux
+*.out
+*.pdf
+pod2*
+.precomp
+MongoDB.log
+MongoDB.mlog

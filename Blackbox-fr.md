@@ -1,0 +1,743 @@
+-*- encoding: utf-8; indent-tabs-mode: nil -*-
+
+Présentation
+============
+
+Ce projet est une exploration exhaustive
+du jeu Black Box avec 4 atomes. Ce n'est pas
+une _n_+1 ème implémentation du jeu. Pour jouer à Black Box,
+j'utilise soit Emacs, soit la collection de
+jeux de Simon Tatham.
+
+But principal du projet
+-----------------------
+
+[Black Box](https://fr.wikipedia.org/wiki/Black_Box_(jeu))
+est un jeu de déduction dans lequel
+le joueur "codeur" place 4 ou 5 atomes dans
+une boîte noire et où le joueur "décodeur" tente
+de les localiser en lançant des rayons depuis
+la périphérie de cette boîte noire.
+C'est aussi un jeu de hasard dans la mesure
+où certaines configurations d'atomes
+sont complètement indiscernables par le décodeur,
+même s'il a utilisé toutes les possibilités
+pour lancer les rayons. Un exemple très connu est
+cette configuration à 5 atomes.
+
+
+```
+   - - - - - - - -
+   - - O - - O - -
+   - - - ? ? - - -
+   - - - ? ? - - -
+   - - O - - O - -
+   - - - - - - - -
+   - - - - - - - -
+   - - - - - - - -
+```
+
+Il est facile de localiser les 4 atomes
+symbolisés par "O". Mais le cinquième
+est situé dans l'une des quatre positions
+marquées d'un point d'interrogation et
+aucun rayon ne peut interagir avec ce
+cinquième atome. Le décodeur est alors obligé
+de proposer une réponse au hasard, avec une chance
+sur quatre de trouver la bonne réponse et trois
+chances sur quatre d'avoir un malus de cinq points.
+
+Il existe d'autres situations indiscernables
+avec 5 atomes, telle
+[cette situation](https://boardgamegeek.com/thread/1621945/spoilers-game-80-has-two-valid-solutions)
+exposée dans une discussion sur
+Board Game Geek. L'opinion générale est
+que ce genre de situation indiscernable
+peut apparaître dans le jeu à 5 atomes, mais
+pas dans le jeu à 4 atomes. C'est faux. Il existe des
+situations indiscernables à 4 atomes, ainsi
+que je l'ai exposé dans ma réponse à la
+discussion sus-mentionnée.
+
+Pour l'instant, dans le cadre du jeu à 4 atomes,
+je ne connais que des cas où les situations
+indiscernables vont 2 par 2. Le but de ce projet est de voir
+s'il existe des cas plus complexes avec 3 ou 4 situations
+indiscernables. Le projet passe en revue toutes les façons
+de disposer les atomes à l'intérieur de la boîte, détermine
+les résultats de tous les rayons et détermine ainsi
+quelles sont les configurations d'atomes qui donnent
+les mêmes résultats pour les rayons.
+
+But secondaire
+--------------
+
+Voici quatre parties jouées avec la variante Emacs de Black Box.
+
+```
+             3
+ 1 - - - - - - - - 1
+ R - - - - - - - -
+ H O - - O - - - -
+   - - - - - - - -
+ 3 - - - - - - - -
+   - - - - - - O -
+ R - - - - - - - - 2
+ H O - - - - - - -
+       4     4   2
+
+There are 4 balls in the box
+
+           6 2   1
+ H O - - - - - - -
+   - - - - - - - - 4
+ 3 - - - - - - - - 3
+   - - - - - - - - 6
+   - - - O - - - -
+ 4 - - - - - - - - 5
+   - - - - - - - - 5
+ H O - - O - - - - H
+   H     H R 2   1
+
+There are 4 balls in the box
+
+     4 3   2
+ H - - - - - - O -
+ 5 - - - - - - - - 6
+   - - - - - - - - 4
+   O - - - - - - -
+   - - - - - - - - 5
+   - - - - - - - - 6
+   O - - - - - O -
+ R - - - - - - - - 1
+       3   2     1
+
+There are 4 balls in the box
+
+   1   7 5 4 6 7
+ 1 - - - - - - - -
+   - O - - - - - O
+   - - - - - - - -
+ H - O - - - - - -
+ 3 - - - - - - - -
+ R - - - - - - - -
+ H - - - - - - - O
+ 2 - - - - - - - -
+   3     5 4 6 2
+
+There are 4 balls in the box
+```
+
+Comme vous pouvez le voir, dans chacune de ces parties, un rayon
+a été dévié à plusieurs reprises avant de ressortir (dans trois cas)
+ou d'être réfléchi (dans le quatrième cas).
+
+Un but annexe du projet est de rassembler des statistiques sur
+les rayons : longueur du chemin, nombre de déviations,
+pour savoir s'il est fréquent d'avoir des situations
+aussi complexes.
+
+On peut d'ores et déjà penser que le nombre maximal de
+déviations est 6 et la longueur maximale est 23, avec la situation suivante :
+
+```
+     1
+   - + - - - - - O
+   - + + + + + + -
+   O - - - - - + -
+   - + + + + + + -
+   - + - - - - - O
+   - + + + + + + -
+   O - - - - - + -
+   - - - - - - + -
+               1
+
+There are 4 balls in the box
+```
+
+Néanmoins, le programme d'exploration calculera les statistiques
+pour chaque situation, pour confirmer ou infirmer cette supposition.
+
+Troisième but
+-------------
+
+Jusqu'à présent, lorsque je devais écrire du texte, mon format
+préféré était le POD de Perl. J'ai décidé d'essayer autre chose.
+Et ce texte est ainsi écrit en Markdown.
+
+Organisation du développement
+=============================
+
+Vocabulaire
+-----------
+
+Le contenu de la boîte noire comporte plusieurs atomes.
+Nous appellerons donc ce contenu une _molécule_.
+
+De la même manière, tous les 32 rayons lancés depuis les 32 positions périphériques
+de Black Box sont réunis sous le terme _spectre_.
+
+Avec ces précisions de vocabulaire, le but principal de ce projet
+est donc de trouver deux molécules différentes avec le même spectre.
+
+Dans notre monde réel en 3-D, pour une molécule asymétrique donnée, on appelle énantiomère
+l'image miroir de cette molécule. Dans le monde abstrait 2-D de Black Box,
+j'utilise le terme "énantiomère" pour désigner une molécule obtenue à partir de la
+première par une rotation autour du centre du carré, ou bien une symétrie par rapport
+à une diagonale ou une médiane du carré.
+
+Par exemple, pour la molécule initiale suivante
+
+```
+   - O O - - - - -
+   - O - - - - - -
+   O - - - - - - -
+   - - - - - - - -
+   - - - - - - - -
+   - - - - - - - -
+   - - - - - - - -
+   - - - - - - - -
+```
+
+les 7 énantiomères sont :
+
+
+```
+   - - - - - O - -      - - - - - - - -      - - - - - - - -
+   - - - - - - O O      - - - - - - - -      - - - - - - - -
+   - - - - - - - O      - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - O      O - - - - - - -
+   - - - - - - - -      - - - - - - O -      O O - - - - - -
+   - - - - - - - -      - - - - - O O -      - - O - - - - -
+
+
+   - - O - - - - -      - - - - - O O -      - - - - - - - -      - - - - - - - -
+   O O - - - - - -      - - - - - - O -      - - - - - - - -      - - - - - - - -
+   O - - - - - - -      - - - - - - - O      - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - - - O      O - - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - - O O      - O - - - - - -
+   - - - - - - - -      - - - - - - - -      - - - - - O - -      - O O - - - - -
+```
+
+En revanche, les molécules suivantes ne sont pas des énantiomères :
+
+```
+   - - - O O - - -      - O O - - - - -
+   - - - O - - - -      - - O - - - - -
+   - - O - - - - -      - - - O - - - -
+   - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -
+   - - - - - - - -      - - - - - - - -
+```
+
+car on exclut les translations et on exclut les rotations et symétries qui ne sont pas
+des rotations ou symétries du carré 8×8.
+
+Découpage en projets élémentaires
+---------------------------------
+
+Les programmes permettront d'explorer les parties de Black Box
+avec une molécule de 4 atomes dans un carré 8×8. Cela représente
+635376 molécules. Le nombre d'atomes et la taille du carré
+ne seront pas des valeurs en dur, mais des paramètres.
+Ainsi, il sera possible d'effectuer par exemple une exploration des
+parties avec des molécules de 2 atomes dans un carré 4×4. Il n'y a que 120 possibilités,
+ce qui fait qu'il est possible de vérifier les résultats intégraux.
+
+Également, il est possible que certaines molécules
+ambiguës du jeu 8×8 apparaissent dans le jeu 6×6, voire
+dans le jeu 5×5.
+
+Une configuration simplifiée sera identifiée par un code An\_Bp, où _n_ est le nombre
+d'atomes et _p_ la longueur d'un côté de la boîte ("A" pour "atomes",
+"B" pour "Black Box" ou pour "boîte"). Ainsi, la configurations "normale"
+sera identifiée par "A4\_B8".
+
+Le projet est divisé en deux parties. Un premier programme
+examine les 635376 molécules, calcule leur spectre et les stocke
+dans une base de données. Dans la deuxième partie,
+quelques programmes accèdent à la base de données
+et génèrent des pages web affichant les données sous
+forme synthétique. Le premier programme ne traitera pas
+les 635376 molécules d'une traite. Il pourra
+s'interrompre à n'importe quel moment et reprendre
+là où il s'était arrêté.
+
+Représentation interne d'une partie
+-----------------------------------
+
+Le carré 8×8 contenant les atomes sera représenté
+par un tableau à deux coordonnées ligne
+et colonne, chaque coordonnée variant
+de 1 à 8. Pourquoi ne pas commencer à 0 ?
+Parce que la ligne 0 et la colonne 0 sont
+réservées aux marques d'entrée et de sortie
+des rayons, tout comme la ligne 9 et la
+colonne 9. Un atome est représenté par un
+caractère "lourd", comme un "X", un "O" ou une
+"*", une case vide par un caractère "léger",
+comme un espace, un point, voire un tiret.
+
+Pour la périphérie (colonnes et lignes 0 et 9), je n'utiliserai pas la
+notation de la version Emacs de Black Box. Tout d'abord, les rayons
+qui ressortent seront représentés par des lettres minuscules, pas par
+les chiffres 1 à 9. Pour une partie compétitive, il est rare de lancer tous
+les rayons possibles et d'avoir ainsi plus de 9 rayons ressortant de
+la boîte, donc les chiffres de 1 à 9 sont suffisants. En revanche, mon
+programme d'exploration systématique lance tous les rayons possibles.
+Les 9 chiffres sont insuffisants pour certaines spectres. Et
+même si l'on ajoute le "0", cela reste insuffisant. Exemple (sans le "0") :
+
+```
+   8 2 1 H $ * ! :
+ 1 - - - - - - - - $
+ 2 - - - O - - - - *
+ H - - O - O - - - H
+ 3 - - - O - - - - ?
+ 4 - - - - - - - - 9
+ 5 - - - - - - - - 5
+ 6 - - - - - - - - 6
+ 7 - - - - - - - - 7
+   8 3 4 H 9 ? ! :
+
+There are 4 balls in the box
+```
+Réécrivons cette partie ainsi :
+
+```
+   h b a H n m k l
+ a - - - - - - - - n
+ b - - - O - - - - m
+ H - - O - O - - - H
+ c - - - O - - - - j
+ d - - - - - - - - i
+ e - - - - - - - - e
+ f - - - - - - - - f
+ g - - - - - - - - g
+   h c d H i j k l
+
+There are 4 balls in the box
+```
+
+Ensuite, le "H" pour "hit" et, dans d'autres spectres,
+le "R" pour "reflected" ou pour "réfléchi" sont difficiles à distinguer
+des lettres minuscules. Je remplacerai donc les "H" et les "R" par
+"@" et "&" respectivement.
+
+```
+   h b a @ n m k l
+ a - - - - - - - - n
+ b - - - O - - - - m
+ @ - - O - O - - - @
+ c - - - O - - - - j
+ d - - - - - - - - i
+ e - - - - - - - - e
+ f - - - - - - - - f
+ g - - - - - - - - g
+   h c d @ i j k l
+
+There are 4 balls in the box
+```
+
+Pour le stockage en base de données et pour
+certains traitements, le carré sera "linéarisé"
+en une chaîne de caractères de longueur 64,
+les caractères étant en positions 0 à 63.
+Ainsi, la ligne 1 sera stockée dans les
+caractères 0 à 7, la ligne 2 dans les caractères
+8 à 15 et ainsi de suite, jusqu'à la ligne 8 stockée
+dans les caractères 56 à 63.
+
+Par ailleurs, les lignes et colonnes 0 et 9,
+indiquant les points d'entrée et de sortie
+des rayons, sont stockées linéairement dans une autre
+chaîne de caractères, sur 32 positions. Traditionnellement,
+les positions d'entrée et de sortie sont numérotés de 1 à 32
+ainsi :
+
+
+```
+   3 3 3 2 2 2 2 2
+   2 1 0 9 8 7 6 5
+ 1 - - - - - - - - 24
+ 2 - - - O - - - - 23
+ 3 - - O - O - - - 22
+ 4 - - - O - - - - 21
+ 5 - - - - - - - - 20
+ 6 - - - - - - - - 19
+ 7 - - - - - - - - 18
+ 8 - - - - - - - - 17
+   9 1 1 1 1 1 1 1
+     0 1 2 3 4 5 6
+
+```
+
+Les 32 positions seront linéarisées dans le même ordre.
+Il y aura juste un décalage d'une unité pour le numéro
+pour aboutir à un numéro de 0 à 31,
+car la fonction `substr` compte à partir de 0.
+
+Exemple dans la configuration A2\_B4, c'est-à-dire avec un carré 4×4 et 2 atomes :
+
+```
+   @ & @ &
+ @ O - O - @
+ & - - - - c
+ a - - - - a
+ b - - - - b
+   @ & @ c
+
+There are 2 balls in the box
+```
+
+La version linéarisée donne les deux chaînes suivantes :
+
+```
+O-O-------------
+@&ab@&@cbac@&@&@
+```
+
+Dans cet exemple, on peut voir :
+
+- 3 rayons absorbés dès l'entrée
+
+- 1 rayon absorbé après avoir traversé une case vide
+
+- 2 rayons absorbés après avoir traversé 3 cases vides chacun
+
+- 3 rayons réfléchis dès l'entrée
+
+- 1 rayon réfléchi après avoir traversé 3 cases vides
+
+- 2 rayons qui ressortent après avoir traversé 4 cases et sans avoir été déviés
+
+- 1 rayon qui ressort après avoir traversé 3 cases et après avoir été dévié une fois.
+
+Pour des raisons qui apparaîtront dans la suite du texte, cet exemple est la deuxième
+molécule testée dans la configuration A2\_B4.
+L'enregistrement de la base de données, en syntaxe JSON, ressemble à :
+
+```
+{ configuration: "A2\_B4",
+  number: 2,
+  molecule: 'O-O-------------',
+  spectrum: '@&12@&@3213@&@&@',
+  absorbed-number:      6,
+  absorbed-max-length:  3,
+  absorbed-max-turns:   0,
+  absorbed-tot-length:  7,
+  absorbed-tot-turns:   0,
+  reflected-number:     4,
+  reflected-max-length: 3,
+  reflected-max-turns:  0,
+  reflected-tot-length: 3,
+  reflected-tot-turns:  0,
+  out-number:      3,
+  out-max-length:  4,
+  out-max-turns:   1,
+  out-tot-length: 11,
+  out-tot-turns:   1
+}
+```
+
+Première optimisation
+---------------------
+
+Lorsque j'écris que le programme lance les 32 rayons possibles,
+ce n'est pas tout-à-fait vrai. Les rayons suivent ce que l'on
+appelle la "loi du retour inverse de la lumière". Si le rayon
+lancé en 1 sort en 24, alors pour la même molécule, le
+rayon lancé en 24 sera ressorti en 1. Pour la configuration A4\_B8,
+il suffira de lancer entre 18 et 28 rayons. Les exemples
+ci-dessous montrent que l'on peut avoir 14 rayons sortants
+plus 4 rayons absorbés, ou bien 4 rayons sortants, plus 16
+rayons absorbés et 8 rayons réfléchis.
+
+
+```
+   h b a @ n m k l         & @ & c d @ @ @
+ a - - - - - - - - n     @ - O - - - - - - &
+ b - - - O - - - - m     @ - - - - - - - O @
+ @ - - O - O - - - @     @ - - - - - - - - &
+ c - - - O - - - - j     a - - - - - - - - a
+ d - - - - - - - - i     b - - - - - - - - b
+ e - - - - - - - - e     & - - - - - - - - @
+ f - - - - - - - - f     @ O - - - - - - - @
+ g - - - - - - - - g     & - - - - - - O - @
+   h c d @ i j k l         @ @ @ c d & @ &
+
+There are 4 balls in the box
+```
+
+Deuxième optimisation
+---------------------
+
+En faisant jouer les symétries et les rotations
+du carré, on voit que chaque molécule
+appartient en général à un groupe de 8 énantiomères.
+Parfois, le groupe n'aura que 4 énantiomères,
+ou 2, voire une seule molécule qui ne mérite plus l'appellation "énantiomère".
+
+Toujours est-il que si l'on a (laborieusement) calculé
+ce que donnent tous les rayons pour une molécule chirale,
+il est facile et rapide de déterminer ce que donnent les rayons
+pour les 7 énantiomères (ou pour les 3 autres, ou pour l'autre).
+Ainsi, au lieu d'écrire un seul enregistrement dans la base de données,
+on en écrit 8 (ou 4, ou 2) en une seule fois.
+
+Reprenons l'exemple de la configuration A2\_B4.  Ainsi donc on a calculé :
+
+```
+   @ & @ &
+ @ O - O - @
+ & - - - - c
+ a - - - - a
+ b - - - - b
+   @ & @ c
+
+There are 2 balls in the box
+```
+
+Avec une rotation de 180 degrés, on a :
+
+```
+   c @ & @
+ b - - - - b
+ a - - - - a
+ c - - - - &
+ @ - O - O @
+   & @ & @
+
+There are 2 balls in the box
+```
+
+Dans un deuxième temps, on renomme les rayons sortants, de façon qu'ils
+soient nommés dans l'ordre où ils apparaissent sur la périphérie. Dans le
+cas présent, le renommage est :
+
+```
+    a → b
+    b → a
+    c → c
+
+   c @ & @
+ a - - - - a
+ b - - - - b
+ c - - - - &
+ @ - O - O @
+   & @ & @
+
+There are 2 balls in the box
+```
+
+Pourquoi cette étape de renommage ? Parce que les lettres "a" à "c"
+sont simplement des étiquettes arbitraires, destinées à différencier
+chaque rayon de chaque autre. Ainsi, ces
+trois schémas représentent le même spectre :
+
+```
+   c @ & @          c @ & @         b @ & @
+ b - - - - b      a - - - - a     c - - - - c
+ a - - - - a      b - - - - b     a - - - - a
+ c - - - - &      c - - - - &     b - - - - &
+ @ - O - O @      @ - O - O @     @ - O - O @
+   & @ & @          & @ & @         & @ & @
+
+There are 2 balls in the box
+```
+
+Ce sont intrinsèquement le même spectre. Mais les
+programmes voient trois chaînes linéarisées différentes :
+
+```
+bac@&@&@@&ab@&@c
+abc@&@&@@&ba@&@c
+cab@&@&@@&ac@&@b
+```
+
+C'est pour cela que l'on renomme les rayons, de façon qu'il
+apparaissent par ordre alphabétique le long de la périphérie
+de la boîte noire, selon le parcours conventionnel.
+
+Au lieu de stocker un seul enregistrement en base de données, on en
+stockera 8. Pour rester bref, j'en présente deux ci-dessous et j'ai retiré
+les statistiques.
+
+```
+{ configuration: "A2\_B4",
+  number: 2,
+  canonical-number: 2,
+  molecule: 'O-O-------------',
+  spectrum: '@&12@&@3213@&@&@',
+}
+{ configuration: "A2\_B4",
+  number: 0,
+  canonical-number: 2,
+  molecule: '-------------O-O',
+  spectrum: 'abc@&@&@@&ba@&@c',
+}
+```
+La propriété `canonical-number` est un pointeur vers la première
+molécule du groupe de 8 énantiomères. Et la propriété `number`
+sera alimentée ultérieurement, lorsque la recherche exhaustive
+trouvera la molécule correspondante. On aura alors :
+
+```
+{ configuration: "A2\_B4",
+  number: 119,
+  canonical-number: 2,
+  molecule: '-------------O-O',
+  spectrum: 'abc@&@&@@&ba@&@c',
+}
+```
+
+
+Recherche exhaustive de toutes les molécules
+---------------------------------------------
+
+La boucle principale du programme d'exploration extrait
+les 635376  molécules. Alors, à quoi cela a-t-il servi de
+calculer les rotations et les symétries ? À chaque
+itération, le programme teste si la molécule à traiter
+existe déjà dans la base de données. Si oui, il fait
+une rapide mise à jour de l'enregistrement associé
+pour attribuer la bonne valeur à la propriété `number`
+et il passe à la molécule suivante. Dans la
+négative, il calcule le spectre complet de la molécule,
+cherche les énantiomères, calcule le spectre de chacun
+et stocke tout cela dans la base de données.
+
+Comment trouve-t-on la liste exhaustive des
+molécules ?
+
+Je vais illustrer cela avec une configuration A6\_B4
+et en me basant sur la représentation linéaire et en
+attribuant des codes différents à chaque atome.
+On commence par la molécule avec tous les
+atomes à gauche :
+
+```
+1 ABCDEF----------
+```
+
+Pendant les 10 itérations suivantes, l'atome
+plus à droite, l'atome F, se décale d'une position à chaque fois
+
+```
+2 ABCDE-F---------
+3 ABCDE--F--------
+4 ABCDE---F-------
+     (...)
+10 ABCDE---------F-
+11 ABCDE----------F
+```
+
+L'atome de droite ne peut plus avancer. Alors
+c'est l'atome E qui avance et l'atome F revient coller à l'atome E.
+
+```
+12 ABCD-EF---------
+```
+
+Puis l'atome F reprend sa progression, cette fois-ci pendant 9 itérations.
+
+```
+13 ABCD-E-F--------
+     (...)
+21 ABCD-E---------F
+```
+
+De nouveau, un pas de E vers la droite et un bond de F vers la gauche
+
+```
+22 ABCD--EF--------
+```
+
+Puis 8 pas de F vers la droite
+
+```
+23 ABCD--E-F-------
+     (...)
+30 ABCD--E--------F
+```
+
+Arrive un moment où E et F sont tous deux bloqués sur la droite
+
+```
+65 ABCD----------EF
+```
+
+À ce moment-là, c'est D qui avance d'un pas vers la droite et c'est E et F
+qui bondissent tous les deux vers la gauche.
+
+```
+66 ABC-DEF---------
+```
+
+On pourrait croire que cela pourrait être implémenté avec des boucles
+emboîtées, la boucle extérieure sur toutes les positions possibles de l'atome
+A, la boucle suivante sur les positions possibles de l'atome B et ainsi
+de suite jusqu'à la boucle interne sur les positions de l'atome F.
+Mais le programme est censé fonctionner pour des configurations avec
+des nombres d'atomes différents. Il est probable que l'on aboutirait
+à un code digne de figurer dans le 
+[site web Worse Than Failure](https://thedailywtf.com/articles/classic-wtf-the-great-code-spawn).
+
+La description que j'ai donnée ressemble plus à un algorithme
+de transformation, qui prend une molécule et en déduit la molécule
+suivante. L'algorithme est le suivant :
+
+1. Rechercher la sous-chaîne `O-` la plus à droite.
+
+2. Si la sous-chaîne `O-` n'apparaît pas dans la molécule, youpi ! on est
+sur la dernière molécule ! l'extraction est terminée !
+
+3. Découper la molécule de part et d'autre de la sous-chaîne `O-`
+
+4. La sous-chaîne `O-` est remplacée par `-O`
+
+5. À droite de cette sous-chaîne, tous les `O`sont rassemblés à gauche.
+
+Exemple avec `-O--O-O------OOO`
+
+```
+0123456789012345
+-O--O-O------OOO
+```
+
+Les sous-chaînes `O-` sont en 1, 4 et 6. Celle qui nous intéresse est
+en 6. On découpe la molécule ainsi :
+
+```
+012345 // 67 // 89012345
+-O--O- // O- // -----OOO
+```
+
+On modifie les sous-chaînes ainsi :
+
+```
+012345 // 67 // 89012345
+-O--O- // -O // OOO-----
+```
+
+Et on recolle l'ensemble
+
+```
+0123456789012345
+-O--O--OOOO-----
+```
+
+Un point paradoxal est le décalage des trois atomes vers la gauche.
+Ce décalage se fera par un `flip`. Lorsque l'on utilise des noms
+différenciés pour les atomes, cela conduit à convertir
+`-----DEF` en `FED-----`, alors que l'on attendait plutôt
+une conversion vers `DEF-----`. Mais puisque les programmes
+utilisent des `O` anonymes  et que les noms de `A` à `F`
+ne sont utilisés que dans le présent texte, le `flip` convient
+parfaitement.
