@@ -16,10 +16,10 @@ The main purpose of the project
 is a puzzle game in which the hider player sets
 up 4 or 5 atoms in a black box and in which the
 seeker player shoots rays from the sides of the black
-box to locate the hidden atoms, even if he has shot all
-possible rays from the outside of the box. This is also a luck game, because there are
+box to locate the hidden atoms. This is also a luck game, because there are
 some configurations where the seeker player cannot
-guess all the atom positions. A well-known
+guess all the atom positions, even if he has shot all
+possible rays from the outside of the box. A well-known
 example is this 5-atom situation:
 
 
@@ -171,7 +171,7 @@ With these definitions, the main purpose of this project is to
 find different molecules with the same spectrum.
 
 In our 3-D real world, when given a molecule, its enantiomer is its mirror
-image, provided the first molecule is asymetrical. In the 2-D abstract Black
+image, provided the first molecule is asymmetrical. In the 2-D abstract Black
 Box world, I will use the word enantiomer to designate a molecule obtained from
 the first one by a rotation around the square's center or a symmetry with respect
 to one of the square's diagonals or medians.
@@ -189,7 +189,7 @@ For example, for the following molecule:
    - - - - - - - -
 ```
 
-the 7 énantiomers are:
+the 7 enantiomers are:
 
 
 ```
@@ -226,7 +226,7 @@ On the other hand, the following molecules are not enantiomers:
    - - - - - - - -      - - - - - - - -
 ```
 
-because we discard translations and we discard rotations and symetries
+because we discard translations and we discard rotations and symmetries
 which do not apply to the 8×8 square.
 
 Basic Projects
@@ -242,7 +242,7 @@ programmes and their results.
 In addition, some interesting results can appear when exploring molecules
 with 4 atoms in a 6×6 square, or even in a 5×5 square.
 
-A configuration will be identified by the An\_Bp, where _n_ is the number of
+A configuration will be identified by the A_n_\_B_p_ code, where _n_ is the number of
 atoms and _p_ is the size of the box. So the "normal" configuration will
 have the key "A4\_B8".
 
@@ -392,11 +392,11 @@ In this example, we see:
 - 1 ray which exits the box after crossing 3 boxes and being deflected once.
 
 For reasons that will be explained later, this example is the 2nd tested
-configuration in the A2\B4 configuration.
+configuration in the A2\_B4 configuration.
 Using JSON syntax, the database record will look like:
 
 ```
-{ configuration: "A2\_B4",
+{ configuration: "A2_B4",
   number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
@@ -446,7 +446,7 @@ There are 4 balls in the box
 Second Optimisation
 -------------------
 
-Using the symetries and rotations of the 8×8 square, we see that each
+Using the symmetries and rotations of the 8×8 square, we see that each
 molecule belongs to a group of usually 8 enantiomers. Sometimes, the group
 contains only 4 enantiomers, or just 2. And very rarely, the molecule is alone
 in its group (and so does not deserve the name "enantiomer").
@@ -534,13 +534,13 @@ store simultaneously 8 of them. To tell a long story short,
 here are two of them. In addition, I have stripped the statistics.
 
 ```
-{ configuration: "A2\_B4",
+{ configuration: "A2_B4",
   number: 2,
   canonical-number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
 }
-{ configuration: "A2\_B4",
+{ configuration: "A2_B4",
   number: 0,
   canonical-number: 2,
   molecule: '-------------O-O',
@@ -554,7 +554,7 @@ later when the exhaustive search comes upon the molecule.
 At this time, the record will be updated to:
 
 ```
-{ configuration: "A2\_B4",
+{ configuration: "A2_B4",
   number: 119,
   canonical-number: 2,
   molecule: '-------------O-O',
@@ -566,7 +566,7 @@ Exhaustive Search of All the Molecules
 --------------------------------------
 
 in the extraction programme, the main loop extracts all 635376
-molecules. So why bother about rotations and symetries?
+molecules. So why bother about rotations and symmetries?
 Actually, on each iteration, the programme begins by checking
 whether the molecule is already in the database. If so, it just
 fills the `number` property with the right value, updates the record
@@ -585,7 +585,7 @@ We begin with a molecule where all the atoms are packed on the left:
 1 ABCDEF----------
 ```
 
-For the nex 10 iterations, the rightmost atom, or atom F, 
+For the next 10 iterations, the rightmost atom, or atom F, 
 shifts to the right step by step:
 
 ```
@@ -630,14 +630,14 @@ The 8 steps rightward
 At some moment, both atoms E and F are stuck to the right.
 
 ```
-65 ABCD----------EF
+66 ABCD----------EF
 ```
 
-When this happens, this is atom D which moves one step rightward
+When this happens, this is atom D's turn to move one step rightward
 and both atoms E and F leap leftward to atom D.
 
 ```
-66 ABC-DEF---------
+67 ABC-DEF---------
 ```
 
 It would appear that this could be implemented as embedded loops, the outer

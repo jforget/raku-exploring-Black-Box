@@ -254,7 +254,7 @@ ce qui fait qu'il est possible de vérifier les résultats intégraux.
 ambiguës du jeu 8×8 apparaissent dans le jeu 6×6, voire
 dans le jeu 5×5.
 
-Une configuration simplifiée sera identifiée par un code An\_Bp, où _n_ est le nombre
+Une configuration simplifiée sera identifiée par un code A_n_\_B_p_, où _n_ est le nombre
 d'atomes et _p_ la longueur d'un côté de la boîte ("A" pour "atomes",
 "B" pour "Black Box" ou pour "boîte"). Ainsi, la configurations "normale"
 sera identifiée par "A4\_B8".
@@ -424,7 +424,7 @@ molécule testée dans la configuration A2\_B4.
 L'enregistrement de la base de données, en syntaxe JSON, ressemble à :
 
 ```
-{ configuration: "A2\_B4",
+{ configuration: "A2_B4",
   number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
@@ -670,14 +670,14 @@ Puis 8 pas de F vers la droite
 Arrive un moment où E et F sont tous deux bloqués sur la droite
 
 ```
-65 ABCD----------EF
+66 ABCD----------EF
 ```
 
 À ce moment-là, c'est D qui avance d'un pas vers la droite et c'est E et F
 qui bondissent tous les deux vers la gauche.
 
 ```
-66 ABC-DEF---------
+67 ABC-DEF---------
 ```
 
 On pourrait croire que cela pourrait être implémenté avec des boucles
