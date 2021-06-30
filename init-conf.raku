@@ -118,7 +118,7 @@ This program  is published under  the same conditions as  Raku: the
 Artistic License version 2.0.
 
 The text of  the licenses is available  in the F<LICENSE-ARTISTIC-2.0>
-file in this repository, or you can read them at:
+file in this repository, or you can read it at:
 
   L<https://raw.githubusercontent.com/Raku/doc/master/LICENSE>
 
