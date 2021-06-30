@@ -109,7 +109,26 @@ sub MAIN (Str $config) {
   }
 
   loop {
-    new-molecule($cf, $number, $molecule);
+    my Int $found = 0;
+    my BSON::Document $enantiomer;
+    $cursor = $molecules.find(
+        criteria   => ( config   => $cf
+                      , molecule => $molecule
+        ),
+      );
+    while $cursor.fetch -> BSON::Document $doc {
+      $found = 1;
+      $enantiomer = $doc;
+    }
+    $cursor.kill;
+    if $found {
+      $enantiomer<number> = $number;
+      $enantiomer<dh2>    = time-stamp;
+      upd-molecule($enantiomer);
+    }
+    else {
+      new-molecule($cf, $number, $molecule);
+    }
 
     last unless $molecule ~~ /'O-'/;
 
@@ -124,7 +143,7 @@ sub MAIN (Str $config) {
 
 sub new-molecule (Str $cf, Int $number, Str $molecule) {
   #printf "%6d %s\n", $number, $molecule;
-  my BSON::Document $molecule-doc .= new: (
+  my BSON::Document $canonical-molecule .= new: (
               config             => $cf
             , number             => $number
             , canonical-number   => $number
@@ -132,7 +151,16 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , dh1                => time-stamp
   );
   my %group;
-  %group{$molecule} = $molecule-doc;
+  %group{$molecule} = $canonical-molecule;
+
+  my BSON::Document $rotated180 .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule.flip
+            , dh1                => time-stamp
+  );
+  %group{$molecule.flip} //= $rotated180;
 
   my BSON::Document $req;
   my BSON::Document $result;
@@ -146,6 +174,23 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
     die "Problem when storing molecule # $number '$molecule'";
   }
 
+}
+
+sub upd-molecule (BSON::Document $molecule) {
+   my BSON::Document $req .= new: (
+    update => 'Molecules',
+    updates => [ (
+        q =>  ( config   => $molecule<config>
+              , molecule => $molecule<molecule>
+              ),
+        u => $molecule,
+      ),
+    ],
+  );
+  my BSON::Document $doc = $database.run-command($req);
+  if $doc<ok> == 0 {
+    say "update ok : ", $doc<ok>, " nb : ", $doc<n>;
+  }
 }
 
 sub time-stamp {
