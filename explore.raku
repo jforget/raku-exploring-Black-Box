@@ -56,21 +56,7 @@ sub MAIN (Str $config) {
   $number   = 1;
 
   loop {
-    printf "%6d %s\n", $number, $molecule;
-    my BSON::Document $molecule-doc .= new: (
-                config   => $cf
-              , number   => $number
-              , molecule => $molecule
-              , dh1      => time-stamp
-    );
-    $req .= new: (
-      insert    => 'Molecules',
-      documents => [ $molecule-doc ],
-    );
-    $result = $database.run-command($req);
-    unless $result<ok> {
-      die "Problem when storing molecule # $number '$molecule'";
-    }
+    new-molecule($cf, $number, $molecule);
 
     last unless $molecule ~~ /'O-'/;
 
@@ -79,6 +65,32 @@ sub MAIN (Str $config) {
     my $mol1 = substr($molecule, 0, $pos);
     my $mol3 = substr($molecule, $pos + 2);
     $molecule = $mol1 ~ '-O' ~ $mol3.flip;
+  }
+
+}
+
+sub new-molecule (Str $cf, Int $number, Str $molecule) {
+  printf "%6d %s\n", $number, $molecule;
+  my BSON::Document $molecule-doc .= new: (
+              config             => $cf
+            , number             => $number
+            , canonical-number   => $number
+            , molecule           => $molecule
+            , dh1                => time-stamp
+  );
+  my %group;
+  %group{$molecule} = $molecule-doc;
+
+  my BSON::Document $req;
+  my BSON::Document $result;
+
+  $req .= new: (
+    insert    => 'Molecules',
+    documents => [ %group.values ],
+  );
+  $result = $database.run-command($req);
+  unless $result<ok> {
+    die "Problem when storing molecule # $number '$molecule'";
   }
 
 }
