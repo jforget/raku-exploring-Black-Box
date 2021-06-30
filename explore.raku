@@ -52,8 +52,61 @@ sub MAIN (Str $config) {
   my BSON::Document $req;
   my BSON::Document $result;
 
-  $molecule = 'O' x $nb_atoms ~ '-' x ($width² - $nb_atoms);
+  # Finding the last number processed in the previous run, which will be the first
+  # one to be processed in the current run. In Mongo-shell, it would be easy:
+  #         db.Molecules.find({ config: $cf} ).sort({number: -1}).limit(1)
+  # But in Raku, we have to scan all the molecules for the current configuration
+  # and store the maximum value of the 'number' property. Not a full table scan
+  # but nearly so, especially with the A4_B8 configuration which may have up to 365376
+  # molecules. I do not know how to add a 'sort' parameter
+  # to the 'find' method. 'number-to-return' is a fine substitute for "limit()',
+  # but there is nothing similar for 'sort()'
+  # A bad anti-optimization, but I cannot do otherwise (or maybe migrate to SQLite?)
   $number   = 1;
+  $cursor = $molecules.find(
+      criteria   => ( 'config' => $cf,  ),
+      projection => ( 'number' => 1, ),
+    );
+  while $cursor.fetch -> BSON::Document $doc {
+    if $doc<number> > $number {
+      $number = $doc<number>;
+    }
+  }
+  $cursor.kill;
+  if $number == 1 {
+    say "starting from scratch";
+    $molecule = 'O' x $nb_atoms ~ '-' x ($width² - $nb_atoms);
+  }
+  else {
+    $cursor = $molecules.find(
+        criteria   => ( 'config' => $cf,
+                        'number' => $number,
+        ),
+      );
+    while $cursor.fetch -> BSON::Document $doc {
+      $molecule = $doc<molecule>;
+
+      # If the highest numbered molecule is the canonical molecule of a group
+      # of enantiomers, reprocessing it will recreate the group of enantiomers.
+      # So we delete this group before recreating. A very minor anti-optimization.
+      #
+      # If the highest numbered molecule is not the canonical molecule of
+      # its group, it will be modified again. A very very very minor anti-optimization.
+      if $doc<number> == $doc<canonical-number> {
+	$req .= new: (
+	  delete    => 'Molecules',
+	  deletes   => [ (
+		q     => ( config => ($cf), canonical-number => ($number), ),
+		limit => 0,
+	  ), ],
+	);
+	$result = $database.run-command($req);
+	say "Clean-up molecules     ok : ", $result<ok>, " nb : ", $result<n>;
+      }
+    }
+    $cursor.kill;
+    say "restarting from $number $molecule";
+  }
 
   loop {
     new-molecule($cf, $number, $molecule);
@@ -70,7 +123,7 @@ sub MAIN (Str $config) {
 }
 
 sub new-molecule (Str $cf, Int $number, Str $molecule) {
-  printf "%6d %s\n", $number, $molecule;
+  #printf "%6d %s\n", $number, $molecule;
   my BSON::Document $molecule-doc .= new: (
               config             => $cf
             , number             => $number
