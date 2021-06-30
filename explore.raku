@@ -23,6 +23,8 @@ my MongoDB::Database   $database       = $client.database('Black-Box');
 my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
+my @rotation90;
+
 sub MAIN (Str $config) {
   my Str $cf = $config.uc;
   unless $cf ~~ /^ 'A' (\d+) '_B' (\d) $ / {
@@ -42,6 +44,14 @@ sub MAIN (Str $config) {
   $cursor.kill;
   unless $configuration {
     die "Configuration inconnue $cf";
+  }
+
+  for 1 .. $width -> $l {
+    for 1 .. $width -> $c {
+      my $l-r90 = $c;
+      my $c-r90 = $width + 1 - $l;
+      @rotation90[ $width × ($l - 1) + $c - 1 ] = $width × ($l-r90 - 1) + $c-r90 - 1;
+    }
   }
 
   say "$nb_atoms atoms in a $width × $width square";
@@ -93,15 +103,15 @@ sub MAIN (Str $config) {
       # If the highest numbered molecule is not the canonical molecule of
       # its group, it will be modified again. A very very very minor anti-optimization.
       if $doc<number> == $doc<canonical-number> {
-	$req .= new: (
-	  delete    => 'Molecules',
-	  deletes   => [ (
-		q     => ( config => ($cf), canonical-number => ($number), ),
-		limit => 0,
-	  ), ],
-	);
-	$result = $database.run-command($req);
-	say "Clean-up molecules     ok : ", $result<ok>, " nb : ", $result<n>;
+        $req .= new: (
+          delete    => 'Molecules',
+          deletes   => [ (
+                q     => ( config => ($cf), canonical-number => ($number), ),
+                limit => 0,
+          ), ],
+        );
+        $result = $database.run-command($req);
+        say "Clean-up molecules     ok : ", $result<ok>, " nb : ", $result<n>;
       }
     }
     $cursor.kill;
@@ -148,8 +158,11 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => $number
             , canonical-number   => $number
             , molecule           => $molecule
+            , transform          => 'id'
             , dh1                => time-stamp
   );
+
+  my @boxes = $molecule.comb;
   my %group;
   %group{$molecule} = $canonical-molecule;
 
@@ -158,9 +171,31 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule.flip
+            , transform          => 'rot180'
             , dh1                => time-stamp
   );
   %group{$molecule.flip} //= $rotated180;
+
+  my $molecule-rot90 = @boxes[@rotation90].join;
+  my BSON::Document $rotated90 .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule-rot90
+            , transform          => 'rot90'
+            , dh1                => time-stamp
+  );
+  %group{$molecule-rot90} //= $rotated90;
+
+  my BSON::Document $rotated270 .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule-rot90.flip
+            , transform          => 'rot270'
+            , dh1                => time-stamp
+  );
+  %group{$molecule-rot90.flip} //= $rotated270;
 
   my BSON::Document $req;
   my BSON::Document $result;
