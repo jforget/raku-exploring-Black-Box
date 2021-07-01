@@ -50,8 +50,8 @@ sub MAIN (Str $config) {
 
   for 1 .. $width -> $l {
     for 1 .. $width -> $c {
-      my $l-r90 = $c;
-      my $c-r90 = $width + 1 - $l;
+      my Int $l-r90 = $c;
+      my Int $c-r90 = $width + 1 - $l;
       @rotation90[ $width × ($l - 1) + $c - 1 ] = $width × ($l-r90 - 1) + $c-r90 - 1;
       @symm-h[     $width × ($l - 1) + $c - 1 ] = $width × ($l     - 1) + $width - $c;
       @symm-diag[  $width × ($l - 1) + $c - 1 ] = $width × ($c     - 1) + $l - 1;
@@ -67,34 +67,49 @@ sub MAIN (Str $config) {
   my BSON::Document $result;
 
   # Finding the last number processed in the previous run, which will be the first
-  # one to be processed in the current run. In Mongo-shell, it would be easy:
+  # one to be processed in the current run.
+  # In Mongo-shell, it would be easy:
   #         db.Molecules.find({ config: $cf} ).sort({number: -1}).limit(1)
-  # But in Raku, we have to scan all the molecules for the current configuration
-  # and store the maximum value of the 'number' property. Not a full table scan
-  # but nearly so, especially with the A4_B8 configuration which may have up to 365376
-  # molecules. I do not know how to add a 'sort' parameter
-  # to the 'find' method. 'number-to-return' is a fine substitute for "limit()',
-  # but there is nothing similar for 'sort()'
-  # A bad anti-optimization, but I cannot do otherwise (or maybe migrate to SQLite?)
-  $number   = 1;
-  $cursor = $molecules.find(
-      criteria   => ( 'config' => $cf,  ),
-      projection => ( 'number' => 1, ),
-    );
-  while $cursor.fetch -> BSON::Document $doc {
-    if $doc<number> > $number {
-      $number = $doc<number>;
+  # In SQL, it would be easy too:
+  #         select max(Molecules.number) from Molecules where Molecules.config = ?
+  #
+  # In Raku + MongoDB, there is a substitute to 'limit(n)', which is the parameter "number-to-return",
+  # but there is no substitute to 'sort(...)'.
+  # The first idea is to retrieve all records, sort them in Raku, keep the first. A very bad
+  # idea, because sorting is O(n.log(n)).
+  # A better idea is to retrieve all records, iterate on them and extract the
+  # maximum value of the (unsorted) list. This is better, but still O(n).
+  # The idea implemented below is a binary search. Hoping that O(log(n)) will be fast enough.
+  my Int $there     = 0;
+  my Int $not-there = $configuration<nb_mol> + 1;
+  while $not-there - $there > 1 {
+    my Int $found  = 0;
+    my Int $middle = (($there + $not-there) / 2).floor;
+    $cursor = $molecules.find(
+        criteria   => ( config => $cf
+                      , number => $middle ),
+      );
+    while $cursor.fetch -> BSON::Document $doc {
+      $found = 1;
+    }
+    $cursor.kill;
+    if $found {
+      $there = $middle;
+    }
+    else {
+      $not-there = $middle;
     }
   }
-  $cursor.kill;
-  if $number == 1 {
+  if $there == 0 {
     say "starting from scratch";
+    $number = 1;
     $molecule = 'O' x $nb_atoms ~ '-' x ($width² - $nb_atoms);
   }
   else {
+    $number = $there;
     $cursor = $molecules.find(
-        criteria   => ( 'config' => $cf,
-                        'number' => $number,
+        criteria   => ( config => $cf
+                      , number => $number
         ),
       );
     while $cursor.fetch -> BSON::Document $doc {
@@ -148,8 +163,8 @@ sub MAIN (Str $config) {
 
     ++$number;
     my Int $pos = rindex($molecule, 'O-');
-    my $mol1 = substr($molecule, 0, $pos);
-    my $mol3 = substr($molecule, $pos + 2);
+    my Str $mol1 = substr($molecule, 0, $pos);
+    my Str $mol3 = substr($molecule, $pos + 2);
     $molecule = $mol1 ~ '-O' ~ $mol3.flip;
   }
 
