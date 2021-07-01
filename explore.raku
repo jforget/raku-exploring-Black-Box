@@ -24,6 +24,8 @@ my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
 my @rotation90;
+my @symm-h;
+my @symm-diag;
 
 sub MAIN (Str $config) {
   my Str $cf = $config.uc;
@@ -51,6 +53,8 @@ sub MAIN (Str $config) {
       my $l-r90 = $c;
       my $c-r90 = $width + 1 - $l;
       @rotation90[ $width × ($l - 1) + $c - 1 ] = $width × ($l-r90 - 1) + $c-r90 - 1;
+      @symm-h[     $width × ($l - 1) + $c - 1 ] = $width × ($l     - 1) + $width - $c;
+      @symm-diag[  $width × ($l - 1) + $c - 1 ] = $width × ($c     - 1) + $l - 1;
     }
   }
 
@@ -176,7 +180,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
   );
   %group{$molecule.flip} //= $rotated180;
 
-  my $molecule-rot90 = @boxes[@rotation90].join;
+  my Str $molecule-rot90 = @boxes[@rotation90].join;
   my BSON::Document $rotated90 .= new: (
               config             => $cf
             , number             => 0
@@ -196,6 +200,48 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , dh1                => time-stamp
   );
   %group{$molecule-rot90.flip} //= $rotated270;
+
+  my Str $molecule-symmh = @boxes[@symm-h].join;
+  my BSON::Document $symm-h    .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule-symmh
+            , transform          => 'symm-h'
+            , dh1                => time-stamp
+  );
+  %group{$molecule-symmh} //= $symm-h;
+
+  my BSON::Document $symm-v .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule-symmh.flip
+            , transform          => 'symm-v'
+            , dh1                => time-stamp
+  );
+  %group{$molecule-symmh.flip} //= $symm-v;
+
+  my Str $molecule-diag = @boxes[@symm-diag].join;
+  my BSON::Document $diag_1 .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule-diag
+            , transform          => 'diag-1'
+            , dh1                => time-stamp
+  );
+  %group{$molecule-diag} //= $diag_1;
+
+  my BSON::Document $diag_2 .= new: (
+              config             => $cf
+            , number             => 0
+            , canonical-number   => $number
+            , molecule           => $molecule-diag.flip
+            , transform          => 'diag-2'
+            , dh1                => time-stamp
+  );
+  %group{$molecule-diag.flip} //= $diag_2;
 
   my BSON::Document $req;
   my BSON::Document $result;
