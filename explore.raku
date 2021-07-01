@@ -23,6 +23,8 @@ my MongoDB::Database   $database       = $client.database('Black-Box');
 my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
+my Int $nb_atoms;
+my Int $width;
 my @rotation90;
 my @symm-h;
 my @symm-diag;
@@ -32,8 +34,8 @@ sub MAIN (Str $config) {
   unless $cf ~~ /^ 'A' (\d+) '_B' (\d) $ / {
     die "Wrong configuration $config";
   }
-  my Int $nb_atoms = + $0;
-  my Int $width    = + $1;
+  $nb_atoms = + $0;
+  $width    = + $1;
 
   my BSON::Document $configuration;
   my MongoDB::Cursor $cursor = $configurations.find(
@@ -172,11 +174,29 @@ sub MAIN (Str $config) {
 
 sub new-molecule (Str $cf, Int $number, Str $molecule) {
   #printf "%6d %s\n", $number, $molecule;
+  my @box;
+  for 1 .. $width -> $l {
+    for 1 .. $width -> $c {
+      @box[ $l; $c ] = substr($molecule, $width × ($l - 1) + $c - 1, 1);
+    }
+    @box[ $l        ; 0          ] = '-';
+    @box[ $l        ; $width + 1 ] = '-';
+    @box[ 0         ; $l         ] = '-';
+    @box[ $width + 1; $l         ] = '-';
+  }
+  my Str $spectrum = ' ' x (4 × $width);
+  for 0 .. 4 × $width -1 -> $i {
+    if substr($spectrum, $i, 1) eq ' ' {
+      my ($res, $boxes, $turns) = ray(@box, $i);
+      substr-rw($spectrum, $i, 1) = $res;
+    }
+  }
   my BSON::Document $canonical-molecule .= new: (
               config             => $cf
             , number             => $number
             , canonical-number   => $number
             , molecule           => $molecule
+            , spectrum           => $spectrum
             , transform          => 'id'
             , dh1                => time-stamp
   );
@@ -287,6 +307,63 @@ sub upd-molecule (BSON::Document $molecule) {
   if $doc<ok> == 0 {
     say "update ok : ", $doc<ok>, " nb : ", $doc<n>;
   }
+}
+
+sub ray (@box, Int $entry) {
+  my Int ($l, $c, $dl, $dc);
+  my Str $dir;
+
+  my %dl     = N => -1,  E =>  0,  S => +1,  W =>  0;
+  my %dc     = N =>  0,  E => +1,  S =>  0,  W => -1;
+  my %turn-l = N => 'W', E => 'N', S => 'E', W => 'S';
+  my %turn-r = N => 'E', E => 'S', S => 'W', W => 'N';
+  if $entry < $width {
+    # Entry 0 to 7 → line 1 to 8, column 0
+    $l   =  $entry + 1;
+    $c   =  0;
+    $dir = 'E';
+  }
+  elsif $entry < 2 × $width {
+    # Entry 8 to 15 → line 9, column 1 to 8
+    $l   =  $width + 1;
+    $c   =  $entry + 1 - $width;
+    $dir = 'N';
+  }
+  elsif $entry < 3 × $width {
+    # Entry 16 to 23 → line 8 to 1, column 9
+    $l   =  3 × $width - $entry;
+    $c   =  $width + 1;
+    $dir = 'W';
+  }
+  else {
+    # Entry 24 to 31 → line 0, column 8 to 1
+    $l   =  0;
+    $c   =  4 × $width - $entry;
+    $dir = 'S';
+  }
+
+  # Absorbed on entry
+  my Int $l-forward = $l + %dl{$dir};
+  my Int $c-forward = $c + %dc{$dir};
+  #say $l, ' ', $c, ' ', $dir, ' ', $l-forward, ' ', $c-forward, ' ', @box[$l-forward; $c-forward];
+  if @box[$l-forward; $c-forward] eq 'O' {
+    return '@', 0, 0;
+  }
+
+  # Reflected on entry
+  my Int $l-left = $l + %dl{$dir} + %dl{%turn-l{$dir}};
+  my Int $c-left = $c + %dc{$dir} + %dc{%turn-l{$dir}};
+  if @box[$l-left; $c-left] eq 'O' {
+    return '&', 0, 0;
+  }
+  my Int $l-right = $l + %dl{$dir} + %dl{%turn-r{$dir}};
+  my Int $c-right = $c + %dc{$dir} + %dc{%turn-r{$dir}};
+  if @box[$l-right; $c-right] eq 'O' {
+    return '&', 0, 0;
+  }
+
+  return ' ', 0, 0;
+
 }
 
 sub time-stamp {
