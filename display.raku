@@ -48,9 +48,14 @@ sub MAIN (Str $config, Int $first, Int $last) {
   }
 
   say "first = $first, last = $last";
+  # With the Mongo shell, we would extract the molecules with:
+  #
+  #    db.Molecules.find({ config: $cf, number: { '$gte': $first, '$lte': $last }}).sort({ number: 1 })
+  #
+  # but I do not know how to write a Raku-Mongo find with a complex criterion (range) and a sort.
   $cursor = $molecules.find(
         criteria   => ( config => $cf
-                      , #number => ( '$gte' => $first,  ),
+                      , #### number => ( '$gte' => $first, '$lte' => $last ),
 		      ),
       );
   my BSON::Document @doc;
