@@ -99,7 +99,7 @@ collection  and, if  necessary, empties  the C<Molecules>  collection,
 removing  any C<Molecule>  document  identified  by the  configuration
 code.
 
-=head1 LANCEMENT
+=head1 SYNOPSIS
 
   raku init-conf.raku a4_b8
 
@@ -108,7 +108,8 @@ code.
 =item configuration code
 
 A string patterned  as C<A>I<n>C<_B>I<p>, where I<n> is  the number of
-atoms and I<p> is the width of the box
+atoms and I<p> is the width of the box. If necessary, letters C<a> and
+C<b> can be converted to upper-case.
 
 =head1 COPYRIGHT and LICENCE
 
