@@ -181,14 +181,37 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
     }
     @box[ $l        ; 0          ] = '-';
     @box[ $l        ; $width + 1 ] = '-';
+    # Well... below, $l is the column, not the line.
     @box[ 0         ; $l         ] = '-';
     @box[ $width + 1; $l         ] = '-';
   }
+  # and do not forget the corners!
+  @box[ 0         ; 0          ] = '-';
+  @box[ 0         ; $width + 1 ] = '-';
+  @box[ $width + 1; 0          ] = '-';
+  @box[ $width + 1; $width + 1 ] = '-';
+
   my Str $spectrum = ' ' x (4 × $width);
+  my Str $marker   = 'a';
   for 0 .. 4 × $width -1 -> $i {
     if substr($spectrum, $i, 1) eq ' ' {
       my ($res, $boxes, $turns) = ray(@box, $i);
-      substr-rw($spectrum, $i, 1) = $res;
+      given $res {
+        when '@' {
+          substr-rw($spectrum, $i, 1) = $res;
+        }
+        when '&' {
+          substr-rw($spectrum, $i, 1) = $res;
+        }
+        when '?' {
+          #say "Problem with molecule $molecule and ray $i";
+        }
+        default {
+          substr-rw($spectrum, $i,   1) = $marker;
+          substr-rw($spectrum, $res, 1) = $marker;
+          ++$marker;
+        }
+      }
     }
   }
   my BSON::Document $canonical-molecule .= new: (
@@ -362,7 +385,7 @@ sub ray (@box, Int $entry) {
     return '&', 0, 0;
   }
 
-  return ' ', 0, 0;
+  return '?', 0, 0;
 
 }
 
