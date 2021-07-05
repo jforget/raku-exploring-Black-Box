@@ -193,6 +193,23 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
   @box[ $E-or-S; 0       ] = '-';
   @box[ $E-or-S; $E-or-S ] = '-';
 
+  # statistics
+  my Int $absorbed-number      = 0;
+  my Int $absorbed-max-length  = 0;
+  my Int $absorbed-max-turns   = 0;
+  my Int $absorbed-tot-length  = 0;
+  my Int $absorbed-tot-turns   = 0;
+  my Int $reflected-number     = 0;
+  my Int $reflected-max-length = 0;
+  my Int $reflected-max-turns  = 0;
+  my Int $reflected-tot-length = 0;
+  my Int $reflected-tot-turns  = 0;
+  my Int $out-number           = 0;
+  my Int $out-max-length       = 0;
+  my Int $out-max-turns        = 0;
+  my Int $out-tot-length       = 0;
+  my Int $out-tot-turns        = 0;
+
   my Str $spectrum = ' ' x (4 × $width);
   my Str $marker   = 'a';
   for 0 .. 4 × $width -1 -> $i {
@@ -201,9 +218,19 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
       given $res {
         when '@' {
           substr-rw($spectrum, $i, 1) = $res;
+          $absorbed-number++;
+          $absorbed-tot-length += $boxes;
+          $absorbed-tot-turns  += $turns;
+          if $absorbed-max-length < $boxes { $absorbed-max-length = $boxes }
+          if $absorbed-max-turns  < $turns { $absorbed-max-turns  = $turns }
         }
         when '&' {
           substr-rw($spectrum, $i, 1) = $res;
+          $reflected-number++;
+          $reflected-tot-length += $boxes;
+          $reflected-tot-turns  += $turns;
+          if $reflected-max-length < $boxes { $reflected-max-length = $boxes }
+          if $reflected-max-turns  < $turns { $reflected-max-turns  = $turns }
         }
         when '?' {
           say "Problem with molecule $molecule and ray $i";
@@ -212,6 +239,11 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
           substr-rw($spectrum, $i,   1) = $marker;
           substr-rw($spectrum, $res, 1) = $marker;
           ++$marker;
+          ++$out-number;
+          $out-tot-length += $boxes;
+          $out-tot-turns  += $turns;
+          if $out-max-length < $boxes { $out-max-length = $boxes }
+          if $out-max-turns  < $turns { $out-max-turns  = $turns }
         }
       }
     }
@@ -302,6 +334,24 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , dh1                => time-stamp
   );
   %group{$molecule-diag.flip} //= $diag_2;
+
+  for %group.values -> BSON::Document $doc {
+    $doc<absorbed-number>      = $absorbed-number     ;
+    $doc<absorbed-max-length>  = $absorbed-max-length ;
+    $doc<absorbed-max-turns>   = $absorbed-max-turns  ;
+    $doc<absorbed-tot-length>  = $absorbed-tot-length ;
+    $doc<absorbed-tot-turns>   = $absorbed-tot-turns  ;
+    $doc<reflected-number>     = $reflected-number    ;
+    $doc<reflected-max-length> = $reflected-max-length;
+    $doc<reflected-max-turns>  = $reflected-max-turns ;
+    $doc<reflected-tot-length> = $reflected-tot-length;
+    $doc<reflected-tot-turns>  = $reflected-tot-turns ;
+    $doc<out-number>           = $out-number          ;
+    $doc<out-max-length>       = $out-max-length      ;
+    $doc<out-max-turns>        = $out-max-turns       ;
+    $doc<out-tot-length>       = $out-tot-length      ;
+    $doc<out-tot-turns>        = $out-tot-turns       ;
+  }
 
   my BSON::Document $req;
   my BSON::Document $result;
