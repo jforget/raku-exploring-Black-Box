@@ -25,6 +25,7 @@ my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
 my Int $nb_atoms;
 my Int $width;
+my Int $E-or-S; # coordinate of the Eastern-most peripheral column and of the Southern-most pêripheral line
 my @rotation90;
 my @symm-h;
 my @symm-diag;
@@ -36,6 +37,7 @@ sub MAIN (Str $config) {
   }
   $nb_atoms = + $0;
   $width    = + $1;
+  $E-or-S   = $width + 1;
 
   my BSON::Document $configuration;
   my MongoDB::Cursor $cursor = $configurations.find(
@@ -179,17 +181,17 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
     for 1 .. $width -> $c {
       @box[ $l; $c ] = substr($molecule, $width × ($l - 1) + $c - 1, 1);
     }
-    @box[ $l        ; 0          ] = '-';
-    @box[ $l        ; $width + 1 ] = '-';
+    @box[ $l     ; 0       ] = '-';
+    @box[ $l     ; $E-or-S ] = '-';
     # Well... below, $l is the column, not the line.
-    @box[ 0         ; $l         ] = '-';
-    @box[ $width + 1; $l         ] = '-';
+    @box[ 0      ; $l      ] = '-';
+    @box[ $E-or-S; $l      ] = '-';
   }
   # and do not forget the corners!
-  @box[ 0         ; 0          ] = '-';
-  @box[ 0         ; $width + 1 ] = '-';
-  @box[ $width + 1; 0          ] = '-';
-  @box[ $width + 1; $width + 1 ] = '-';
+  @box[ 0      ; 0       ] = '-';
+  @box[ 0      ; $E-or-S ] = '-';
+  @box[ $E-or-S; 0       ] = '-';
+  @box[ $E-or-S; $E-or-S ] = '-';
 
   my Str $spectrum = ' ' x (4 × $width);
   my Str $marker   = 'a';
@@ -348,14 +350,14 @@ sub ray (@box, Int $entry) {
   }
   elsif $entry < 2 × $width {
     # Entry 8 to 15 → line 9, column 1 to 8
-    $l   =  $width + 1;
+    $l   =  $E-or-S;
     $c   =  $entry + 1 - $width;
     $dir = 'N';
   }
   elsif $entry < 3 × $width {
     # Entry 16 to 23 → line 8 to 1, column 9
     $l   =  3 × $width - $entry;
-    $c   =  $width + 1;
+    $c   =  $E-or-S;
     $dir = 'W';
   }
   else {
@@ -401,13 +403,13 @@ sub ray (@box, Int $entry) {
       $res = $l - 1;
       return $res, $i - 1, $turns;
     }
-    if $l == $width + 1 {
+    if $l == $E-or-S {
       # For A4_B8, (9, 1) → 9 and (9, 8) → 16 (when 1-based),
       #            (9, 1) → 8 and (9, 8) → 15 (when 0-based)
       $res = $c + $width - 1;
       return $res, $i - 1, $turns;
     }
-    if $c == $width + 1 {
+    if $c == $E-or-S {
       # For A4_B8, (8, 9) → 17 and (1, 9) → 24 (when 1-based),
       #            (8, 9) → 16 and (1, 9) → 23 (when 0-based)
       $res = 3 × $width - $l;
