@@ -56,7 +56,7 @@ sub MAIN (Str $config, Int $first, Int $last) {
   $cursor = $molecules.find(
         criteria   => ( config => $cf
                       , #### number => ( '$gte' => $first, '$lte' => $last ),
-		      ),
+                      ),
       );
   my BSON::Document @doc;
   while $cursor.fetch -> BSON::Document $doc {
@@ -72,7 +72,7 @@ sub MAIN (Str $config, Int $first, Int $last) {
     for (1 .. $width) -> $l {
       say insert-spaces(  substr($spectrum, $l - 1, 1)
                         ~ substr($doc<molecule>, ($l - 1) × $width, $width)
-			~ substr($spectrum, 3 × $width - $l, 1));
+                        ~ substr($spectrum, 3 × $width - $l, 1));
     }
     say insert-spaces(' ' ~ substr($spectrum, $width, $width));
   }
@@ -112,8 +112,6 @@ C<b> can be converted to upper-case.
 
 The  range of  numbers for  the  keys of  the molecules  that will  be
 extracted.
-
-Two numbers, 
 
 =head1 COPYRIGHT and LICENCE
 
