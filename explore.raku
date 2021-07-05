@@ -204,7 +204,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
           substr-rw($spectrum, $i, 1) = $res;
         }
         when '?' {
-          #say "Problem with molecule $molecule and ray $i";
+          say "Problem with molecule $molecule and ray $i";
         }
         default {
           substr-rw($spectrum, $i,   1) = $marker;
@@ -385,6 +385,67 @@ sub ray (@box, Int $entry) {
     return '&', 0, 0;
   }
 
+  my $res = '?';
+  my Int $length;
+  my Int $turns = 0;
+  # fail-safe: using a loop with a fixed number of iterations, although
+  # this loop is theoretically a "while" loop.
+  for (1 .. 2 × $width²) -> Int $i {
+    $l += %dl{$dir};
+    $c += %dc{$dir};
+
+    # out
+    if $c == 0 {
+      # For A4_B8, (1, 0) → 1 and (8, 0) → 8 (when 1-based),
+      #            (1, 0) → 0 and (8, 0) → 7 (when 0-based)
+      $res = $l - 1;
+      return $res, $i - 1, $turns;
+    }
+    if $l == $width + 1 {
+      # For A4_B8, (9, 1) → 9 and (9, 8) → 16 (when 1-based),
+      #            (9, 1) → 8 and (9, 8) → 15 (when 0-based)
+      $res = $c + $width - 1;
+      return $res, $i - 1, $turns;
+    }
+    if $c == $width + 1 {
+      # For A4_B8, (8, 9) → 17 and (1, 9) → 24 (when 1-based),
+      #            (8, 9) → 16 and (1, 9) → 23 (when 0-based)
+      $res = 3 × $width - $l;
+      return $res, $i - 1, $turns;
+    }
+    if $l == 0 {
+      # For A4_B8, (0, 8) → 25 and (0, 1) → 32 (when 1-based),
+      #            (0, 8) → 24 and (0, 1) → 31 (when 0-based)
+      $res = 4 × $width - $c;
+      return $res, $i - 1, $turns;
+    }
+
+    # absorbed
+    $l-forward = $l + %dl{$dir};
+    $c-forward = $c + %dc{$dir};
+    if @box[$l-forward; $c-forward] eq 'O' {
+      return '@', $i, $turns;
+    }
+
+    # reflected
+    $l-left  = $l + %dl{$dir} + %dl{%turn-l{$dir}};
+    $c-left  = $c + %dc{$dir} + %dc{%turn-l{$dir}};
+    $l-right = $l + %dl{$dir} + %dl{%turn-r{$dir}};
+    $c-right = $c + %dc{$dir} + %dc{%turn-r{$dir}};
+    if @box[$l-left; $c-left] eq 'O' && @box[$l-right; $c-right] eq 'O' {
+      return '&', $i, $turns;
+    }
+
+    # deflected
+    if @box[$l-left; $c-left] eq 'O' {
+      $dir = %turn-r{$dir};
+      $turns++;
+    }
+    if @box[$l-right; $c-right] eq 'O' {
+      $dir = %turn-l{$dir};
+      $turns++;
+    }
+  }
   return '?', 0, 0;
 
 }
