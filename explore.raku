@@ -259,6 +259,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
   );
 
   my @boxes = $molecule.comb;
+  my $spectrum-diag1 = $spectrum.flip;
   my %group;
   %group{$molecule} = $canonical-molecule;
 
@@ -267,6 +268,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule.flip
+            , spectrum           => substr($spectrum, 2 × $width) ~ substr($spectrum, 0, 2 × $width)
             , transform          => 'rot180'
             , dh1                => time-stamp
   );
@@ -278,6 +280,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule-rot90
+            , spectrum           => substr($spectrum, 3 × $width) ~ substr($spectrum, 0, 3 × $width)
             , transform          => 'rot90'
             , dh1                => time-stamp
   );
@@ -288,6 +291,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule-rot90.flip
+            , spectrum           => substr($spectrum, $width) ~ substr($spectrum, 0, $width)
             , transform          => 'rot270'
             , dh1                => time-stamp
   );
@@ -299,6 +303,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule-symmh
+            , spectrum           => substr($spectrum-diag1, $width) ~ substr($spectrum-diag1, 0, $width)
             , transform          => 'symm-h'
             , dh1                => time-stamp
   );
@@ -309,6 +314,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule-symmh.flip
+            , spectrum           => substr($spectrum-diag1, 3 × $width) ~ substr($spectrum-diag1, 0, 3 × $width)
             , transform          => 'symm-v'
             , dh1                => time-stamp
   );
@@ -320,6 +326,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule-diag
+            , spectrum           => $spectrum-diag1
             , transform          => 'diag-1'
             , dh1                => time-stamp
   );
@@ -330,6 +337,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , number             => 0
             , canonical-number   => $number
             , molecule           => $molecule-diag.flip
+            , spectrum           => substr($spectrum-diag1, 2 × $width) ~ substr($spectrum-diag1, 0, 2 × $width)
             , transform          => 'diag-2'
             , dh1                => time-stamp
   );
