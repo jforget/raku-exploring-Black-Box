@@ -344,6 +344,9 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
   %group{$molecule-diag.flip} //= $diag_2;
 
   for %group.values -> BSON::Document $doc {
+    # normalise the spectrum
+    $doc<spectrum> = normalise($doc<spectrum>);
+    # statistics
     $doc<absorbed-number>      = $absorbed-number     ;
     $doc<absorbed-max-length>  = $absorbed-max-length ;
     $doc<absorbed-max-turns>   = $absorbed-max-turns  ;
@@ -508,6 +511,19 @@ sub ray (@box, Int $entry) {
   }
   return '?', 0, 0;
 
+}
+
+sub normalise(Str $str) {
+  my %trans   = '@' => '@', '&' =>'&';
+  my $symbol  = 'a';
+  my @letters = $str.comb;
+  for @letters -> $letter is rw {
+    unless %trans{$letter} {
+      %trans{$letter} = $symbol++;
+    }
+    $letter = %trans{$letter};      
+  }
+  return @letters.join;
 }
 
 sub time-stamp {
