@@ -75,6 +75,10 @@ sub MAIN (Str $config, Int $first, Int $last) {
                         ~ substr($spectrum, 3 × $width - $l, 1));
     }
     say insert-spaces(' ' ~ substr($spectrum, $width, $width));
+    printf "          number length  turns\n";
+    printf "Absorbed   %2d    %3d %2d %3d %2d\n", $doc< absorbed-number>, $doc< absorbed-tot-length>, $doc< absorbed-max-length>, $doc< absorbed-tot-turns>, $doc< absorbed-max-turns>;
+    printf "Reflected  %2d    %3d %2d %3d %2d\n", $doc<reflected-number>, $doc<reflected-tot-length>, $doc<reflected-max-length>, $doc<reflected-tot-turns>, $doc<reflected-max-turns>;
+    printf "Out        %2d    %3d %2d %3d %2d\n", $doc<      out-number>, $doc<      out-tot-length>, $doc<      out-max-length>, $doc<      out-tot-turns>, $doc<      out-max-turns>;
   }
 }
 
