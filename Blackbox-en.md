@@ -60,6 +60,28 @@ arrayed inside the box, computes the results for all
 possible 32 rays and, thus, determines which atom configurations
 leads to the same ray results.
 
+Post-scriptum. While writing the exploration program
+and _before_ running it on a configuration with 4 atoms on
+a 8×8 square, or even on any configuration with a square bigger
+than 4×4, I have found by pure thought this game:
+
+```
+   6 7 5 H 4 H 3 H
+ 1 - - - - - - - - 1
+ 2 - - - - - - - - 2
+ 3 - - - - - - - - R
+ H - - - - - - - - H
+ 4 - - - - - - - - R
+ H - - - - - - - - H
+ 5 - - - - - - - - R
+ H - - - - - - - - H
+   6 7 R H R H R H
+
+There are 4 balls in the box
+```
+
+(H = absorbed, R = reflected) Try to decode it...
+
 Secondary Purpose
 -----------------
 
@@ -242,7 +264,7 @@ programmes and their results.
 In addition, some interesting results can appear when exploring molecules
 with 4 atoms in a 6×6 square, or even in a 5×5 square.
 
-A configuration will be identified by the A_n_\_B_p_ code, where _n_ is the number of
+A configuration will be identified by the An\_Bp code, where _n_ is the number of
 atoms and _p_ is the size of the box. So the "normal" configuration will
 have the key "A4\_B8".
 
@@ -396,7 +418,7 @@ configuration in the A2\_B4 configuration.
 Using JSON syntax, the database record will look like:
 
 ```
-{ configuration: "A2_B4",
+{ config: "A2_B4",
   number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
@@ -534,31 +556,36 @@ store simultaneously 8 of them. To tell a long story short,
 here are two of them. In addition, I have stripped the statistics.
 
 ```
-{ configuration: "A2_B4",
+{ config: "A2_B4",
   number: 2,
   canonical-number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
+  transform: 'id',
 }
-{ configuration: "A2_B4",
+{ config: "A2_B4",
   number: 0,
   canonical-number: 2,
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
+  transform: 'rot180',
 }
 ```
 The `canonical-number` property is a link to the
-first molecule of the enantiomers group. The `number`
+first molecule of the enantiomers group. The `transform` property
+is a reminder of which rotation or which symmetry gave the
+current molecule, when applied to the canonical enantiomer. The `number`
 property is initialised with value zero, but is filled
 later when the exhaustive search comes upon the molecule.
 At this time, the record will be updated to:
 
 ```
-{ configuration: "A2_B4",
+{ config: "A2_B4",
   number: 119,
   canonical-number: 2,
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
+  transform: 'rot180',
 }
 ```
 

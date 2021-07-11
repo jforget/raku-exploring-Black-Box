@@ -69,6 +69,30 @@ les résultats de tous les rayons et détermine ainsi
 quelles sont les configurations d'atomes qui donnent
 les mêmes résultats pour les rayons.
 
+Post-scriptum : pendant le développement du programme
+d'exploration, et _avant_ de le lancer pour la configuration
+avec 4 atomes dans un carré 8×8, ou même pour toute configuration
+dans un carré plus grand que 4×4, j'ai trouvé par réflexion
+ce cas de figure :
+
+```
+   6 7 5 H 4 H 3 H
+ 1 - - - - - - - - 1
+ 2 - - - - - - - - 2
+ 3 - - - - - - - - R
+ H - - - - - - - - H
+ 4 - - - - - - - - R
+ H - - - - - - - - H
+ 5 - - - - - - - - R
+ H - - - - - - - - H
+   6 7 R H R H R H
+
+There are 4 balls in the box
+```
+
+(H = absorbé, R = réfléchi) Essayez de le décoder...
+
+
 But secondaire
 --------------
 
@@ -254,7 +278,7 @@ ce qui fait qu'il est possible de vérifier les résultats intégraux.
 ambiguës du jeu 8×8 apparaissent dans le jeu 6×6, voire
 dans le jeu 5×5.
 
-Une configuration simplifiée sera identifiée par un code A_n_\_B_p_, où _n_ est le nombre
+Une configuration simplifiée sera identifiée par un code An\_Bp, où _n_ est le nombre
 d'atomes et _p_ la longueur d'un côté de la boîte ("A" pour "atomes",
 "B" pour "Black Box" ou pour "boîte"). Ainsi, la configurations "normale"
 sera identifiée par "A4\_B8".
@@ -424,7 +448,7 @@ molécule testée dans la configuration A2\_B4.
 L'enregistrement de la base de données, en syntaxe JSON, ressemble à :
 
 ```
-{ configuration: "A2_B4",
+{ config: "A2_B4",
   number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
@@ -570,30 +594,35 @@ stockera 8. Pour rester bref, j'en présente deux ci-dessous et j'ai retiré
 les statistiques.
 
 ```
-{ configuration: "A2\_B4",
+{ config: "A2\_B4",
   number: 2,
   canonical-number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
+  transform: 'id',
 }
-{ configuration: "A2\_B4",
+{ config: "A2\_B4",
   number: 0,
   canonical-number: 2,
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
+  transform: 'rot180',
 }
 ```
 La propriété `canonical-number` est un pointeur vers la première
-molécule du groupe de 8 énantiomères. Et la propriété `number`
+molécule du groupe de 8 énantiomères. La propriété `transform` permet
+de savoir quelle rotation ou quelle symétrie a donné la présente molécule
+à partir de l'énantiomère canonique. Et la propriété `number`
 sera alimentée ultérieurement, lorsque la recherche exhaustive
 trouvera la molécule correspondante. On aura alors :
 
 ```
-{ configuration: "A2\_B4",
+{ config: "A2\_B4",
   number: 119,
   canonical-number: 2,
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
+  transform: 'rot180',
 }
 ```
 
