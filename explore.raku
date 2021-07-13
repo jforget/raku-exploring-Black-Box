@@ -256,6 +256,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , spectrum           => $spectrum
             , transform          => 'id'
             , dh1                => time-stamp
+            , dh2                => time-stamp
   );
 
   my @boxes = $molecule.comb;
