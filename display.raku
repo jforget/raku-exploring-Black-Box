@@ -30,7 +30,7 @@ multi sub MAIN (Str :$config, Int :$from, Int :$to) {
   my Str $cf = $config.uc;
   check-conf($cf);
 
-  say "from = $from, to = $to";
+  say "from $from to $to";
   # With the Mongo shell, we would extract the molecules with:
   #
   #    db.Molecules.find({ config: $cf, number: { '$gte': $from, '$lte': $to }}).sort({ number: 1 })
@@ -125,6 +125,10 @@ sub display(BSON::Document $doc) {
 		      ~ substr($spectrum, 3 × $width - $l, 1));
   }
   say insert-spaces(' ' ~ substr($spectrum, $width, $width));
+  printf "          number length  turns\n";
+  printf "Absorbed   %2d    %3d %2d %3d %2d\n", $doc< absorbed-number>, $doc< absorbed-tot-length>, $doc< absorbed-max-length>, $doc< absorbed-tot-turns>, $doc< absorbed-max-turns>;
+  printf "Reflected  %2d    %3d %2d %3d %2d\n", $doc<reflected-number>, $doc<reflected-tot-length>, $doc<reflected-max-length>, $doc<reflected-tot-turns>, $doc<reflected-max-turns>;
+  printf "Out        %2d    %3d %2d %3d %2d\n", $doc<      out-number>, $doc<      out-tot-length>, $doc<      out-max-length>, $doc<      out-tot-turns>, $doc<      out-max-turns>;
 }
 
 sub insert-spaces (Str $str) {
