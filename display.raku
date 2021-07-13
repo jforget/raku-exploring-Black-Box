@@ -26,10 +26,77 @@ my MongoDB::Collection $molecules      = $database.collection('Molecules');
 my Int $nb_atoms;
 my Int $width;
 
-sub MAIN (Str $config, Int $first, Int $last) {
+multi sub MAIN (Str :$config, Int :$from, Int :$to) {
   my Str $cf = $config.uc;
+  check-conf($cf);
+
+  say "from = $from, to = $to";
+  # With the Mongo shell, we would extract the molecules with:
+  #
+  #    db.Molecules.find({ config: $cf, number: { '$gte': $from, '$lte': $to }}).sort({ number: 1 })
+  #
+  # but I do not know how to write a Raku-Mongo find with a complex criterion (range) and a sort.
+  my MongoDB::Cursor $cursor = $molecules.find(
+        criteria   => ( config => $cf
+                      , #### number => ( '$gte' => $from, '$lte' => $to ),
+                      ),
+      );
+  my BSON::Document @doc;
+  while $cursor.fetch -> BSON::Document $doc {
+    if $from ≤ $doc<number> ≤ $to {
+      push @doc, $doc;
+    }
+  }
+  $cursor.kill;
+  for @doc ==> sort { $_<number> } -> BSON::Document $doc {
+     display($doc)
+  }
+}
+
+multi sub MAIN (Str :$config, *@num) {
+  my Str $cf = $config.uc;
+  check-conf($cf);
+
+  my BSON::Document @doc;
+
+  for (@num) -> Int $num {
+    my MongoDB::Cursor $cursor = $molecules.find(
+	  criteria   => ( config => $cf
+			, number => + $num
+			),
+	);
+    while $cursor.fetch -> BSON::Document $doc {
+      push @doc, $doc;
+    }
+    $cursor.kill;
+  }
+  for @doc ==> sort { $_<number> } -> BSON::Document $doc {
+     display($doc)
+  }
+}
+
+multi sub MAIN (Str :$config, Str :$spectrum) {
+  my Str $cf = $config.uc;
+  check-conf($cf);
+
+  my MongoDB::Cursor $cursor = $molecules.find(
+        criteria   => ( config => $cf
+                      , spectrum => $spectrum
+                      ),
+      );
+  my BSON::Document @doc;
+  while $cursor.fetch -> BSON::Document $doc {
+    push @doc, $doc;
+  }
+  $cursor.kill;
+  for @doc ==> sort { $_<number> } -> BSON::Document $doc {
+     display($doc)
+  }
+}
+
+sub check-conf(Str $cf) {
   unless $cf ~~ /^ 'A' (\d+) '_B' (\d) $ / {
-    die "Wrong configuration $config";
+    die "Wrong configuration $cf";
   }
   $nb_atoms = + $0;
   $width    = + $1;
@@ -44,42 +111,20 @@ sub MAIN (Str $config, Int $first, Int $last) {
   }
   $cursor.kill;
   unless $configuration {
-    die "Configuration inconnue $cf";
+    die "Unknown configuration $cf";
   }
+}
 
-  say "first = $first, last = $last";
-  # With the Mongo shell, we would extract the molecules with:
-  #
-  #    db.Molecules.find({ config: $cf, number: { '$gte': $first, '$lte': $last }}).sort({ number: 1 })
-  #
-  # but I do not know how to write a Raku-Mongo find with a complex criterion (range) and a sort.
-  $cursor = $molecules.find(
-        criteria   => ( config => $cf
-                      , #### number => ( '$gte' => $first, '$lte' => $last ),
-                      ),
-      );
-  my BSON::Document @doc;
-  while $cursor.fetch -> BSON::Document $doc {
-    if $first ≤ $doc<number> ≤ $last {
-      push @doc, $doc;
-    }
+sub display(BSON::Document $doc) {
+  my $spectrum = $doc<spectrum> // ' ' x ($width × 4);
+  say "\n", $doc<number>, ' ', $spectrum, "\n";
+  say insert-spaces(' ' ~ substr($spectrum, 3 × $width, $width).flip);
+  for (1 .. $width) -> $l {
+    say insert-spaces(  substr($spectrum, $l - 1, 1)
+		      ~ substr($doc<molecule>, ($l - 1) × $width, $width)
+		      ~ substr($spectrum, 3 × $width - $l, 1));
   }
-  $cursor.kill;
-  for @doc ==> sort { $_<number> } -> BSON::Document $doc {
-    my $spectrum = $doc<spectrum> // ' ' x ($width × 4);
-    say "\n", $doc<number>, ' ', $spectrum, "\n";
-    say insert-spaces(' ' ~ substr($spectrum, 3 × $width, $width).flip);
-    for (1 .. $width) -> $l {
-      say insert-spaces(  substr($spectrum, $l - 1, 1)
-                        ~ substr($doc<molecule>, ($l - 1) × $width, $width)
-                        ~ substr($spectrum, 3 × $width - $l, 1));
-    }
-    say insert-spaces(' ' ~ substr($spectrum, $width, $width));
-    printf "          number length  turns\n";
-    printf "Absorbed   %2d    %3d %2d %3d %2d\n", $doc< absorbed-number>, $doc< absorbed-tot-length>, $doc< absorbed-max-length>, $doc< absorbed-tot-turns>, $doc< absorbed-max-turns>;
-    printf "Reflected  %2d    %3d %2d %3d %2d\n", $doc<reflected-number>, $doc<reflected-tot-length>, $doc<reflected-max-length>, $doc<reflected-tot-turns>, $doc<reflected-max-turns>;
-    printf "Out        %2d    %3d %2d %3d %2d\n", $doc<      out-number>, $doc<      out-tot-length>, $doc<      out-max-length>, $doc<      out-tot-turns>, $doc<      out-max-turns>;
-  }
+  say insert-spaces(' ' ~ substr($spectrum, $width, $width));
 }
 
 sub insert-spaces (Str $str) {
@@ -112,7 +157,7 @@ A string patterned  as C<A>I<n>C<_B>I<p>, where I<n> is  the number of
 atoms and I<p> is the width of the box. If necessary, letters C<a> and
 C<b> can be converted to upper-case.
 
-=item first, last
+=item from, to
 
 The  range of  numbers for  the  keys of  the molecules  that will  be
 extracted.
