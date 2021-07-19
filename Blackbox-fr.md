@@ -716,7 +716,8 @@ de suite jusqu'à la boucle interne sur les positions de l'atome F.
 Mais le programme est censé fonctionner pour des configurations avec
 des nombres d'atomes différents. Il est probable que l'on aboutirait
 à un code digne de figurer dans le 
-[site web Worse Than Failure](https://thedailywtf.com/articles/classic-wtf-the-great-code-spawn).
+[site web](https://thedailywtf.com/articles/classic-wtf-the-great-code-spawn)
+[Daily WTF](https://thedailywtf.com/articles/just-a-few-questions).
 
 La description que j'ai donnée ressemble plus à un algorithme
 de transformation, qui prend une molécule et en déduit la molécule
@@ -770,3 +771,44 @@ une conversion vers `DEF-----`. Mais puisque les programmes
 utilisent des `O` anonymes  et que les noms de `A` à `F`
 ne sont utilisés que dans le présent texte, le `flip` convient
 parfaitement.
+
+Implémentation physique
+-----------------------
+
+Quelle base de données ? Une base SQL ou MongoDB ? J'écris ces mots
+alors que le programme d'exploration fonctionne parfaitement avec
+MongoDB et pourtant, la question continue à se poser.
+Il y a deux problèmes avec MongoDB.
+
+Le premier problème est que le module Raku
+pour MongoDB n'implémente pas toutes les options disponibles avec
+MongoDB. Par exemple, je ne sais pas comment faire des
+sélection du type `≥` :
+
+```
+  { cle: { '$gte': valeur-min }}
+```
+
+On ne peut faire que des sélections de type `=`, pas des comparaisons
+par inégalités ou par intervalle. De même, pour trier le résultat d'une
+recherche, il faut le faire dans le programme Raku, il n'y a pas moyen de
+demander à MongoDB de trier les documents extraits avant de les transmettre
+au programme Raku. Cela ne m'a pas trop gêné pour le programme d'exploration,
+cela risque de poser plus de problèmes pour les programmes d'affichage (qui
+ne sont pas encore écrits).
+
+Le deuxième problème, peut-être, est un problème de performances. Voici les
+temps relevés pour diverses configurations, avec un stockage dans MongoDB. 
+
+```
+         nb_mol          real             user 
+A4_B4      1820      2 min  2,201 s     2 min 46,945 s
+A4_B5     12650     16 min 45,232 s    19 min 29,010 s
+A4_B6     58905    132 min 22,944 s    94 min 55,280 s
+```
+
+Peut-être que SQLite sera plus rapide. Ou peut-être pas. Il faut essayer.
+Je ne vais pas supprimer le code MongoDB pour le remplacer par du
+code SQLite. Je vais m'arranger pour faire cohabiter les deux.
+Ainsi, si quelqu'un d'autre est intéressé par mon code, il pourra
+choisir une base de données SQLite ou une base de données MongoDB.

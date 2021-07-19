@@ -672,7 +672,8 @@ one on atom A's position, the next one on atom B's position and so on until
 the inner loop on atom F's position. This does not scale up. You must allow
 for configurations with different numbers of atoms. And you can end with
 code eligible for the
-[Worse Than Failure website](https://thedailywtf.com/articles/classic-wtf-the-great-code-spawn).
+[Daily WTF](https://thedailywtf.com/articles/classic-wtf-the-great-code-spawn)
+[website](https://thedailywtf.com/articles/just-a-few-questions).
 
 But the description above shows rather a kind of transformation algorithm,
 which takes one molecule and finds the next one. The algorithm is as follows:
@@ -722,3 +723,43 @@ the `flip` converts `-----DEF` to `FED-----` while we would expect
 a transformation to `DEF-----`. But since the programmes will only use anonymous `O`'s,
 while the `A` to `F` are used only in this descriptive text,
 the `flip` function is the function to use.
+
+Physical Implementation
+-----------------------
+
+Which kind of database? SQL or MongoDB? As I write these words, the
+exploration program is fully functional over a MongoDB database.
+Yet, the question is still pending.
+There are two problems with MongoDB programming.
+
+The first problem is that the Raku module for MongoDB does not
+implement the full set of functionalities available for MongoDB.
+For example, I do not know how to code in Raku a `≥` selection:
+
+```
+  { key: { '$gte': min-value }}
+```
+
+I can only code `=` selections. Likewise, I do not know how to
+ask MongoDB to sort the retrieved documents. If I need to sort the documents,
+I must do it within the Raku program. These problems did not hinder
+me much when writing the exploration program, but this may change with
+the retrieval programs (not yet written).
+
+The other problem, maybe, is performances. Here are the times for
+exploration of various configurations, using a MongoDB backend:
+
+```
+         nb_mol          real             user 
+A4_B4      1820      2 min  2,201 s     2 min 46,945 s
+A4_B5     12650     16 min 45,232 s    19 min 29,010 s
+A4_B6     58905    132 min 22,944 s    94 min 55,280 s
+```
+
+Maybe SQLite will be faster. Maybe not. I have to experiment. I am reluctant to
+remove the MongoDB code and replace it by SQLite. I will try to
+provide both backends at once. So if someone else is interested by my
+code, this person can still opt for a SQLite solution or a MongoDB solution.
+
+
+
