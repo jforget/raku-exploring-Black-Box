@@ -11,7 +11,9 @@
 #
 
 use v6;
-use lib 'lib';
+
+unit module explore-common;
+
 use BSON::Document;
 use MongoDB::Client;
 use MongoDB::Database;
@@ -25,12 +27,12 @@ my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
 my Int $nb_atoms;
 my Int $width;
-my Int $E-or-S; # coordinate of the Eastern-most peripheral column and of the Southern-most pêripheral line
+my Int $E-or-S; # coordinate of the Eastern-most peripheral column and of the Southern-most peripheral line
 my @rotation90;
 my @symm-h;
 my @symm-diag;
 
-sub MAIN (Str $config) {
+sub explore (Str $config, %dispatch) is export {
   my Str $cf = $config.uc;
   unless $cf ~~ /^ 'A' (\d+) '_B' (\d) $ / {
     die "Wrong configuration $config";
@@ -255,7 +257,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
             , molecule           => $molecule
             , spectrum           => $spectrum
             , transform          => 'id'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
             , dh2                => time-stamp
   );
 
