@@ -58,88 +58,40 @@ sub explore (Str $config, %dispatch) is export {
   say "$nb_atoms atoms in a $width × $width square";
 
   my Str $molecule;
-  my Int $number;
+  $call-back = %dispatch<last-number>;
+  my Int $number = $call-back($configuration);
 
   my BSON::Document $req;
   my BSON::Document $result;
 
-  # Finding the last number processed in the previous run, which will be the first
-  # one to be processed in the current run.
-  # In Mongo-shell, it would be easy:
-  #         db.Molecules.find({ config: $cf} ).sort({number: -1}).limit(1)
-  # In SQL, it would be easy too:
-  #         select max(Molecules.number) from Molecules where Molecules.config = ?
-  #
-  # In Raku + MongoDB, there is a substitute to 'limit(n)', which is the parameter "number-to-return",
-  # but there is no substitute to 'sort(...)'.
-  # The first idea is to retrieve all records, sort them in Raku, keep the first. A very bad
-  # idea, because sorting is O(n.log(n)).
-  # A better idea is to retrieve all records, iterate on them and extract the
-  # maximum value of the (unsorted) list. This is better, but still O(n).
-  # The idea implemented below is a binary search. Hoping that O(log(n)) will be fast enough.
-  my Int $there     = 0;
-  my Int $not-there = $configuration<nb_mol> + 1;
-  while $not-there - $there > 1 {
-    my Int $found  = 0;
-    my Int $middle = (($there + $not-there) / 2).floor;
-    $cursor = $molecules.find(
-        criteria   => ( config => $cf
-                      , number => $middle ),
-      );
-    while $cursor.fetch -> BSON::Document $doc {
-      $found = 1;
-    }
-    $cursor.kill;
-    if $found {
-      $there = $middle;
-    }
-    else {
-      $not-there = $middle;
-    }
-  }
-  if $there == 0 {
+  if $number == 0 {
     say "starting from scratch";
     $number = 1;
     $molecule = 'O' x $nb_atoms ~ '-' x ($width² - $nb_atoms);
   }
   else {
-    $number = $there;
-    $cursor = $molecules.find(
-        criteria   => ( config => $cf
-                      , number => $number
-        ),
-      );
-    while $cursor.fetch -> BSON::Document $doc {
-      $molecule = $doc<molecule>;
+    $call-back = %dispatch<molecule-by-number>;
+    my ($found, $doc) = $call-back($cf, $number);
 
-      # If the highest numbered molecule is the canonical molecule of a group
-      # of enantiomers, reprocessing it will recreate the group of enantiomers.
-      # So we delete this group before recreating. A very minor anti-optimization.
-      #
-      # If the highest numbered molecule is not the canonical molecule of
-      # its group, it will be modified again. A very very very minor anti-optimization.
-      if $doc<number> == $doc<canonical-number> {
-        my $call-back = %dispatch<remove-enantiomer-group>;
-        $call-back($cf, $doc<number>);
-      }
+    # If the highest numbered molecule is the canonical molecule of a group
+    # of enantiomers, reprocessing it will recreate the group of enantiomers.
+    # So we delete this group before recreating. A very minor anti-optimization.
+    #
+    # If the highest numbered molecule is not the canonical molecule of
+    # its group, it will be modified again. A very very very minor anti-optimization.
+    if $doc<number> == $doc<canonical-number> {
+      my $call-back = %dispatch<remove-enantiomer-group>;
+      $call-back($cf, $doc<number>);
     }
-    $cursor.kill;
+    $molecule = $doc<molecule>;
     say "restarting from $number $molecule";
   }
 
   loop {
     my Int $found = 0;
     my BSON::Document $enantiomer;
-    $cursor = $molecules.find(
-        criteria   => ( config   => $cf
-                      , molecule => $molecule
-        ),
-      );
-    while $cursor.fetch -> BSON::Document $doc {
-      $found = 1;
-      $enantiomer = $doc;
-    }
-    $cursor.kill;
+    $call-back = %dispatch<molecule-by-molecule>;
+    ($found, $enantiomer) = $call-back($cf, $molecule);
     if $found {
       $enantiomer<number> = $number;
       $enantiomer<dh2>    = time-stamp;

@@ -25,6 +25,9 @@ my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
 my %dispatch = load-configuration      => &load-configuration
+             , last-number             => &last-number
+             , molecule-by-number      => &molecule-by-number
+             , molecule-by-molecule    => &molecule-by-molecule
              , store-molecules         => &store-molecules
              , upd-molecule            => &upd-molecule
              , remove-enantiomer-group => &remove-enantiomer-group
@@ -49,6 +52,79 @@ sub load-configuration (Str $cf) {
     die "Configuration inconnue $cf";
   }
   return $configuration;
+}
+
+sub last-number(BSON::Document $configuration) {
+  # Finding the last number processed in the previous run, which will be the first
+  # one to be processed in the current run.
+  # In Mongo-shell, it would be easy:
+  #         db.Molecules.find({ config: $cf} ).sort({number: -1}).limit(1)
+  # In SQL, it would be easy too:
+  #         select max(Molecules.number) from Molecules where Molecules.config = ?
+  #
+  # In Raku + MongoDB, there is a substitute to 'limit(n)', which is the parameter "number-to-return",
+  # but there is no substitute to 'sort(...)'.
+  # The first idea is to retrieve all records, sort them in Raku, keep the first. A very bad
+  # idea, because sorting is O(n.log(n)).
+  # A better idea is to retrieve all records, iterate on them and extract the
+  # maximum value of the (unsorted) list. This is better, but still O(n).
+  # The idea implemented below is a binary search. Hoping that O(log(n)) will be fast enough.
+  my Int $there     = 0;
+  my Int $not-there = $configuration<nb_mol> + 1;
+  my Str $cf        = $configuration<config>;
+  while $not-there - $there > 1 {
+    my Int $found  = 0;
+    my Int $middle = (($there + $not-there) / 2).floor;
+    my MongoDB::Cursor $cursor = $molecules.find(
+        criteria   => ( config => $cf
+                      , number => $middle ),
+      );
+    while $cursor.fetch -> BSON::Document $doc {
+      $found = 1;
+    }
+    $cursor.kill;
+    if $found {
+      $there = $middle;
+    }
+    else {
+      $not-there = $middle;
+    }
+  }
+  return $there;
+}
+
+sub molecule-by-number (Str $cf, Int $number) {
+  my Int             $found = 0;
+  my BSON::Document  $molecule-doc;
+  my MongoDB::Cursor $cursor = $molecules.find(
+        criteria   => ( config => $cf
+                      , number => $number
+        ),
+      );
+  while $cursor.fetch -> BSON::Document $doc {
+    $found = 1;
+    $molecule-doc = $doc;
+    last
+  }
+  $cursor.kill;
+  return $found, $molecule-doc;
+}
+
+sub molecule-by-molecule (Str $cf, Str $molecule) {
+  my Int             $found = 0;
+  my BSON::Document  $molecule-doc;
+  my MongoDB::Cursor $cursor = $molecules.find(
+        criteria   => ( config   => $cf
+                      , molecule => $molecule
+        ),
+      );
+  while $cursor.fetch -> BSON::Document $doc {
+    $found = 1;
+    $molecule-doc = $doc;
+    last
+  }
+  $cursor.kill;
+  return $found, $molecule-doc;
 }
 
 sub store-molecules (@molecules) {
