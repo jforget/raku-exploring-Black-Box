@@ -24,9 +24,10 @@ my MongoDB::Database   $database       = $client.database('Black-Box');
 my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
-my %dispatch = load-configuration => &load-configuration
-             , store-molecules    => &store-molecules
-             , upd-molecule       => &upd-molecule
+my %dispatch = load-configuration      => &load-configuration
+             , store-molecules         => &store-molecules
+             , upd-molecule            => &upd-molecule
+             , remove-enantiomer-group => &remove-enantiomer-group
              ;
 
 sub MAIN (Str $config) {
@@ -80,6 +81,18 @@ sub upd-molecule (BSON::Document $molecule) {
   if $doc<ok> == 0 {
     say "update ok : ", $doc<ok>, " nb : ", $doc<n>;
   }
+}
+
+sub remove-enantiomer-group (Str $cf, Int $number) {
+  my BSON::Document $req .= new: (
+          delete    => 'Molecules',
+          deletes   => [ (
+                q     => ( config => ($cf), canonical-number => ($number), ),
+                limit => 0,
+          ), ],
+        );
+  my BSON::Document $result = $database.run-command($req);
+  say "Clean-up molecules     ok : ", $result<ok>, " nb : ", $result<n>;
 }
 
 =begin POD

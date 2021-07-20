@@ -119,15 +119,8 @@ sub explore (Str $config, %dispatch) is export {
       # If the highest numbered molecule is not the canonical molecule of
       # its group, it will be modified again. A very very very minor anti-optimization.
       if $doc<number> == $doc<canonical-number> {
-        $req .= new: (
-          delete    => 'Molecules',
-          deletes   => [ (
-                q     => ( config => ($cf), canonical-number => ($number), ),
-                limit => 0,
-          ), ],
-        );
-        $result = $database.run-command($req);
-        say "Clean-up molecules     ok : ", $result<ok>, " nb : ", $result<n>;
+        my $call-back = %dispatch<remove-enantiomer-group>;
+        $call-back($cf, $doc<number>);
       }
     }
     $cursor.kill;
