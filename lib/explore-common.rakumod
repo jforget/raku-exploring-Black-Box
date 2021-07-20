@@ -15,16 +15,6 @@ use v6;
 unit module explore-common;
 
 use BSON::Document;
-use MongoDB::Client;
-use MongoDB::Database;
-use MongoDB::Collection;
-use JSON::Class;
-
-my MongoDB::Client     $client        .= new(:uri('mongodb://'));
-my MongoDB::Database   $database       = $client.database('Black-Box');
-my MongoDB::Collection $configurations = $database.collection('Configurations');
-my MongoDB::Collection $molecules      = $database.collection('Molecules');
-my MongoDB::Cursor     $cursor;
 
 my Int $nb_atoms;
 my Int $width;
@@ -60,9 +50,6 @@ sub explore (Str $config, %dispatch) is export {
   my Str $molecule;
   $call-back = %dispatch<last-number>;
   my Int $number = $call-back($configuration);
-
-  my BSON::Document $req;
-  my BSON::Document $result;
 
   if $number == 0 {
     say "starting from scratch";
@@ -303,9 +290,6 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
     $doc<out-tot-length>       = $out-tot-length      ;
     $doc<out-tot-turns>        = $out-tot-turns       ;
   }
-
-  my BSON::Document $req;
-  my BSON::Document $result;
 
   my $call-back = %dispatch<store-molecules>;
   $call-back( %group.values );
