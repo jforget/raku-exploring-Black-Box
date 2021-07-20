@@ -24,13 +24,30 @@ my MongoDB::Database   $database       = $client.database('Black-Box');
 my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
-my %dispatch;
+my %dispatch = load-configuration => &load-configuration
+             ,
+             ;
 
 sub MAIN (Str $config) {
   my $cf = $config.uc;
   explore($cf, %dispatch);
 }
 
+sub load-configuration (Str $cf) {
+  my BSON::Document $configuration;
+  my MongoDB::Cursor $cursor = $configurations.find(
+    criteria   => ( 'config' => $cf, ),
+  );
+  while $cursor.fetch -> BSON::Document $d {
+    $configuration = $d;
+    last;
+  }
+  $cursor.kill;
+  unless $configuration {
+    die "Configuration inconnue $cf";
+  }
+  return $configuration;
+}
 
 =begin POD
 

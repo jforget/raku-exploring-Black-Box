@@ -24,6 +24,7 @@ my MongoDB::Client     $client        .= new(:uri('mongodb://'));
 my MongoDB::Database   $database       = $client.database('Black-Box');
 my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
+my MongoDB::Cursor     $cursor;
 
 my Int $nb_atoms;
 my Int $width;
@@ -41,18 +42,8 @@ sub explore (Str $config, %dispatch) is export {
   $width    = + $1;
   $E-or-S   = $width + 1;
 
-  my BSON::Document $configuration;
-  my MongoDB::Cursor $cursor = $configurations.find(
-    criteria   => ( 'config' => $cf, ),
-  );
-  while $cursor.fetch -> BSON::Document $d {
-    $configuration = $d;
-    last;
-  }
-  $cursor.kill;
-  unless $configuration {
-    die "Configuration inconnue $cf";
-  }
+  my $call-back = %dispatch<load-configuration>;
+  my BSON::Document $configuration = $call-back($cf);
 
   for 1 .. $width -> $l {
     for 1 .. $width -> $c {
