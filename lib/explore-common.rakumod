@@ -150,10 +150,11 @@ sub explore (Str $config, %dispatch) is export {
     if $found {
       $enantiomer<number> = $number;
       $enantiomer<dh2>    = time-stamp;
-      upd-molecule($enantiomer);
+      my $call-back = %dispatch<upd-molecule>;
+      $call-back($enantiomer);
     }
     else {
-      new-molecule($cf, $number, $molecule);
+      new-molecule($cf, $number, $molecule, %dispatch);
     }
 
     last unless $molecule ~~ /'O-'/;
@@ -167,7 +168,7 @@ sub explore (Str $config, %dispatch) is export {
 
 }
 
-sub new-molecule (Str $cf, Int $number, Str $molecule) {
+sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
   #printf "%6d %s\n", $number, $molecule;
   my @box;
   for 1 .. $width -> $l {
@@ -361,32 +362,9 @@ sub new-molecule (Str $cf, Int $number, Str $molecule) {
   my BSON::Document $req;
   my BSON::Document $result;
 
-  $req .= new: (
-    insert    => 'Molecules',
-    documents => [ %group.values ],
-  );
-  $result = $database.run-command($req);
-  unless $result<ok> {
-    die "Problem when storing molecule # $number '$molecule'";
-  }
+  my $call-back = %dispatch<store-molecules>;
+  $call-back( %group.values );
 
-}
-
-sub upd-molecule (BSON::Document $molecule) {
-   my BSON::Document $req .= new: (
-    update => 'Molecules',
-    updates => [ (
-        q =>  ( config   => $molecule<config>
-              , molecule => $molecule<molecule>
-              ),
-        u => $molecule,
-      ),
-    ],
-  );
-  my BSON::Document $doc = $database.run-command($req);
-  if $doc<ok> == 0 {
-    say "update ok : ", $doc<ok>, " nb : ", $doc<n>;
-  }
 }
 
 sub ray (@box, Int $entry) {

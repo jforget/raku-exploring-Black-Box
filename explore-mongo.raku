@@ -25,7 +25,8 @@ my MongoDB::Collection $configurations = $database.collection('Configurations');
 my MongoDB::Collection $molecules      = $database.collection('Molecules');
 
 my %dispatch = load-configuration => &load-configuration
-             ,
+             , store-molecules    => &store-molecules
+             , upd-molecule       => &upd-molecule
              ;
 
 sub MAIN (Str $config) {
@@ -47,6 +48,38 @@ sub load-configuration (Str $cf) {
     die "Configuration inconnue $cf";
   }
   return $configuration;
+}
+
+sub store-molecules (@molecules) {
+  my BSON::Document $req;
+  my BSON::Document $result;
+  my Int $number = @molecules[0]<canonical-number>;
+
+  $req .= new: (
+    insert    => 'Molecules',
+    documents => [ @molecules ],
+  );
+  $result = $database.run-command($req);
+  unless $result<ok> {
+    die "Problem when storing molecule # $number";
+  }
+}
+
+sub upd-molecule (BSON::Document $molecule) {
+   my BSON::Document $req .= new: (
+      update => 'Molecules',
+      updates => [ (
+        q =>  ( config   => $molecule<config>
+              , molecule => $molecule<molecule>
+              ),
+        u => $molecule,
+      ),
+    ],
+  );
+  my BSON::Document $doc = $database.run-command($req);
+  if $doc<ok> == 0 {
+    say "update ok : ", $doc<ok>, " nb : ", $doc<n>;
+  }
 }
 
 =begin POD
