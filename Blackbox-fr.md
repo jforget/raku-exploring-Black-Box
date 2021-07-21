@@ -812,3 +812,28 @@ Je ne vais pas supprimer le code MongoDB pour le remplacer par du
 code SQLite. Je vais m'arranger pour faire cohabiter les deux.
 Ainsi, si quelqu'un d'autre est intéressé par mon code, il pourra
 choisir une base de données SQLite ou une base de données MongoDB.
+
+Post scriptum : la version SQLite est opérationnelle. Voici les
+résultats avant mise en place des `begin` / `commit`.
+
+```
+         nb_mol          real             user 
+A4_B4      1820      0 min 47,436 s     0 min 21,424 s
+A4_B5     12650      6 min 15,180 s     2 min 50,238 s 
+```
+
+Les résultats avec des `commit` toutes les 50 mises à jour.
+
+```
+         nb_mol          real             user 
+A4_B4 	   1820      0 min 15,031 s  	0 min 15,463 s
+A4_B5 	  12650      2 min 16,277 s  	2 min  0,199 s 
+```
+
+Les résultats avec des `commit` toutes les 500 mises à jour.
+
+```
+         nb_mol          real             user 
+A4_B4 	   1820      0 min 19,017 s  	0 min 18,053 s
+A4_B5 	  12650      2 min  4,514 s  	1 min 56,635 s 
+```

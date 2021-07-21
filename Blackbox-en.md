@@ -751,9 +751,9 @@ exploration of various configurations, using a MongoDB backend:
 
 ```
          nb_mol          real             user 
-A4_B4      1820      2 min  2,201 s     2 min 46,945 s
-A4_B5     12650     16 min 45,232 s    19 min 29,010 s
-A4_B6     58905    132 min 22,944 s    94 min 55,280 s
+A4_B4      1820      2 min  2.201 s     2 min 46.945 s
+A4_B5     12650     16 min 45.232 s    19 min 29.010 s
+A4_B6     58905    132 min 22.944 s    94 min 55.280 s
 ```
 
 Maybe SQLite will be faster. Maybe not. I have to experiment. I am reluctant to
@@ -761,5 +761,29 @@ remove the MongoDB code and replace it by SQLite. I will try to
 provide both backends at once. So if someone else is interested by my
 code, this person can still opt for a SQLite solution or a MongoDB solution.
 
+Post-scriptum: the SQLite version is functional. Here are the
+timing results before implementing `begin`/ `commit`:
+
+```
+         nb_mol          real             user 
+A4_B4      1820      0 min 47.436 s     0 min 21.424 s
+A4_B5     12650      6 min 15.180 s     2 min 50.238 s 
+```
+
+The results with a `commit` every 50 updates:
+
+```
+         nb_mol          real             user 
+A4_B4 	   1820      0 min 15.031 s  	0 min 15.463 s
+A4_B5 	  12650      2 min 16.277 s  	2 min  0.199 s 
+```
+
+The results with a `commit` every 500 updates:
+
+```
+         nb_mol          real             user 
+A4_B4 	   1820      0 min 19.017 s  	0 min 18.053 s
+A4_B5 	  12650      2 min  4.514 s  	1 min 56.635 s 
+```
 
 

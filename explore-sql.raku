@@ -18,6 +18,8 @@ use explore-common;
 use db-conf-sql;
 
 my $dbh = DBIish.connect('SQLite', database => dbname());
+my $sql-counter = 0;
+my $next-commit = commit-interval();
 
 my %dispatch = load-configuration      => &load-configuration
              , last-number             => &last-number
@@ -29,8 +31,10 @@ my %dispatch = load-configuration      => &load-configuration
              ;
 
 sub MAIN (Str $config) {
+  $dbh.execute('begin transaction');
   my $cf = $config.uc;
   explore($cf, %dispatch);
+  $dbh.execute('commit transaction');
 }
 
 sub load-configuration (Str $cf) {
@@ -87,6 +91,11 @@ sub store-molecules (@molecules) {
   for @molecules -> $molecule {
     store-molecule($molecule);
   }
+  if $sql-counter ≥ $next-commit {
+    $dbh.execute('commit transaction');
+    $dbh.execute('begin transaction');
+    $next-commit = $sql-counter + commit-interval();
+  }
 }
 
 sub store-molecule (BSON::Document $molecule) {
@@ -141,6 +150,7 @@ SQL
             , $molecule<dh1                     >
             , $molecule<dh2                     >
 	    );
+  ++ $sql-counter;
 }
 
 sub upd-molecule (BSON::Document $molecule) {
@@ -156,6 +166,12 @@ SQL
       , $molecule<config>
       , $molecule<molecule>
      );
+  ++ $sql-counter;
+  if $sql-counter ≥ $next-commit {
+    $dbh.execute('commit transaction');
+    $dbh.execute('begin transaction');
+    $next-commit = $sql-counter + commit-interval();
+  }
 }
 
 sub remove-enantiomer-group (Str $cf, Int $number) {
@@ -167,6 +183,12 @@ SQL
       , $cf
       , $number
      );
+  ++ $sql-counter;
+  if $sql-counter ≥ $next-commit {
+    $dbh.execute('commit transaction');
+    $dbh.execute('begin transaction');
+    $next-commit = $sql-counter + commit-interval();
+  }
 }
 
 =begin POD
