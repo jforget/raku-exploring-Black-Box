@@ -34,31 +34,139 @@ sub MAIN (Str $config) {
 }
 
 sub load-configuration (Str $cf) {
-  ...
+  my $sth = $dbh.prepare('select * from Configurations where config = ?');
+  my $doc = $sth.execute($cf).row(:hash);
+  unless $doc {
+    die "Unknown configuration $cf";
+  }
+  my BSON::Document $configuration .= new;
+  for $doc.keys -> $key {
+    $configuration{$key} = $doc{$key};
+  }
+  return $configuration;
 }
 
 sub last-number(BSON::Document $configuration) {
- ...
+  my $sth = $dbh.prepare('select max(number) from Molecules where config = ?');
+  my $result  = $sth.execute($configuration<config>).row();
+  unless $result[0] {
+    return 0;
+  }
+  say $result[0];
+  return $result[0];
 }
 
 sub molecule-by-number (Str $cf, Int $number) {
-  ...
+  my $sth = $dbh.prepare('select * from Molecules where config = ? and number = ?');
+  my $result  = $sth.execute($cf, $number).row(:hash);
+  unless $result<config> {
+    return 0;
+  }
+  my BSON::Document $molecule-doc .= new;
+  for $result.keys -> $key {
+    $molecule-doc{$key} = $result{$key};
+  }
+  #say $molecule-doc;
+  return 1, $molecule-doc;
 }
 
 sub molecule-by-molecule (Str $cf, Str $molecule) {
-  ...
+  my $sth = $dbh.prepare('select * from Molecules where config = ? and molecule = ?');
+  my $result  = $sth.execute($cf, $molecule).row(:hash);
+  unless $result<config> {
+    return 0;
+  }
+  my BSON::Document $molecule-doc .= new;
+  for $result.keys -> $key {
+    $molecule-doc{$key} = $result{$key};
+  }
+  return 1, $molecule-doc;
 }
 
 sub store-molecules (@molecules) {
-  ...
+  for @molecules -> $molecule {
+    store-molecule($molecule);
+  }
+}
+
+sub store-molecule (BSON::Document $molecule) {
+  $dbh.execute(q:to/SQL/
+  insert into Molecules
+            ( config
+            , number
+            , canonical_number
+            , molecule
+            , spectrum
+            , transform
+            , absorbed_number
+            , absorbed_max_length
+            , absorbed_max_turns
+            , absorbed_tot_length
+            , absorbed_tot_turns
+            , reflected_number
+            , reflected_max_length
+            , reflected_max_turns
+            , reflected_tot_length
+            , reflected_tot_turns
+            , out_number
+            , out_max_length
+            , out_max_turns
+            , out_tot_length
+            , out_tot_turns
+            , dh1
+            , dh2)
+     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+            , $molecule<config                  >    
+            , $molecule<number                  >
+            , $molecule<canonical-number        >
+            , $molecule<molecule                >
+            , $molecule<spectrum                >
+            , $molecule<transform               >
+            , $molecule<absorbed-number         >
+            , $molecule<absorbed-max-length     >
+            , $molecule<absorbed-max-turns      >
+            , $molecule<absorbed-tot-length     >
+            , $molecule<absorbed-tot-turns      >
+            , $molecule<reflected-number        >
+            , $molecule<reflected-max-length    >
+            , $molecule<reflected-max-turns     >
+            , $molecule<reflected-tot-length    >
+            , $molecule<reflected-tot-turns     >
+            , $molecule<out-number              >
+            , $molecule<out-max-length          >
+            , $molecule<out-max-turns           >
+            , $molecule<out-tot-length          >
+            , $molecule<out-tot-turns           >
+            , $molecule<dh1                     >
+            , $molecule<dh2                     >
+	    );
 }
 
 sub upd-molecule (BSON::Document $molecule) {
-  ...
+  $dbh.execute(q:to/SQL/
+  update Molecules
+  set    number   = ?
+       , dh2      = ?
+  where  config   = ?
+    and  molecule = ?
+SQL
+      , $molecule<number>
+      , $molecule<dh2>
+      , $molecule<config>
+      , $molecule<molecule>
+     );
 }
 
 sub remove-enantiomer-group (Str $cf, Int $number) {
-  ...
+  $dbh.execute(q:to/SQL/
+  delete from Molecules
+  where  config   = ?
+  and    canonical_number = ?
+SQL
+      , $cf
+      , $number
+     );
 }
 
 =begin POD
