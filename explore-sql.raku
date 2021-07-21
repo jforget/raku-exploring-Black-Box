@@ -62,12 +62,7 @@ sub molecule-by-number (Str $cf, Int $number) {
   unless $result<config> {
     return 0;
   }
-  my BSON::Document $molecule-doc .= new;
-  for $result.keys -> $key {
-    $molecule-doc{$key} = $result{$key};
-  }
-  #say $molecule-doc;
-  return 1, $molecule-doc;
+  return molecule-by-any($result);
 }
 
 sub molecule-by-molecule (Str $cf, Str $molecule) {
@@ -76,11 +71,16 @@ sub molecule-by-molecule (Str $cf, Str $molecule) {
   unless $result<config> {
     return 0;
   }
+  return molecule-by-any($result);
+}
+
+sub molecule-by-any ($result) {
   my BSON::Document $molecule-doc .= new;
   for $result.keys -> $key {
-    $molecule-doc{$key} = $result{$key};
+    $molecule-doc{$key.trans('_' => '-')} = $result{$key};
   }
   return 1, $molecule-doc;
+
 }
 
 sub store-molecules (@molecules) {
