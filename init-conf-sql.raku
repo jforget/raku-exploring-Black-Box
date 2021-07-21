@@ -29,37 +29,37 @@ sub create-database {
   $dbh.execute(q:to/SQL/);
 create table if not exists Configurations (
               config
-	    , nb_mol
-	    , dh1
-	    );
+            , nb_mol
+            , dh1
+            );
 SQL
 
   $dbh.execute(q:to/SQL/);
 create table if not exists Molecules (
               config
-	    , number
-	    , canonical_number
-	    , molecule
-	    , spectrum
-	    , transform
-	    , abssorbed_number
-	    , abssorbed_max_length
-	    , abssorbed_max_turns
-	    , abssorbed_tot_length
-	    , abssorbed_tot_turns
-	    , reflected_number
-	    , reflected_max_length
-	    , reflected_max_turns
-	    , reflected_tot_length
-	    , reflected_tot_turns
-	    , out_number
-	    , out_max_length
-	    , out_max_turns
-	    , out_tot_length
-	    , out_tot_turns
-	    , dh1
-	    , dh2
-	    );
+            , number
+            , canonical_number
+            , molecule
+            , spectrum
+            , transform
+            , absorbed_number
+            , absorbed_max_length
+            , absorbed_max_turns
+            , absorbed_tot_length
+            , absorbed_tot_turns
+            , reflected_number
+            , reflected_max_length
+            , reflected_max_turns
+            , reflected_tot_length
+            , reflected_tot_turns
+            , out_number
+            , out_max_length
+            , out_max_turns
+            , out_tot_length
+            , out_tot_turns
+            , dh1
+            , dh2
+            );
 SQL
 }
 
@@ -77,8 +77,8 @@ sub store-Configuration(BSON::Document $doc) {
      values (?, ?, ?)
 SQL
            $doc<config>,
-	   $doc<nb_mol>,
-	   $doc<dh1>);
+           $doc<nb_mol>,
+           $doc<dh1>);
 }
 
 =begin POD
