@@ -837,3 +837,46 @@ Les résultats avec des `commit` toutes les 500 mises à jour.
 A4_B4 	   1820      0 min 19,017 s  	0 min 18,053 s
 A4_B5 	  12650      2 min  4,514 s  	1 min 56,635 s 
 ```
+
+Problèmes avec SQLite
+---------------------
+
+J'ai eu quelques problèmes lors du développement de la version SQLite.
+Tout d'abord, le _kebab case_. Le _kebab case_ est le style préféré
+en Raku et est compatible avec JSON/BSON et MongoDB. En revanche, il est
+interdit dans les noms de colonnes en SQLite, pour lesquels il vaut mieux
+utiliser le _snake case_.  Ainsi, il n'était pas immédiat de faire le
+lien entre la colonne SQLite `canonical_number` et la clé de hachage
+`canonical-number`. Bien sûr, il est possible de convertir les soulignés
+en tirets, mais je n'y ai pas pensé lorsque j'ai codé les instructions `select`.
+
+Je n'ai pas constaté ce problème dès le début, car il était masqué par
+un autre problème, la syntaxe des instructions `insert`. Un `insert`
+est codé ainsi :
+
+```
+  $dbh.execute(q:to/SQL/
+  insert into Molecules
+            ( config
+            , number
+            , canonical_number
+            [...]
+            , dh2)
+     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+            , $molecule<config                  >    
+            , $molecule<number                  >
+            , $molecule<canonical-number        >
+            [...]
+            , $molecule<dh2                     >
+	    );
+```
+
+avec les 23 noms de colonnes, 23 points d'interrogation pour
+les valeurs à substituer et les 23 valeurs substituées. Vous pouvez
+remarquer que les soulignés des noms de colonnes sont remplacés par
+des tirets dans les valeurs Raku, entre autres adaptations. Les lectures `select`
+peuvent produire des hachages, les écritures `insert` nécessitent de tout
+écrire explicitement. Ou alors, il y a une astuce que je n'ai pas vue
+dans le module DBIish et qui me permettrait d'avoir recours à une table de hachage.
+

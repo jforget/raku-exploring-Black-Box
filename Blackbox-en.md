@@ -786,4 +786,46 @@ A4_B4 	   1820      0 min 19.017 s  	0 min 18.053 s
 A4_B5 	  12650      2 min  4.514 s  	1 min 56.635 s 
 ```
 
+Problems with SQLite
+--------------------
 
+I had a few problems when developing the SQLite version.
+First, kebab case. In Raku, kebab case is usually preferred 
+to snake case and to camel case, and it is compatible with
+JSON/BSON and MongoDB. But you cannot use kebab case for SQLite
+column names. So there was no immediate link between the
+`canonical_number` column name and the `canonical-number` hash
+key. Of course, you can use the translitteration of underscores
+to dashes, but at first I did not think of that when I wrote the
+first version of the `select` statements.
+
+The problem did not appear at first, because it was hidden behind
+another problem the syntax of `insert` statements. The main `insert`
+statement looks like:
+
+```
+  $dbh.execute(q:to/SQL/
+  insert into Molecules
+            ( config
+            , number
+            , canonical_number
+            [...]
+            , dh2)
+     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+            , $molecule<config                  >    
+            , $molecule<number                  >
+            , $molecule<canonical-number        >
+            [...]
+            , $molecule<dh2                     >
+	    );
+```
+
+with all 23 column names, with 23 question marks for bind values
+and the 23 Raku values used for the binding. You may
+notice that underscores in the column names are replaced by
+dashes in the Raku values, among other edits. The problem is that
+you have to specify all 23 column names and all 23 Raku values,
+without the convenient way of using a hash variable. Maybe there is
+a trick in the DBIish module which I have not seen and which would
+allow me to use a hash table.
