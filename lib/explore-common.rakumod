@@ -427,7 +427,7 @@ sub normalise(Str $str) {
   return @letters.join;
 }
 
-sub time-stamp {
+sub time-stamp is export {
   return sprintf "%04d-%02d-%02dT%02d:%02d:%02d", .year, .month, .day, .hour, .minute, .whole-second
            given DateTime.now.utc;
 }

@@ -95,6 +95,7 @@ sub store-molecules (@molecules) {
     $dbh.execute('commit transaction');
     $dbh.execute('begin transaction');
     $next-commit = $sql-counter + commit-interval();
+    say time-stamp, ' commit storing group ', @molecules[0]<canonical-number>;
   }
 }
 
@@ -171,6 +172,7 @@ SQL
     $dbh.execute('commit transaction');
     $dbh.execute('begin transaction');
     $next-commit = $sql-counter + commit-interval();
+    say time-stamp, ' commit upd of molecule ', $molecule<number>;
   }
 }
 
@@ -188,6 +190,7 @@ SQL
     $dbh.execute('commit transaction');
     $dbh.execute('begin transaction');
     $next-commit = $sql-counter + commit-interval();
+    say time-stamp, " commit removing group $number";
   }
 }
 
