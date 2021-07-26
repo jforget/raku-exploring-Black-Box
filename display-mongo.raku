@@ -17,6 +17,7 @@ use MongoDB::Client;
 use MongoDB::Database;
 use MongoDB::Collection;
 use JSON::Class;
+use display-common;
 
 my MongoDB::Client     $client        .= new(:uri('mongodb://'));
 my MongoDB::Database   $database       = $client.database('Black-Box');
@@ -49,7 +50,7 @@ multi sub MAIN (Str :$config, Int :$from, Int :$to) {
   }
   $cursor.kill;
   for @doc ==> sort { $_<number> } -> BSON::Document $doc {
-     display($doc)
+     display($cf, $doc)
   }
 }
 
@@ -71,7 +72,7 @@ multi sub MAIN (Str :$config, *@num) {
     $cursor.kill;
   }
   for @doc ==> sort { $_<number> } -> BSON::Document $doc {
-     display($doc)
+     display($cf, $doc)
   }
 }
 
@@ -90,7 +91,7 @@ multi sub MAIN (Str :$config, Str :$spectrum) {
   }
   $cursor.kill;
   for @doc ==> sort { $_<number> } -> BSON::Document $doc {
-     display($doc)
+     display($cf, $doc)
   }
 }
 
@@ -113,26 +114,6 @@ sub check-conf(Str $cf) {
   unless $configuration {
     die "Unknown configuration $cf";
   }
-}
-
-sub display(BSON::Document $doc) {
-  my $spectrum = $doc<spectrum> // ' ' x ($width × 4);
-  say "\n", $doc<number>, ' ', $spectrum, "\n";
-  say insert-spaces(' ' ~ substr($spectrum, 3 × $width, $width).flip);
-  for (1 .. $width) -> $l {
-    say insert-spaces(  substr($spectrum, $l - 1, 1)
-		      ~ substr($doc<molecule>, ($l - 1) × $width, $width)
-		      ~ substr($spectrum, 3 × $width - $l, 1));
-  }
-  say insert-spaces(' ' ~ substr($spectrum, $width, $width));
-  printf "          number length  turns\n";
-  printf "Absorbed   %2d    %3d %2d %3d %2d\n", $doc< absorbed-number>, $doc< absorbed-tot-length>, $doc< absorbed-max-length>, $doc< absorbed-tot-turns>, $doc< absorbed-max-turns>;
-  printf "Reflected  %2d    %3d %2d %3d %2d\n", $doc<reflected-number>, $doc<reflected-tot-length>, $doc<reflected-max-length>, $doc<reflected-tot-turns>, $doc<reflected-max-turns>;
-  printf "Out        %2d    %3d %2d %3d %2d\n", $doc<      out-number>, $doc<      out-tot-length>, $doc<      out-max-length>, $doc<      out-tot-turns>, $doc<      out-max-turns>;
-}
-
-sub insert-spaces (Str $str) {
-  return $str.comb.join(' ');
 }
 
 
