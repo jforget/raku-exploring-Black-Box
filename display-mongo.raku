@@ -2,8 +2,8 @@
 # -*- encoding: utf-8; indent-tabs-mode: nil -*-
 #
 #
-#     Affichage des molécules dans Black Box
-#     Display some molecules for a Black Box configuration
+#     Affichage des molécules dans Black Box (base MongoDB)
+#     Display some molecules for a Black Box configuration (MongoDB version)
 #     Copyright (C) 2021 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
@@ -142,7 +142,7 @@ sub insert-spaces (Str $str) {
 
 =head1 NAME
 
-display.raku -- Display some molecules and their spectrum for a Black Box configuration
+display-mongo.raku -- Display some molecules and their spectrum for a Black Box configuration
 
 =head1 DESCRIPTION
 
@@ -151,7 +151,9 @@ a range of numbers and displays them.
 
 =head1 SYNOPSIS
 
-  raku display.raku a4_b8  10 19
+  raku display-mongo.raku --config=a4_b8 --from=10 --to=19
+  raku display-mongo.raku --config=a4_b4 --spectrum='@&&@@&@a@@a@&@@@'
+  reku display-mongo.raku --config=a4_b4 1 3 5
 
 =head2 Parameters
 
@@ -165,6 +167,19 @@ C<b> can be converted to upper-case.
 
 The  range of  numbers for  the  keys of  the molecules  that will  be
 extracted.
+
+=item spectrum
+
+The value  of the  C<spectrum> attribute, to  display the  molecule or
+possibly all the molecules sharing this spectrum.
+
+=item list of numbers
+
+This parameter  is a position  parameter, not a keyword  parameter. It
+accepts  multiple  values. The  values  are  the  number keys  of  the
+molecules to display.
+
+Since the spectrum contains C<@> and C<&> chars, it must be quoted.
 
 =head1 COPYRIGHT and LICENCE
 
