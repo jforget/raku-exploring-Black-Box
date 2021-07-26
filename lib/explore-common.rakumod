@@ -47,6 +47,8 @@ sub explore (Str $config, %dispatch) is export {
 
   say "$nb_atoms atoms in a $width × $width square";
 
+  my $message-period = ($configuration<nb_mol> / 100).floor;
+
   my Str $molecule;
   $call-back = %dispatch<last-number>;
   my Int $number = $call-back($configuration);
@@ -92,6 +94,9 @@ sub explore (Str $config, %dispatch) is export {
     last unless $molecule ~~ /'O-'/;
 
     ++$number;
+    if $number %% $message-period {
+      printf("%s     %6d of %6d: %5.1f %%\n", time-stamp(), $number, $configuration<nb_mol>, (100 × $number / $configuration<nb_mol>).Num);
+    }
     my Int $pos = rindex($molecule, 'O-');
     my Str $mol1 = substr($molecule, 0, $pos);
     my Str $mol3 = substr($molecule, $pos + 2);
