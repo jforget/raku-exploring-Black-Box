@@ -786,4 +786,106 @@ A4_B4 	   1820      0 min 19.017 s  	0 min 18.053 s
 A4_B5 	  12650      2 min  4.514 s  	1 min 56.635 s 
 ```
 
+Problems with SQLite
+--------------------
 
+I had a few problems when developing the SQLite version.
+First, kebab case. In Raku, kebab case is usually preferred 
+to snake case and to camel case, and it is compatible with
+JSON/BSON and MongoDB. But you cannot use kebab case for SQLite
+column names. So there was no immediate link between the
+`canonical_number` column name and the `canonical-number` hash
+key. Of course, you can use the translitteration of underscores
+to dashes, but at first I did not think of that when I wrote the
+first version of the `select` statements.
+
+The problem did not appear at first, because it was hidden behind
+another problem the syntax of `insert` statements. The main `insert`
+statement looks like:
+
+```
+  $dbh.execute(q:to/SQL/
+  insert into Molecules
+            ( config
+            , number
+            , canonical_number
+            [...]
+            , dh2)
+     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+            , $molecule<config                  >    
+            , $molecule<number                  >
+            , $molecule<canonical-number        >
+            [...]
+            , $molecule<dh2                     >
+	    );
+```
+
+with all 23 column names, with 23 question marks for bind values
+and the 23 Raku values used for the binding. You may
+notice that underscores in the column names are replaced by
+dashes in the Raku values, among other edits. The problem is that
+you have to specify all 23 column names and all 23 Raku values,
+without the convenient way of using a hash variable. Maybe there is
+a trick in the DBIish module which I have not seen and which would
+allow me to use a hash table.
+
+The last problem is a bit ironical. There is a missing feature in MongoDB
+which is implemented in SQL: consistent updates. This is done with `begin
+transaction` and `commit transaction` in SQLite or similar statements in
+other SQL dialects. So I coded a way to bypass this problem, which would
+be necessary in MongoDB and superfluous in SQLite. On one hand, this
+bypass measure was unnecessary in MongoDB, on the other hand it was buggy
+with SQLite.
+
+When I run the exploration program a second or a third time, why do I need
+to delete and recreate the last enantiomer group created in the previous run?
+Because it may have happened, in the previous run, that `Ctrl-C` took effect
+when some molecules documents of the group, but not all, have been inserted
+into the database. Yet, it is necessary that each enantiomer group is stored
+in the database as a whole. This prerequisite is easy to implement in SQLite,
+with `begin transaction` / `commit transaction`, but there is no consistency
+mechanism in MongoDB. So at the start of the second or subsequent run, I extract
+the maximum value of `number` from the database. If this is the number of a
+canonical molecule, the program deletes the whole enantiomer group (sometimes
+a full group, some times an incomplete group) and rebuilds it in full.
+
+On one hand, this precaution was not required for MongoDB. In MongoDB,
+I execute a bulk insert, by giving an array of 8 documents to the `insert`
+statement. During my tests, I have never seen a partial enantiomer group
+in which the programme would have had time to insert, for example, only
+two documents before being interrupted by `Ctrl-C`. Each time, the
+last created enantiomer group was a complete one.
+
+On the other hand, the first SQLite version did not include
+`begin transaction`/ `commit transaction` statements. And the programme
+would run `insert` statements on single molecules, I did not know that SQLite could do
+[`bulk insert`](https://www.educba.com/sqlite-bulk-insert/).
+There was one test in which the group identified by `canonical-number = 2`
+was fully created and the group identified by `canonical-number = 3`
+was incomplete, with two molecules in the database and the six other dropped.
+Especially, the canonical molecule identified by `number = 3` was missing.
+When I relaunched the exploration programme, the search for the maximum value
+of `number` gave 2, not 3. So the enantiomer group identified by `canonical-number = 2`
+was deleted and created again, then the enantiomer group identified by `canonical-number = 3`
+was created, without considering the two already existing molecules.
+Therefore, an inconsistent enantiomer group with 10 molecules, including 2 duplicates.
+
+How can I fix it? There are at least three ways:
+
+- Retrieve not only the maximum value of `number`, but also the maximum value
+of `canonical-number`. In the example above, the program would have obtained a 2 and a 3
+and it would have removed the enantiomer group identified by `canonical-number = 3` while
+leaving alone the enantiomer group identified by `canonical-number = 2`.
+
+- Ensure that the canonical molecule of the enantiomer group is the first one
+to be inserted in the database. In this case, the extraction of the maximum value
+of `number` would have given a 3 and the deleted group would have been the one
+identified by `canonical-number = 3`.
+
+- Add  `begin transaction` / `commit transaction` to the exploration programme
+and ensure there will be no `commit transaction` before an enantiomer group is
+complete.
+
+Since I already had the intention to add `begin transaction` / `commit transaction`,
+I did not tried the other fixes.

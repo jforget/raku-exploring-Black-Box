@@ -837,3 +837,97 @@ Les résultats avec des `commit` toutes les 500 mises à jour.
 A4_B4 	   1820      0 min 19,017 s  	0 min 18,053 s
 A4_B5 	  12650      2 min  4,514 s  	1 min 56,635 s 
 ```
+
+Problèmes avec SQLite
+---------------------
+
+J'ai eu quelques problèmes lors du développement de la version SQLite.
+Tout d'abord, le _kebab case_. Le _kebab case_ est le style préféré
+en Raku et est compatible avec JSON/BSON et MongoDB. En revanche, il est
+interdit dans les noms de colonnes en SQLite, pour lesquels il vaut mieux
+utiliser le _snake case_.  Ainsi, il n'était pas immédiat de faire le
+lien entre la colonne SQLite `canonical_number` et la clé de hachage
+`canonical-number`. Bien sûr, il est possible de convertir les soulignés
+en tirets, mais je n'y ai pas pensé lorsque j'ai codé les instructions `select`.
+
+Je n'ai pas constaté ce problème dès le début, car il était masqué par
+un autre problème, la syntaxe des instructions `insert`. Un `insert`
+est codé ainsi :
+
+```
+  $dbh.execute(q:to/SQL/
+  insert into Molecules
+            ( config
+            , number
+            , canonical_number
+            [...]
+            , dh2)
+     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+            , $molecule<config                  >    
+            , $molecule<number                  >
+            , $molecule<canonical-number        >
+            [...]
+            , $molecule<dh2                     >
+	    );
+```
+
+avec les 23 noms de colonnes, 23 points d'interrogation pour
+les valeurs à substituer et les 23 valeurs substituées. Vous pouvez
+remarquer que les soulignés des noms de colonnes sont remplacés par
+des tirets dans les valeurs Raku, entre autres adaptations. Les lectures `select`
+peuvent produire des hachages, les écritures `insert` nécessitent de tout
+écrire explicitement. Ou alors, il y a une astuce que je n'ai pas vue
+dans le module DBIish et qui me permettrait d'avoir recours à une table de hachage.
+
+Le dernier problème est un peu ironique. Il y a une lacune en MongoDB (ou je croyais
+qu'il y avait une lacune), facile à éviter en SQLite. J'ai donc prévu un moyen
+de contournement, que je pensais nécessaire en MongoDB et superflu en SQLite
+et ce moyen de contournement s'est révélé bugué... dans la version SQLite.
+
+Pourquoi, lorsque je lance le programme d'exploration une deuxième ou une troisième fois, faut-il supprimer le dernier
+groupe d'énantiomères et le recréer de toutes pièces ? Parce que, lors de la fois précédente,
+lorsque j'ai tapé `Ctrl-C` pour interrompre le programme, il a pu arriver que
+le groupe d'énantiomères en cours de traitement était partiellement stocké en base
+de données. Or il est indispensable que les huit molécules (dans le cas le plus fréquent)
+soient stockées simultanément. Cette contrainte est facile à mettre en place en SQL avec
+des `begin transaction` / `commit transaction`, mais il n'y a pas de mécanisme similaire
+en MongoDB. Donc je cherche la valeur maximale de `number` dans la base
+de données, puis si cette valeur identifie la molécule canonique d'un groupe d'énantiomères,
+je supprime ce groupe d'énantiomères (parfois complet, parfois incomplet) et je le recrée complètement.
+
+D'une part cette précaution s'est révélée inutile pour MongoDB. Dans MongoDB, j'effectue
+un `insert` en masse, en transmettant un tableau contenant les huit documents à stocker.
+Et lors de mes tests, je n'ai jamais vu de cas où le programme aurait inséré en base de données
+deux documents sur les huit avant d'être interrompu par `Ctrl-C`. À chaque fois, le groupe d'énantiomères
+était complet.
+
+Lorsque j'ai développé la version SQLite, je n'ai pas tout de suite mis en place
+les `begin transaction`/ `commit transaction`. Et les `insert` se faisaient un par un,
+je n'avais pas cherché s'il existait des
+[`bulk insert`](https://www.educba.com/sqlite-bulk-insert/)
+en SQLite. Lors d'un test, j'ai eu le cas où le groupe identifié par `canonical-number = 2`
+était entièrement créé et le groupe identifié par `canonical-number = 3` était partiellement
+stocké en base, deux molécules de ce groupe étaient présentes et les six autres
+absentes. Notamment, la molécule identifiée par `number = 3` n'avait pas encore été
+insérée dans la base. Lors du passage suivant, la recherche du plus grand `number` a donné le numéro 2,
+donc c'est le groupe identifié par `canonical-number = 2` qui a été supprimé et recréé.
+Puis le programme a créé le  groupe identifié par `canonical-number = 3`, sans tenir compte
+des deux molécules déjà présentes. D'où un groupe incohérent à 10 molécules, dont deux doublons.
+
+Comment remédier ? Il y a, au moins, trois façons :
+
+- Extraire non seulement la valeur maximale de `number` mais aussi celle de `canonical-number`
+et traiter la plus grande des deux. Dans le cas présenté ci-dessus, cela aurait conduit à supprimer
+le groupe identifié par `canonical-number = 3` contenant deux molécules et à laisser tranquille le
+groupe identifié par `canonical-number = 2` qui était complet.
+
+- S'arranger pour que la molécule canonique, celle pour laquelle `number` est renseigné,
+soit la première à être insérée en base de données. Ainsi, l'extraction de la valeur maximale
+de `number` aurait conduit à supprimer le groupe identifié par `canonical-number = 3`.
+
+- Mettre en place les `begin transaction` / `commit transaction` et s'arranger pour qu'il
+n'y ait pas un `commit` en plein milieu du traitement d'un groupe d'énantiomères.
+
+Comme j'avais déjà planifié la mise  en place les `begin transaction` / `commit transaction`,
+je n'ai pas cherché à programmer la méthode 1 ou la méthode 2.
