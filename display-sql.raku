@@ -19,7 +19,6 @@ use db-conf-sql;
 
 my $dbh = DBIish.connect('SQLite', database => dbname());
 
-my Int $nb_atoms;
 my Int $width;
 
 multi sub MAIN (Str :$config, Int :$from, Int :$to) {
@@ -27,12 +26,10 @@ multi sub MAIN (Str :$config, Int :$from, Int :$to) {
   check-conf($cf);
 
   say "from $from to $to";
-  for $from .. $to -> $number {
-    my $sth = $dbh.prepare('select * from Molecules where config = ? and number = ?');
-    my $result  = $sth.execute($cf, $number).row(:hash);
-    if $result<config> {
-      display($cf, convert-molecule($result))
-    }
+  my $sth = $dbh.prepare('select * from Molecules where config = ? and number >= ? and number <= ? order by number');
+  my @result  = $sth.execute($cf, + $from, + $to).allrows(:array-of-hash);
+  for @result -> $result {
+    display($cf, convert-molecule($result))
   }
 }
 
@@ -55,9 +52,9 @@ multi sub MAIN (Str :$config, Str :$spectrum) {
   my Str $cf = $config.uc;
   check-conf($cf);
 
-  my $sth = $dbh.prepare('select * from Molecules where config = ? and spectrum = ?');
-  my $result  = $sth.execute($cf, $spectrum).row(:hash);
-  if $result<config> {
+  my $sth = $dbh.prepare('select * from Molecules where config = ? and spectrum = ? order by number');
+  my @result  = $sth.execute($cf, $spectrum).allrows(:array-of-hash);
+  for @result -> $result {
     display($cf, convert-molecule($result))
   }
 }
@@ -66,7 +63,6 @@ sub check-conf(Str $cf) {
   unless $cf ~~ /^ 'A' (\d+) '_B' (\d) $ / {
     die "Wrong configuration $cf";
   }
-  $nb_atoms = + $0;
   $width    = + $1;
 
   my $sth = $dbh.prepare('select * from Configurations where config = ?');
