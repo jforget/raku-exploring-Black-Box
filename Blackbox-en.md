@@ -800,8 +800,8 @@ to dashes, but at first I did not think of that when I wrote the
 first version of the `select` statements.
 
 The problem did not appear at first, because it was hidden behind
-another problem the syntax of `insert` statements. The main `insert`
-statement looks like:
+another problem the syntax of `insert` statements. The first version
+of the main `insert` statement looked like:
 
 ```
   $dbh.execute(q:to/SQL/
@@ -829,6 +829,15 @@ you have to specify all 23 column names and all 23 Raku values,
 without the convenient way of using a hash variable. Maybe there is
 a trick in the DBIish module which I have not seen and which would
 allow me to use a hash table.
+
+In the second version of the `insert` statement, I generated the list of
+database columns and the list of question marks and I interpolated them
+into the SQL statement. This is not a
+[Bobby Tables](https://xkcd.com/327/)
+[issue](https://bobby-tables.com/).
+The interpolated strings are fully controlled by the programme maintainer.
+They do not come from user input or from an external source.
+And this helps with the DRY principle (Don't Repeat Yourself).
 
 The last problem is a bit ironical. There is a missing feature in MongoDB
 which is implemented in SQL: consistent updates. This is done with `begin

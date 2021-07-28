@@ -30,6 +30,38 @@ my %dispatch = load-configuration      => &load-configuration
              , remove-enantiomer-group => &remove-enantiomer-group
              ;
 
+my @key-doc = < config               
+                number               
+                canonical-number     
+                molecule             
+                spectrum             
+                transform            
+                absorbed-number      
+                absorbed-max-length  
+                absorbed-max-turns   
+                absorbed-tot-length  
+                absorbed-tot-turns   
+                reflected-number     
+                reflected-max-length 
+                reflected-max-turns  
+                reflected-tot-length 
+                reflected-tot-turns  
+                out-number           
+                out-max-length       
+                out-max-turns        
+                out-tot-length       
+                out-tot-turns        
+                dh1                  
+                dh2
+                >;
+@key-doc ==> map { .trans('-' => '_') } ==> my @sql-columns;
+my @qst-mrk = '?' xx @key-doc.elems;
+
+# No this is not a "Bobby tables" issue. The strings interpolated into the SQL statement
+# are fully controlled by the programme maintainer. They do not come from user input or
+# from an external origin.
+my $sql-insert = sprintf("insert into Molecules (%s) values (%s)", @sql-columns.join(','), @qst-mrk.join(','));
+
 sub MAIN (Str $config) {
   $dbh.execute('begin transaction');
   my $cf = $config.uc;
@@ -100,57 +132,7 @@ sub store-molecules (@molecules) {
 }
 
 sub store-molecule (BSON::Document $molecule) {
-  $dbh.execute(q:to/SQL/
-  insert into Molecules
-            ( config
-            , number
-            , canonical_number
-            , molecule
-            , spectrum
-            , transform
-            , absorbed_number
-            , absorbed_max_length
-            , absorbed_max_turns
-            , absorbed_tot_length
-            , absorbed_tot_turns
-            , reflected_number
-            , reflected_max_length
-            , reflected_max_turns
-            , reflected_tot_length
-            , reflected_tot_turns
-            , out_number
-            , out_max_length
-            , out_max_turns
-            , out_tot_length
-            , out_tot_turns
-            , dh1
-            , dh2)
-     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-SQL
-            , $molecule<config                  >    
-            , $molecule<number                  >
-            , $molecule<canonical-number        >
-            , $molecule<molecule                >
-            , $molecule<spectrum                >
-            , $molecule<transform               >
-            , $molecule<absorbed-number         >
-            , $molecule<absorbed-max-length     >
-            , $molecule<absorbed-max-turns      >
-            , $molecule<absorbed-tot-length     >
-            , $molecule<absorbed-tot-turns      >
-            , $molecule<reflected-number        >
-            , $molecule<reflected-max-length    >
-            , $molecule<reflected-max-turns     >
-            , $molecule<reflected-tot-length    >
-            , $molecule<reflected-tot-turns     >
-            , $molecule<out-number              >
-            , $molecule<out-max-length          >
-            , $molecule<out-max-turns           >
-            , $molecule<out-tot-length          >
-            , $molecule<out-tot-turns           >
-            , $molecule<dh1                     >
-            , $molecule<dh2                     >
-	    );
+  $dbh.execute($sql-insert, |$molecule{@key-doc});
   ++ $sql-counter;
 }
 

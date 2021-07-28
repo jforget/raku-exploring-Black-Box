@@ -851,8 +851,9 @@ lien entre la colonne SQLite `canonical_number` et la clé de hachage
 en tirets, mais je n'y ai pas pensé lorsque j'ai codé les instructions `select`.
 
 Je n'ai pas constaté ce problème dès le début, car il était masqué par
-un autre problème, la syntaxe des instructions `insert`. Un `insert`
-est codé ainsi :
+un autre problème, la syntaxe des instructions `insert`. Dans la première
+version, l'instruction `insert` pour la table `Molecules` était
+codée ainsi :
 
 ```
   $dbh.execute(q:to/SQL/
@@ -879,6 +880,17 @@ des tirets dans les valeurs Raku, entre autres adaptations. Les lectures `select
 peuvent produire des hachages, les écritures `insert` nécessitent de tout
 écrire explicitement. Ou alors, il y a une astuce que je n'ai pas vue
 dans le module DBIish et qui me permettrait d'avoir recours à une table de hachage.
+
+Remarque : dans la deuxième version de l'instruction `insert`, la liste des colonnes
+et la liste de points d'interrogation ont été générées par programme et insérées
+dans l'instruction SQL. Il ne s'agit pas ici d'un
+[problème](https://xkcd.com/327/)
+[« à la Bobby Tables »](https://bobby-tables.com/).
+Les chaînes interpolées dans l'instruction SQL sont entièrement sous le
+contrôle du programmeur. Elles ne proviennent pas de la saisie de valeurs
+par l'utilisateur, ni même d'une autre source extérieure. Du coup, cela
+permet de mieux respecter le principe DRY (_Don't Repeat Yourself_ ou « Ne
+répétez pas la même chose »).
 
 Le dernier problème est un peu ironique. Il y a une lacune en MongoDB (ou je croyais
 qu'il y avait une lacune), facile à éviter en SQLite. J'ai donc prévu un moyen
