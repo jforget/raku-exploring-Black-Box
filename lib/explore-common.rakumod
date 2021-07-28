@@ -47,7 +47,7 @@ sub explore (Str $config, %dispatch) is export {
 
   say "$nb_atoms atoms in a $width × $width square";
 
-  my $message-period = ($configuration<nb_mol> / 100).floor;
+  my $message-period = 10 max (($configuration<nb_mol> / 100).floor);
 
   my Str $molecule;
   $call-back = %dispatch<last-number>;
