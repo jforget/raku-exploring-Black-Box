@@ -287,7 +287,7 @@ Le projet est divisé en deux parties. Un premier programme
 examine les 635376 molécules, calcule leur spectre et les stocke
 dans une base de données. Dans la deuxième partie,
 quelques programmes accèdent à la base de données
-et génèrent des pages web affichant les données sous
+et génèrent des fichiers textes ou des pages web affichant les données sous
 forme synthétique. Le premier programme ne traitera pas
 les 635376 molécules d'une traite. Il pourra
 s'interrompre à n'importe quel moment et reprendre
@@ -307,6 +307,8 @@ colonne 9. Un atome est représenté par un
 caractère "lourd", comme un "X", un "O" ou une
 "*", une case vide par un caractère "léger",
 comme un espace, un point, voire un tiret.
+En fin de compte, j'ai pris la notation d'Emacs,
+avec des "O" et des tirets.
 
 Pour la périphérie (colonnes et lignes 0 et 9), je n'utiliserai pas la
 notation de la version Emacs de Black Box. Tout d'abord, les rayons
@@ -737,6 +739,7 @@ sur la dernière molécule ! l'extraction est terminée !
 Exemple avec `-O--O-O------OOO`
 
 ```
+          111111
 0123456789012345
 -O--O-O------OOO
 ```
@@ -745,6 +748,7 @@ Les sous-chaînes `O-` sont en 1, 4 et 6. Celle qui nous intéresse est
 en 6. On découpe la molécule ainsi :
 
 ```
+                  111111
 012345 // 67 // 89012345
 -O--O- // O- // -----OOO
 ```
@@ -752,6 +756,7 @@ en 6. On découpe la molécule ainsi :
 On modifie les sous-chaînes ainsi :
 
 ```
+                  111111
 012345 // 67 // 89012345
 -O--O- // -O // OOO-----
 ```
@@ -759,6 +764,7 @@ On modifie les sous-chaînes ainsi :
 Et on recolle l'ensemble
 
 ```
+          111111
 0123456789012345
 -O--O--OOOO-----
 ```
@@ -826,23 +832,24 @@ Les résultats avec des `commit` toutes les 50 mises à jour.
 
 ```
          nb_mol          real             user 
-A4_B4 	   1820      0 min 15,031 s  	0 min 15,463 s
-A4_B5 	  12650      2 min 16,277 s  	2 min  0,199 s 
+A4_B4      1820      0 min 15,031 s     0 min 15,463 s
+A4_B5     12650      2 min 16,277 s     2 min  0,199 s 
 ```
 
 Les résultats avec des `commit` toutes les 500 mises à jour.
 
 ```
          nb_mol          real             user 
-A4_B4 	   1820      0 min 19,017 s  	0 min 18,053 s
-A4_B5 	  12650      2 min  4,514 s  	1 min 56,635 s 
+A4_B4      1820      0 min 19,017 s     0 min 18,053 s
+A4_B5     12650      2 min  4,514 s     1 min 56,635 s 
+A4_B6     58905     26 min 39,339 s    21 min 40,528 s
 ```
 
 Problèmes avec SQLite
 ---------------------
 
 J'ai eu quelques problèmes lors du développement de la version SQLite.
-Tout d'abord, le _kebab case_. Le _kebab case_ est le style préféré
+Tout d'abord, le _kebab case_. Le _kebab case_ est le style privilégié
 en Raku et est compatible avec JSON/BSON et MongoDB. En revanche, il est
 interdit dans les noms de colonnes en SQLite, pour lesquels il vaut mieux
 utiliser le _snake case_.  Ainsi, il n'était pas immédiat de faire le
@@ -870,7 +877,7 @@ SQL
             , $molecule<canonical-number        >
             [...]
             , $molecule<dh2                     >
-	    );
+            );
 ```
 
 avec les 23 noms de colonnes, 23 points d'interrogation pour
@@ -898,7 +905,8 @@ de contournement, que je pensais nécessaire en MongoDB et superflu en SQLite
 et ce moyen de contournement s'est révélé bugué... dans la version SQLite.
 
 Pourquoi, lorsque je lance le programme d'exploration une deuxième ou une troisième fois, faut-il supprimer le dernier
-groupe d'énantiomères et le recréer de toutes pièces ? Parce que, lors de la fois précédente,
+groupe d'énantiomères et le recréer de toutes pièces ? Voici le raisonnement que j'ai tenu
+avant de commencer à écrire les programmes. Lors du premier passage,
 lorsque j'ai tapé `Ctrl-C` pour interrompre le programme, il a pu arriver que
 le groupe d'énantiomères en cours de traitement était partiellement stocké en base
 de données. Or il est indispensable que les huit molécules (dans le cas le plus fréquent)

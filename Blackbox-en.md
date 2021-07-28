@@ -270,8 +270,10 @@ have the key "A4\_B8".
 
 The project is divided in two parts. The first part will explore all the 635376 possible
 molecules and store them, compute their spectrums (or spectra?) and store them into a database.
-The programmes from the second part read this database and generate
-HTML files to display synthetic results in a pleasing way.
+The programmes from the second part read this database and display
+synthetic results in a pleasing way (possibly in HTML form with convenient links;
+or I may limit myself to text output).
+
 About the programme from the first part: the programme will not process
 all 635376 molecules in one go. It will be able to stop at any moment
 and restart later from the point where it stopped.
@@ -286,6 +288,7 @@ are numbered 1-to-8. Why not start at 0? Because line 0 and column
 the additional line 9 and column 9. An atom is represented by a "heavy"
 character, such as "O", "X" or "*", while an empty box is represented
 by a "light" character, such as a space, a dot or a hyphen.
+Actually, I have used the Emacs notation, awith a "O" and an hyphen.
 
 For the peripheral area (lines and columns 0 and 9), I will not use
 Emacs' notation. Firstly, the rays which come out will be shown as
@@ -691,6 +694,7 @@ which takes one molecule and finds the next one. The algorithm is as follows:
 Example with  `-O--O-O------OOO`
 
 ```
+          111111
 0123456789012345
 -O--O-O------OOO
 ```
@@ -699,6 +703,7 @@ The `O-` substrings are at 1, 4 et 6. The interesting one is the substring
 at 6. The sting is split thus:
 
 ```
+                  111111
 012345 // 67 // 89012345
 -O--O- // O- // -----OOO
 ```
@@ -706,6 +711,7 @@ at 6. The sting is split thus:
 The substrings are modified in this way:
 
 ```
+                  111111
 012345 // 67 // 89012345
 -O--O- // -O // OOO-----
 ```
@@ -713,6 +719,7 @@ The substrings are modified in this way:
 And the pieces are gathered together:
 
 ```
+          111111
 0123456789012345
 -O--O--OOOO-----
 ```
@@ -774,16 +781,17 @@ The results with a `commit` every 50 updates:
 
 ```
          nb_mol          real             user 
-A4_B4 	   1820      0 min 15.031 s  	0 min 15.463 s
-A4_B5 	  12650      2 min 16.277 s  	2 min  0.199 s 
+A4_B4      1820      0 min 15.031 s     0 min 15.463 s
+A4_B5     12650      2 min 16.277 s     2 min  0.199 s 
 ```
 
 The results with a `commit` every 500 updates:
 
 ```
          nb_mol          real             user 
-A4_B4 	   1820      0 min 19.017 s  	0 min 18.053 s
-A4_B5 	  12650      2 min  4.514 s  	1 min 56.635 s 
+A4_B4      1820      0 min 19.017 s     0 min 18.053 s
+A4_B5     12650      2 min  4.514 s     1 min 56.635 s 
+A4_B6     58905     26 min 39.339 s    21 min 40.528 s
 ```
 
 Problems with SQLite
@@ -840,7 +848,7 @@ They do not come from user input or from an external source.
 And this helps with the DRY principle (Don't Repeat Yourself).
 
 The last problem is a bit ironical. There is a missing feature in MongoDB
-which is implemented in SQL: consistent updates. This is done with `begin
+which is implemented in SQL: consistent updates, aka database transactions. This is done with `begin
 transaction` and `commit transaction` in SQLite or similar statements in
 other SQL dialects. So I coded a way to bypass this problem, which would
 be necessary in MongoDB and superfluous in SQLite. On one hand, this
@@ -849,7 +857,8 @@ with SQLite.
 
 When I run the exploration program a second or a third time, why do I need
 to delete and recreate the last enantiomer group created in the previous run?
-Because it may have happened, in the previous run, that `Ctrl-C` took effect
+Here is my reasoning before writing the programmes.
+It may have happened, in the previous run, that `Ctrl-C` took effect
 when some molecules documents of the group, but not all, have been inserted
 into the database. Yet, it is necessary that each enantiomer group is stored
 in the database as a whole. This prerequisite is easy to implement in SQLite,
