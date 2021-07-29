@@ -48,6 +48,8 @@ create table if not exists Molecules (
             , absorbed_tot_length
             , absorbed_tot_turns
             , reflected_number
+            , reflected_edge
+            , reflected_deep
             , reflected_max_length
             , reflected_max_turns
             , reflected_tot_length

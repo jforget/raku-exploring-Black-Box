@@ -460,6 +460,8 @@ L'enregistrement de la base de données, en syntaxe JSON, ressemble à :
   absorbed-tot-length:  7,
   absorbed-tot-turns:   0,
   reflected-number:     4,
+  reflected-edge:       3,
+  reflected-deep:       1,
   reflected-max-length: 3,
   reflected-max-turns:  0,
   reflected-tot-length: 3,

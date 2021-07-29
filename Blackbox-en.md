@@ -408,7 +408,7 @@ In this example, we see:
 
 - 2 rays absorbed after crossing 3 boxes each
 
-- 2 rays which are reflected as soon as they enter the box
+- 3 rays which are reflected as soon as they enter the box
 
 - 1 ray reflected after crossing 3 boxes
 
@@ -431,6 +431,8 @@ Using JSON syntax, the database record will look like:
   absorbed-tot-length:  7,
   absorbed-tot-turns:   0,
   reflected-number:     4,
+  reflected-edge:       3,
+  reflected-deep:       1,
   reflected-max-length: 3,
   reflected-max-turns:  0,
   reflected-tot-length: 3,

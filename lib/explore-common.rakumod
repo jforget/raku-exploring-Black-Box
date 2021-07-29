@@ -131,6 +131,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
   my Int $absorbed-tot-length  = 0;
   my Int $absorbed-tot-turns   = 0;
   my Int $reflected-number     = 0;
+  my Int $reflected-edge       = 0;
+  my Int $reflected-deep       = 0;
   my Int $reflected-max-length = 0;
   my Int $reflected-max-turns  = 0;
   my Int $reflected-tot-length = 0;
@@ -158,6 +160,12 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
         when '&' {
           substr-rw($spectrum, $i, 1) = $res;
           $reflected-number++;
+          if $boxes == 0 {
+            $reflected-edge++;
+          }
+          else {
+            $reflected-deep++;
+          }
           $reflected-tot-length += $boxes;
           $reflected-tot-turns  += $turns;
           if $reflected-max-length < $boxes { $reflected-max-length = $boxes }
@@ -285,10 +293,12 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
     $doc<absorbed-tot-length>  = $absorbed-tot-length ;
     $doc<absorbed-tot-turns>   = $absorbed-tot-turns  ;
     $doc<reflected-number>     = $reflected-number    ;
+    $doc<reflected-edge      > = $reflected-edge      ;
+    $doc<reflected-deep      > = $reflected-deep      ;
     $doc<reflected-max-length> = $reflected-max-length;
-    $doc<reflected-max-turns>  = $reflected-max-turns ;
+    $doc<reflected-max-turns > = $reflected-max-turns ;
     $doc<reflected-tot-length> = $reflected-tot-length;
-    $doc<reflected-tot-turns>  = $reflected-tot-turns ;
+    $doc<reflected-tot-turns > = $reflected-tot-turns ;
     $doc<out-number>           = $out-number          ;
     $doc<out-max-length>       = $out-max-length      ;
     $doc<out-max-turns>        = $out-max-turns       ;

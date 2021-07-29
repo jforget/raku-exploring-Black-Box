@@ -42,6 +42,8 @@ my @key-doc = < config
                 absorbed-tot-length  
                 absorbed-tot-turns   
                 reflected-number     
+                reflected-edge
+                reflected-deep
                 reflected-max-length 
                 reflected-max-turns  
                 reflected-tot-length 
