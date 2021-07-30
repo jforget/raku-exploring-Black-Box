@@ -251,6 +251,12 @@ On the other hand, the following molecules are not enantiomers:
 because we discard translations and we discard rotations and symmetries
 which do not apply to the 8×8 square.
 
+In an enantiomer group, I define the "canonical molecule" as the molecule
+with the smallest number when stored in the database, that is, the first
+molecule of the group that is processed by the exploration programme.
+This phrase has no equivalent in 3-D chemicals, but I need to give
+a name to this concept. So it will be "canonical molecule".
+
 Basic Projects
 --------------
 
@@ -329,7 +335,7 @@ The game is rewritten as:
 There are 4 balls in the box
 ```
 As you can see, the upper-case "H" (for a "hit" ray) is not standing out of the
-lower-case letters for coming-out rays. Same thing, for other spectra,
+lower-case letters for coming-out rays. Same thing, for other spectrums,
 for the "R" letter representing a reflected ray. I will use instead "@"
 for hitting rays and "&" for reflected rays.
 
@@ -567,6 +573,7 @@ here are two of them. In addition, I have stripped the statistics.
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
   transform: 'id',
+  [...]
 }
 { config: "A2_B4",
   number: 0,
@@ -574,6 +581,7 @@ here are two of them. In addition, I have stripped the statistics.
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
   transform: 'rot180',
+  [...]
 }
 ```
 The `canonical-number` property is a link to the
@@ -591,6 +599,7 @@ At this time, the record will be updated to:
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
   transform: 'rot180',
+  [...]
 }
 ```
 
@@ -733,6 +742,113 @@ a transformation to `DEF-----`. But since the programmes will only use anonymous
 while the `A` to `F` are used only in this descriptive text,
 the `flip` function is the function to use.
 
+Table of Spectrums
+------------------
+
+When the Molecules table is fully populated (for a given configuration),
+we extract from this table all the spectrums that appear in two or more
+records and we store them in a new table, Spectrums.
+
+Example with a A4\_B6 configuration. We have these two molecules, with the
+same spectrum:
+
+```
+   @ & @ & @ &             @ & @ & @ &
+ @ O - - - O - @         @ - - O - O - @
+ & - - - - - - 4         & - - - - - - 4
+ @ O - O - - - @         @ O - O - - - @
+ & - - - - - - 3         & - - - - - - 3
+ 1 - - - - - - 1         1 - - - - - - 1
+ 2 - - - - - - 2         2 - - - - - - 2
+   @ & @ 3 @ 4             @ & @ 3 @ 4
+
+There are 4 balls in the box
+```
+
+The Molecules table will contain:
+
+```
+{ config: "A4_B6",
+  number: 1234,
+  canonical-number: 1234,
+  molecule: 'O---O-------O-O---------------------',
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  transform: 'id',
+  [...]
+}
+{ config: "A4_B6",
+  number: 2345,
+  canonical-number: 2345,
+  molecule: '--O-O-------O-O---------------------',
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  transform: 'id',
+  [...]
+}
+```
+
+and the Spectrums table will contain:
+
+```
+{ config: "A4_B6",
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  nb-mol: 2,
+  transform: 'id'
+}
+```
+
+Which means that for this spectrum, there are two molecules.
+
+Why the `transform` attribute? When two asymmetrical molecules
+form a spectral group, the same happens with their respective enantiomers.
+So we have 8 spectrums which are rotations / symmetries of each other.
+We may want to study one of them, but then we would be bored studying
+the 7 other groups. By tagging one group with `transform: 'id',`
+and the others with  `transform: 'rot180',` `transform: 'sym-h',`
+and the like, we know which spectrums we need to study.
+
+So with:
+
+```
+   @ & @ & @ &             @ & @ & @ &             4 @ 3 @ & @             4 @ 3 @ & @  
+ @ O - - - O - @         @ - - O - O - @         1 - - - - - - 1         1 - - - - - - 1
+ & - - - - - - 4         & - - - - - - 4         2 - - - - - - 2         2 - - - - - - 2
+ @ O - O - - - @         @ O - O - - - @         3 - - - - - - &         3 - - - - - - &
+ & - - - - - - 3         & - - - - - - 3         @ - - - O - O @         @ - - - O - O @
+ 1 - - - - - - 1         1 - - - - - - 1         4 - - - - - - &         4 - - - - - - &
+ 2 - - - - - - 2         2 - - - - - - 2         @ - O - O - - @         @ - O - - - O @
+   @ & @ 3 @ 4             @ & @ 3 @ 4             & @ & @ & @             & @ & @ & @  
+
+There are 4 balls in the box
+```
+
+we will have these two records in the Spectrums table:
+
+```
+{ config: "A4_B6",
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  nb-mol: 2,
+  transform: 'id'
+}
+{ config: "A4_B6",
+  spectrum: '123@4@&@&@&@@&@&21@&@3@4',
+  nb-mol: 2,
+  transform: 'rot180'
+}
+```
+
+How is the Spectrums table populated? First, we insert all spectrum records
+without bothering with the `transform` column, which will be initialised with
+a dummy value. This will be acheived by harnessing the power of the `group by`
+SQL clause or of the MongoDB function `aggregate`.
+
+Then, we fix the `transform` field. For this, the programme scans all
+canonical molecules (`transform: 'id'`) whose spectrum exists in the
+Spectrums table. Then the programme reads this spectrum record. If 
+the spectrum record is not already updated, the programmes reads the
+whole enantiomer group of the current molecule, and the corresponding
+records from the Spectrums table, copies the `transform` value from the
+molecule to the spectrum and updates the spectrum record.
+
 Physical Implementation
 -----------------------
 
@@ -828,7 +944,7 @@ SQL
             , $molecule<canonical-number        >
             [...]
             , $molecule<dh2                     >
-	    );
+            );
 ```
 
 with all 23 column names, with 23 question marks for bind values

@@ -263,6 +263,12 @@ En revanche, les molécules suivantes ne sont pas des énantiomères :
 car on exclut les translations et on exclut les rotations et symétries qui ne sont pas
 des rotations ou symétries du carré 8×8.
 
+Dans un groupe d'énantiomères, je définis la "molécule canonique" comme étant
+celle qui est identifiée par le plus petit numéro, c'est-à-dire la première
+à être traitée par le programme d'exploration. Ce terme n'a pas de correspondance
+dans le monde réel de la chimie 3-D, mais il en faut en. Donc ce sera
+"molécule canonique".
+
 Découpage en projets élémentaires
 ---------------------------------
 
@@ -598,19 +604,21 @@ stockera 8. Pour rester bref, j'en présente deux ci-dessous et j'ai retiré
 les statistiques.
 
 ```
-{ config: "A2\_B4",
+{ config: "A2_B4",
   number: 2,
   canonical-number: 2,
   molecule: 'O-O-------------',
   spectrum: '@&12@&@3213@&@&@',
   transform: 'id',
+  [...]
 }
-{ config: "A2\_B4",
+{ config: "A2_B4",
   number: 0,
   canonical-number: 2,
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
   transform: 'rot180',
+  [...]
 }
 ```
 La propriété `canonical-number` est un pointeur vers la première
@@ -621,12 +629,13 @@ sera alimentée ultérieurement, lorsque la recherche exhaustive
 trouvera la molécule correspondante. On aura alors :
 
 ```
-{ config: "A2\_B4",
+{ config: "A2_B4",
   number: 119,
   canonical-number: 2,
   molecule: '-------------O-O',
   spectrum: 'abc@&@&@@&ba@&@c',
   transform: 'rot180',
+  [...]
 }
 ```
 
@@ -779,6 +788,118 @@ une conversion vers `DEF-----`. Mais puisque les programmes
 utilisent des `O` anonymes  et que les noms de `A` à `F`
 ne sont utilisés que dans le présent texte, le `flip` convient
 parfaitement.
+
+Table des spectres
+------------------
+
+Lorsque la table des molécules est complètement remplie (pour
+une configuration donnée), nous extrayons de cette table les
+spectres qui apparaissent pour deux molécules ou plus et nous
+les stockons dans une nouvelle table, la table Spectrums des spectres.
+
+Example avec une configuration A4\_B6. Nous avons ces deux molécules,
+avec des spectres identiques :
+
+```
+   @ & @ & @ &             @ & @ & @ &
+ @ O - - - O - @         @ - - O - O - @
+ & - - - - - - 4         & - - - - - - 4
+ @ O - O - - - @         @ O - O - - - @
+ & - - - - - - 3         & - - - - - - 3
+ 1 - - - - - - 1         1 - - - - - - 1
+ 2 - - - - - - 2         2 - - - - - - 2
+   @ & @ 3 @ 4             @ & @ 3 @ 4
+
+There are 4 balls in the box
+```
+
+La table Molecules contient alors :
+
+```
+{ config: "A4_B6",
+  number: 1234,
+  canonical-number: 1234,
+  molecule: 'O---O-------O-O---------------------',
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  transform: 'id',
+  [...]
+}
+{ config: "A4_B6",
+  number: 2345,
+  canonical-number: 2345,
+  molecule: '--O-O-------O-O---------------------',
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  transform: 'id',
+  [...]
+}
+```
+
+et la table Spectrums contient :
+
+```
+{ config: "A4_B6",
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  nb-mol: 2,
+  transform: 'id'
+}
+```
+
+ce qui veut dire que pour ce spectre, nous avons deux molécules.
+
+Pourquoi cet attribut `transform` ? Quand deux molécules asymétriques
+forment un groupe spectral, il en va de même avec leurs énantiomères
+respectifs. Nous avons donc 8 groupes spectraux qui se déduisent les uns
+des autres par rotation ou par symétrie. Nous voulons bien en étudier un
+en détail, mais les autres ne nous intéressent pas. Donc en étiquetant
+l'un de ces spectres avec  `transform: 'id',`
+et les autres avec  `transform: 'rot180',` `transform: 'sym-h',`
+et ainsi de suite, nous savons quels sont les spectres qu'il faut
+examiner pour avoir un aperçu complet.
+
+Ainsi, avec les quatre molécules :
+
+```
+   @ & @ & @ &             @ & @ & @ &             4 @ 3 @ & @             4 @ 3 @ & @  
+ @ O - - - O - @         @ - - O - O - @         1 - - - - - - 1         1 - - - - - - 1
+ & - - - - - - 4         & - - - - - - 4         2 - - - - - - 2         2 - - - - - - 2
+ @ O - O - - - @         @ O - O - - - @         3 - - - - - - &         3 - - - - - - &
+ & - - - - - - 3         & - - - - - - 3         @ - - - O - O @         @ - - - O - O @
+ 1 - - - - - - 1         1 - - - - - - 1         4 - - - - - - &         4 - - - - - - &
+ 2 - - - - - - 2         2 - - - - - - 2         @ - O - O - - @         @ - O - - - O @
+   @ & @ 3 @ 4             @ & @ 3 @ 4             & @ & @ & @             & @ & @ & @  
+
+There are 4 balls in the box
+```
+
+cela génère deux enregistrements dans la table Spectrums :
+
+```
+{ config: "A4_B6",
+  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  nb-mol: 2,
+  transform: 'id'
+}
+{ config: "A4_B6",
+  spectrum: '123@4@&@&@&@@&@&21@&@3@4',
+  nb-mol: 2,
+  transform: 'rot180'
+}
+```
+
+Concrètement, comment la table Spectrums est-elle alimentée ?
+Dans un premier temps, on crée tous les enregistrements sans s'intéresser
+au champ `transform`, qui sera provisoirement alimenté avec une valeur
+bidon. Cela se fait en mettant à profit la puissance de la clause `group by` en
+SQL ou de la fonction  `aggregate` de MongoDB.
+
+Ensuite, on rectifie le champ `transform`. Pour ce faire, le programme
+extrait toutes les molécules canoniques (`transform: 'id'`) associée à
+un spectre de la table Spectrums. Puis le programme lit ce spectre.
+S'il n'a pas encoré été modifié, alors le programme lit le groupe d'énantiomères
+complet de la molécule traitée, lit les spectres correspondants dans la
+table Spectrums, copie le champ `transform` de chaque molécule vers le spectre
+associé et modifie cet enregistrement.
+
 
 Implémentation physique
 -----------------------
