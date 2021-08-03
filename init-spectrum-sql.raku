@@ -34,6 +34,7 @@ create table if not exists Spectrums (
             , spectrum
             , nb_mol
             , transform
+            , canonical_number
             );
 SQL
 }
@@ -44,8 +45,8 @@ sub purge-Spectrums(Str $cf) {
 
 sub fill-Spectrums(Str $cf) {
   my $sth = $dbh.execute(q:to/SQL/, $cf);
-  insert into Spectrums (config, spectrum, nb_mol, transform)
-       select   max(config), max(spectrum), count(*) as nb, '??'
+  insert into Spectrums (config, spectrum, nb_mol, transform, canonical_number)
+       select   max(config), max(spectrum), count(*) as nb, '??', 0
        from     Molecules
        where    config = ?
        group by spectrum

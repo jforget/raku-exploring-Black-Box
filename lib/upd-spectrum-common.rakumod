@@ -43,7 +43,8 @@ sub upd-spectrum (Str $config, %dispatch) is export {
       }
       else {
         say "change on spectrum $cf $mol<spectrum> $spectrum-doc<transform> $mol<transform>";
-	$spectrum-doc<transform> = $mol<transform>;
+        $spectrum-doc<transform>        = $mol<transform>;
+        $spectrum-doc<canonical-number> = $canonical-number;
         my $callback = %dispatch<update-spectrum>;
         $callback($spectrum-doc);
       }

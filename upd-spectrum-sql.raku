@@ -67,8 +67,9 @@ SQL
     die "Unknown spectrum $cf $spectrum";
   }
   my BSON::Document $spec-doc .= new;
-  for $doc.keys -> $key {
-    $spec-doc{$key} = $doc{$key};
+  for $doc.keys -> $key-sql {
+    my $key-doc = $key-sql.trans('_' => '-');
+    $spec-doc{$key-doc} = $doc{$key-sql};
   }
   return $spec-doc;
 
@@ -77,11 +78,13 @@ SQL
 sub update-spectrum(BSON::Document $spectrum) {
   $dbh.execute(q:to/SQL/
   update Spectrums
-  set    transform = ?
+  set    transform        = ?
+  ,      canonical_number = ?
   where  config   = ?
     and  spectrum = ?
 SQL
       , $spectrum<transform>
+      , $spectrum<canonical-number>
       , $spectrum<config>
       , $spectrum<spectrum>
      );
