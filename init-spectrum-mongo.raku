@@ -70,10 +70,11 @@ EOF
   my $proc = run($mongo, $dbname, '--eval', $aggreg, :out);
   for $proc.out.lines -> $s {
     if $s ~~ /^ ('A' \d+ '_B' \d+) \s+ (\S+) \s+ (\d+) $/ {
-      my BSON::Document $spectrum .= new: ( config    => ~ $0
-                                          , spectrum  => ~ $1
-                                          , nb_mol    => + $2
-                                          , transform => '??'
+      my BSON::Document $spectrum .= new: ( config           => ~ $0
+                                          , spectrum         => ~ $1
+                                          , nb_mol           => + $2
+                                          , transform        => '??'
+                                          , canonical-number => 0
                                           );
       my BSON::Document $req;
       my BSON::Document $result;
