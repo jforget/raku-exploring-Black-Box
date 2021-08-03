@@ -16,7 +16,6 @@ use BSON::Document;
 use MongoDB::Client;
 use MongoDB::Database;
 use MongoDB::Collection;
-use JSON::Class;
 use explore-common;
 
 my MongoDB::Client     $client        .= new(:uri('mongodb://'));
