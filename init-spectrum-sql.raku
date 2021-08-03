@@ -2,7 +2,7 @@
 # -*- encoding: utf-8; indent-tabs-mode: nil -*-
 #
 #
-#     Initialisation de la table Spectrums pour un configuration de Black Box (base de données SQLite)
+#     Initialisation de la table Spectrums pour une configuration de Black Box (base de données SQLite)
 #     Initialising the Spectrums table for a Black Box configuration (SQLite database)
 #     Copyright (C) 2021 Jean Forget
 #
@@ -19,6 +19,9 @@ my $dbh = DBIish.connect('SQLite', database => dbname());
 
 sub MAIN (Str $config) {
   my $cf = $config.uc;
+  unless $cf ~~ / ^ 'A' <[0..9]> ** 1..2 '_B' <[0..9]> $ / {
+    die "Invalid configuration $cf";
+  }
   create-table();
   purge-Spectrums($cf);
   fill-Spectrums($cf);
