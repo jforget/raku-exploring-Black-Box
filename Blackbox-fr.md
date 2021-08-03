@@ -893,7 +893,7 @@ bidon. Cela se fait en mettant à profit la puissance de la clause `group by` en
 SQL ou de la fonction  `aggregate` de MongoDB.
 
 Ensuite, on rectifie le champ `transform`. Pour ce faire, le programme
-extrait toutes les molécules canoniques (`transform: 'id'`) associée à
+extrait toutes les molécules canoniques (`transform: 'id'`) associées à
 un spectre de la table Spectrums. Puis le programme lit ce spectre.
 S'il n'a pas encoré été modifié, alors le programme lit le groupe d'énantiomères
 complet de la molécule traitée, lit les spectres correspondants dans la
