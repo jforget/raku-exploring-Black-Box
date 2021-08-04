@@ -19,9 +19,9 @@ use BSON::Document;
 my Int $nb_atoms;
 my Int $width;
 my Int $E-or-S; # coordinate of the Eastern-most peripheral column and of the Southern-most peripheral line
-my @rotation90;
-my @symm-h;
-my @symm-diag;
+my Int @rotation90;
+my Int @symm-h;
+my Int @symm-diag;
 
 sub explore (Str $config, %dispatch) is export {
   my Str $cf = $config.uc;
@@ -47,7 +47,7 @@ sub explore (Str $config, %dispatch) is export {
 
   say "$nb_atoms atoms in a $width × $width square";
 
-  my $message-period = 10 max (($configuration<nb_mol> / 100).floor);
+  my Int $message-period = 10 max (($configuration<nb_mol> / 100).floor);
 
   my Str $molecule;
   $call-back = %dispatch<last-number>;
@@ -102,6 +102,7 @@ sub explore (Str $config, %dispatch) is export {
     my Str $mol3 = substr($molecule, $pos + 2);
     $molecule = $mol1 ~ '-O' ~ $mol3.flip;
   }
+  printf("%s     %6d of %6d: %5.1f %%\n", time-stamp(), $number, $configuration<nb_mol>, (100 × $number / $configuration<nb_mol>).Num);
 
 }
 
@@ -198,8 +199,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , dh2                => time-stamp
   );
 
-  my @boxes = $molecule.comb;
-  my $spectrum-diag1 = $spectrum.flip;
+  my Str @boxes = $molecule.comb;
+  my Str $spectrum-diag1 = $spectrum.flip;
   my %group;
   %group{$molecule} = $canonical-molecule;
 
@@ -364,7 +365,7 @@ sub ray (@box, Int $entry) {
     return '&', 0, 0;
   }
 
-  my $res = '?';
+  my $res = '?'; # No type, because it can be a Str ('@' or '&') for absorbed / reflected rays, or an Int for out-coming rays
   my Int $length;
   my Int $turns = 0;
   # fail-safe: using a loop with a fixed number of iterations, although
@@ -431,7 +432,7 @@ sub ray (@box, Int $entry) {
 
 sub normalise(Str $str) {
   my %trans   = '@' => '@', '&' =>'&';
-  my $symbol  = 'a';
+  my Str $symbol  = 'a';
   my @letters = $str.comb;
   for @letters -> $letter is rw {
     unless %trans{$letter} {
