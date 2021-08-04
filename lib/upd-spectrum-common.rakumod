@@ -28,9 +28,9 @@ sub upd-spectrum (Str $config, %dispatch) is export {
   $width    = + $1;
 
   my $callback = %dispatch<canonical-molecules>;
-  my @numbers = $callback($cf);
+  my Int @numbers = $callback($cf);
 
-  for @numbers -> $canonical-number {
+  for @numbers -> Int $canonical-number {
     my $callback = %dispatch<enantiomer-group>;
     my @enantiomer-group = $callback($cf, $canonical-number);
     #say @enantiomer-group;
