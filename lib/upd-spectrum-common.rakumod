@@ -21,7 +21,7 @@ my Int $width;
 
 sub upd-spectrum (Str $config, %dispatch) is export {
   my Str $cf = $config.uc;
-  unless $cf ~~ /^ 'A' (\d+) '_B' (\d) $ / {
+  unless $cf ~~ / ^ 'A' (<[0..9]> ** 1..2) '_B' (<[0..9]>) $ / {
     die "Wrong configuration $config";
   }
   $nb_atoms = + $0;
@@ -33,7 +33,9 @@ sub upd-spectrum (Str $config, %dispatch) is export {
   for @numbers -> Int $canonical-number {
     my $callback = %dispatch<enantiomer-group>;
     my @enantiomer-group = $callback($cf, $canonical-number);
+    # No type for @enantiomer-group: array of hashes for SQL, array of BSON::Document for MongoDB
     #say @enantiomer-group;
+
     say '-------', $canonical-number;
     for @enantiomer-group -> $mol {
       my $callback = %dispatch<read-spectrum>;
@@ -50,7 +52,6 @@ sub upd-spectrum (Str $config, %dispatch) is export {
       }
     }
   }
-
 }
 
 
@@ -64,7 +65,7 @@ upd-spectrum.rakumod -- Finding symmetries between spectrums
 
 =head1 DESCRIPTION
 
-This module  is used by  the programmes whic updates  the C<transform>
+This module is  used by the programmes which  updates the C<transform>
 field of  the C<Spectrums> records  / documents,  so we can  see which
 spectrum is  related to which other  spectrum through a rotation  or a
 symmetry.

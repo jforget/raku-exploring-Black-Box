@@ -27,7 +27,9 @@ my %dispatch = canonical-molecules => &canonical-molecules
 
 sub MAIN (Str $config) {
   my $cf = $config.uc;
+  $dbh.execute('begin transaction');
   upd-spectrum($cf, %dispatch);
+  $dbh.execute('commit transaction');
 }
 
 sub canonical-molecules(Str $cf) {
@@ -40,6 +42,7 @@ where  config = ?
                     from   Spectrums
                     where  config = ?
                       and  transform = '??')
+order by number
 SQL
   return $sth.allrows.map({ $_[0] });
 }
