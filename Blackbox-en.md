@@ -829,7 +829,7 @@ we will have these two records in the Spectrums table:
 
 ```
 { config: "A4_B6",
-  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  spectrum: '@&@&@&@a@bcda@b@&@dc&@&@',
   nb-mol: 2,
   transform: 'id',
   canonical-number: 868
