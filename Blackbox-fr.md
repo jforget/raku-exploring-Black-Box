@@ -459,7 +459,7 @@ L'enregistrement de la base de données, en syntaxe JSON, ressemble à :
 { config: "A2_B4",
   number: 2,
   molecule: 'O-O-------------',
-  spectrum: '@&12@&@3213@&@&@',
+  spectrum: '@&ab@&@cbac@&@&@',
   absorbed-number:      6,
   absorbed-max-length:  3,
   absorbed-max-turns:   0,
@@ -610,7 +610,7 @@ les statistiques.
   number: 2,
   canonical-number: 2,
   molecule: 'O-O-------------',
-  spectrum: '@&12@&@3213@&@&@',
+  spectrum: '@&ab@&@cbac@&@&@',
   transform: 'id',
   [...]
 }
@@ -878,7 +878,7 @@ cela génère deux enregistrements dans la table Spectrums :
 
 ```
 { config: "A4_B6",
-  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  spectrum: '@&@&@&@a@bcda@b@&@dc&@&@',
   nb-mol: 2,
   transform: 'id',
   canonical-number: 868
