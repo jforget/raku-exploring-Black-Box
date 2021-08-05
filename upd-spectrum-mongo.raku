@@ -50,6 +50,7 @@ sub canonical-molecules(Str $cf) {
                 .forEach(function(doc) { spc.push(doc.spectrum) });
     //print('trce ' + spc);
     db.Molecules.find({config: cf, transform: 'id', spectrum: { '$in': spc }})
+                .sort({number: 1})
                 .forEach(function(doc) { print('data ' + doc.number) });
 EOF
   # $cf has been checked, validated ans sanitised in calling function upd-spectrum.
@@ -58,7 +59,7 @@ EOF
 
   my Int @number;
   my $proc = run($mongo, $dbname, '--eval', $script, :out);
-  for $proc.out.lines -> $line {
+  for $proc.out.lines -> Str $line {
     if $line ~~ /^ 'data' \s+ (\d+) $/ {
       @number.push( + $0 );
     }
@@ -67,7 +68,7 @@ EOF
     }
   }
   say @number;
-  return ();
+  return @number;
 }
 
 sub enantiomer-group(Str $cf, Int $canonical-number) {
