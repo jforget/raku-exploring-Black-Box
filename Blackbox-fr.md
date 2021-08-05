@@ -266,8 +266,8 @@ des rotations ou symétries du carré 8×8.
 Dans un groupe d'énantiomères, je définis la "molécule canonique" comme étant
 celle qui est identifiée par le plus petit numéro, c'est-à-dire la première
 à être traitée par le programme d'exploration. Ce terme n'a pas de correspondance
-dans le monde réel de la chimie 3-D, mais il en faut en. Donc ce sera
-"molécule canonique".
+dans le monde réel de la chimie 3-D, mais il en faut en pour mon projet
+Black Box. Donc ce sera "molécule canonique".
 
 Découpage en projets élémentaires
 ---------------------------------
@@ -327,16 +327,16 @@ Les 9 chiffres sont insuffisants pour certaines spectres. Et
 même si l'on ajoute le "0", cela reste insuffisant. Exemple (sans le "0") :
 
 ```
-   8 2 1 H $ * ! :
- 1 - - - - - - - - $
- 2 - - - O - - - - *
+   8 2 1 H
+ 1 - - - - - - - -
+ 2 - - - O - - - -
  H - - O - O - - - H
- 3 - - - O - - - - ?
+ 3 - - - O - - - -
  4 - - - - - - - - 9
  5 - - - - - - - - 5
  6 - - - - - - - - 6
  7 - - - - - - - - 7
-   8 3 4 H 9 ? ! :
+   8 3 4 H 9
 
 There are 4 balls in the box
 ```
@@ -493,6 +493,8 @@ ci-dessous montrent que l'on peut avoir 14 rayons sortants
 plus 4 rayons absorbés, ou bien 4 rayons sortants, plus 16
 rayons absorbés et 8 rayons réfléchis.
 
+Voici des exemples pourla situation avec un maximum de rayons
+qui sortent et pour la situation inverse.
 
 ```
    h b a @ n m k l         & @ & c d @ @ @
@@ -801,14 +803,14 @@ Example avec une configuration A4\_B6. Nous avons ces deux molécules,
 avec des spectres identiques :
 
 ```
-   @ & @ & @ &             @ & @ & @ &
- @ O - - - O - @         @ - - O - O - @
- & - - - - - - 4         & - - - - - - 4
- @ O - O - - - @         @ O - O - - - @
- & - - - - - - 3         & - - - - - - 3
- 1 - - - - - - 1         1 - - - - - - 1
- 2 - - - - - - 2         2 - - - - - - 2
-   @ & @ 3 @ 4             @ & @ 3 @ 4
+   @ & @ & c d             @ & @ & c d
+ @ O - O - - - @         @ - - O - - - @
+ & - - - - - - &         & - - - - - - &
+ @ - - O - - - @         @ O - O - - - @
+ & - - - - - - b         & - - - - - - b
+ @ O - - - - - @         @ O - - - - - @
+ & - - - - - - a         & - - - - - - a
+   @ a @ b c d             @ a @ b c d
 
 There are 4 balls in the box
 ```
@@ -817,18 +819,18 @@ La table Molecules contient alors :
 
 ```
 { config: "A4_B6",
-  number: 1234,
-  canonical-number: 1234,
-  molecule: 'O---O-------O-O---------------------',
-  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  number: 868,
+  canonical-number: 868,
+  molecule: 'O-O-----------O---------O-----------',
+  spectrum: '@&@&@&@a@bcda@b@&@dc&@&@',
   transform: 'id',
   [...]
 }
 { config: "A4_B6",
-  number: 2345,
-  canonical-number: 2345,
-  molecule: '--O-O-------O-O---------------------',
-  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  number: 15993,
+  canonical-number: 7361,
+  molecule: '--O---------O-O---------O-----------',
+  spectrum: '@&@&@&@a@bcda@b@&@dc&@&@',
   transform: 'id',
   [...]
 }
@@ -838,9 +840,10 @@ et la table Spectrums contient :
 
 ```
 { config: "A4_B6",
-  spectrum: '@&@&12@&@3@4213@4@&@&@&@',
+  spectrum: '@&@&@&@a@bcda@b@&@dc&@&@',
   nb-mol: 2,
-  transform: 'id'
+  transform: 'id',
+  canonical-number: 868
 }
 ```
 
@@ -859,14 +862,14 @@ examiner pour avoir un aperçu complet.
 Ainsi, avec les quatre molécules :
 
 ```
-   @ & @ & @ &             @ & @ & @ &             4 @ 3 @ & @             4 @ 3 @ & @  
- @ O - - - O - @         @ - - O - O - @         1 - - - - - - 1         1 - - - - - - 1
- & - - - - - - 4         & - - - - - - 4         2 - - - - - - 2         2 - - - - - - 2
- @ O - O - - - @         @ O - O - - - @         3 - - - - - - &         3 - - - - - - &
- & - - - - - - 3         & - - - - - - 3         @ - - - O - O @         @ - - - O - O @
- 1 - - - - - - 1         1 - - - - - - 1         4 - - - - - - &         4 - - - - - - &
- 2 - - - - - - 2         2 - - - - - - 2         @ - O - O - - @         @ - O - - - O @
-   @ & @ 3 @ 4             @ & @ 3 @ 4             & @ & @ & @             & @ & @ & @  
+   @ & @ & c d             @ & @ & c d             c d b @ a @             c d b @ a @  
+ @ O - O - - - @         @ - - O - - - @         a - - - - - - &         a - - - - - - 1
+ & - - - - - - &         & - - - - - - &         @ - - - - - O @         @ - - - - - O 2
+ @ - - O - - - @         @ O - O - - - @         b - - - - - - &         b - - - - - - &
+ & - - - - - - b         & - - - - - - b         @ - - - O - O @         @ - - - O - - @
+ @ O - - - - - @         @ O - - - - - @         & - - - - - - &         & - - - - - - &
+ & - - - - - - a         & - - - - - - a         @ - - - O - - @         @ - - - O - O @
+   @ a @ b c d             @ a @ b c d             c d & @ & @             c d & @ & @  
 
 There are 4 balls in the box
 ```
@@ -877,12 +880,14 @@ cela génère deux enregistrements dans la table Spectrums :
 { config: "A4_B6",
   spectrum: '@&@&12@&@3@4213@4@&@&@&@',
   nb-mol: 2,
-  transform: 'id'
+  transform: 'id',
+  canonical-number: 868
 }
 { config: "A4_B6",
-  spectrum: '123@4@&@&@&@@&@&21@&@3@4',
+  spectrum: 'a@b@&@cd&@&@@&@&@&@a@bdc',
   nb-mol: 2,
-  transform: 'rot180'
+  transform: 'rot180',
+  canonical-number: 868
 }
 ```
 
