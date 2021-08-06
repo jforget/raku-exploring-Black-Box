@@ -298,7 +298,7 @@ are numbered 1-to-8. Why not start at 0? Because line 0 and column
 the additional line 9 and column 9. An atom is represented by a "heavy"
 character, such as "O", "X" or "*", while an empty box is represented
 by a "light" character, such as a space, a dot or a hyphen.
-Actually, I have used the Emacs notation, awith a "O" and an hyphen.
+Actually, I have used the Emacs notation, with a "O" and an hyphen.
 
 For the peripheral area (lines and columns 0 and 9), I will not use
 Emacs' notation. Firstly, the rays which come out will be shown as
@@ -463,9 +463,8 @@ ray shot from position 1 comes out in position 24, then the ray shot from
 position 24 would come out in position 1. For configuration A4\_B8, you need
 to shoot only 18 to 28 rays. See the examples below: either 14 coming-out rays
 and 4 absorbed rays, or 4 coming-out rays, 16 absorbed rays and 8 reflected rays.
-
-Here are an example of a game with the highest number of out-coming rays
-and a game with the opposite situation.
+These examples show a situation with the maximim number of out-coming rays
+and a situation with the minimum number.
 
 ```
    h b a @ n m k l         & @ & c d @ @ @  
@@ -805,7 +804,7 @@ and the Spectrums table will contain:
 
 Which means that for this spectrum, there are two molecules.
 
-Why the `transform` attribute? When two asymmetrical molecules
+Why the `transform` and `canonical-number` attributes? When two asymmetrical molecules
 form a spectral group, the same happens with their respective enantiomers.
 So we have 8 spectrums which are rotations / symmetries of each other.
 We may want to study one of them, but then we would be bored studying
@@ -850,12 +849,12 @@ without bothering with the `transform` column, which will be initialised with
 a dummy value. This will be acheived by harnessing the power of the `group by`
 SQL clause or of the MongoDB function `aggregate`.
 
-Then, we fix the `transform` field. For this, the programme scans all
+Then, we fix the `transform` and `canonical-number` attributes. For this, the programme scans all
 canonical molecules (`transform: 'id'`) whose spectrum exists in the
 Spectrums table. Then the programme reads this spectrum record. If 
 the spectrum record is not already updated, the programmes reads the
 whole enantiomer group of the current molecule, and the corresponding
-records from the Spectrums table, copies the `transform` value from the
+records from the Spectrums table, copies the `transform` and `canonical-number` values from the
 molecule to the spectrum and updates the spectrum record.
 
 Physical Implementation

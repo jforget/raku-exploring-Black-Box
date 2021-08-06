@@ -495,11 +495,8 @@ rayon lancé en 24 sera ressorti en 1. Pour la configuration A4\_B8,
 il suffira de lancer entre 18 et 28 rayons. Les exemples
 ci-dessous montrent que l'on peut avoir 14 rayons sortants
 plus 4 rayons absorbés, ou bien 4 rayons sortants, plus 16
-rayons absorbés et 8 rayons réfléchis.
-
-Voici des exemples pourla situation avec un maximum de rayons
-qui sortent et pour la situation inverse.
-
+rayons absorbés et 8 rayons réfléchis. Ils donnent les situations
+avec le maximum ou le minimum de rayons sortants.
 ```
    h b a @ n m k l         & @ & c d @ @ @
  a - - - - - - - - n     @ - O - - - - - - &
@@ -897,16 +894,16 @@ cela génère deux enregistrements dans la table Spectrums :
 
 Concrètement, comment la table Spectrums est-elle alimentée ?
 Dans un premier temps, on crée tous les enregistrements sans s'intéresser
-au champ `transform`, qui sera provisoirement alimenté avec une valeur
+aux propriétés `transform` et `canonical-number`, qui seront provisoirement alimentées avec une valeur
 bidon. Cela se fait en mettant à profit la puissance de la clause `group by` en
 SQL ou de la fonction  `aggregate` de MongoDB.
 
-Ensuite, on rectifie le champ `transform`. Pour ce faire, le programme
+Ensuite, on rectifie les propriétés `transform` et `canonical-number`. Pour ce faire, le programme
 extrait toutes les molécules canoniques (`transform: 'id'`) associées à
 un spectre de la table Spectrums. Puis le programme lit ce spectre.
 S'il n'a pas encoré été modifié, alors le programme lit le groupe d'énantiomères
 complet de la molécule traitée, lit les spectres correspondants dans la
-table Spectrums, copie le champ `transform` de chaque molécule vers le spectre
+table Spectrums, copie le champ `transform` et le champ `canonical-number` de chaque molécule vers le spectre
 associé et modifie cet enregistrement.
 
 
@@ -1090,7 +1087,7 @@ Conclusion
 J'écris cette conclusion après avoir lancé l'exploration sur une configuration
 A4\_B6. Je n'ai pas encore essayé la configuration standard A4\_B8, mais 
 les conclusions tirées de la configuration A4\_B6 sont intéressantes et peuvent
-en grande partie s'étendre à la configuration A4\_B8.
+en grande partie s'extrapoler à la configuration A4\_B8.
 
 Avant de commencer le développement de ces programmes, je connaissais deux spectres
 ambigus pour la configuration A4\_B8 (en fait 16, à cause des rotations et des symétries).
