@@ -201,6 +201,10 @@ Nous appellerons donc ce contenu une _molécule_.
 De la même manière, tous les 32 rayons lancés depuis les 32 positions périphériques
 de Black Box sont réunis sous le terme _spectre_.
 
+La métaphore a ses limites. Dans la vraie vie, un spectre est tout un tas
+de rayons sur une large plage de longueurs d'onde. Ici, un spectre est tout un
+tas de rayons sur une large plage de positions géométriques.
+
 Avec ces précisions de vocabulaire, le but principal de ce projet
 est donc de trouver deux molécules différentes avec le même spectre.
 
@@ -1079,3 +1083,51 @@ n'y ait pas un `commit` en plein milieu du traitement d'un groupe d'énantiomèr
 
 Comme j'avais déjà planifié la mise  en place les `begin transaction` / `commit transaction`,
 je n'ai pas cherché à programmer la méthode 1 ou la méthode 2.
+
+Conclusion
+==========
+
+J'écris cette conclusion après avoir lancé l'exploration sur une configuration
+A4\_B6. Je n'ai pas encore essayé la configuration standard A4\_B8, mais 
+les conclusions tirées de la configuration A4\_B6 sont intéressantes et peuvent
+en grande partie s'étendre à la configuration A4\_B8.
+
+Avant de commencer le développement de ces programmes, je connaissais deux spectres
+ambigus pour la configuration A4\_B8 (en fait 16, à cause des rotations et des symétries).
+Ces deux (ou 16) spectres offrent chacun deux solutions. Je m'attendais à en trouver
+d'autres avec deux solutions, une poignée avec trois solutions et peut-être, vraiment
+peut-être, un avec quatre solutions (en fait 8 compte tenu des rotations et symétries).
+
+Voici ce que j'ai trouvé pour la configuration A4\_B6 :
+```
+nombre de molécules     spectres        spectres        molécules
+par spectre           sans rot / sym  avec rot / sym  avec rot / sym
+       2                    89            696             1392
+       3                     6             36              108
+       4                     4             24               96
+       5                     1              8               40
+total                      100            764             1636
+```
+J'ai vérifié les groupes spectraux à 4 ou 5 molécules et j'ai constaté qu'ils
+pouvaient sans problème s'étendre à une configuration A4\_B8, en insérant
+deux lignes vides et deux colonnes vides au bon endroit. Je pense qu'il en
+va de même avec la plupart des groupes spectraux à 2 ou 3 molécules. Il est possible
+qu'il y ait de nouveaux cas d'ambiguïté dans A4\_B8 qui n'auraient pas
+d'équivalents dans A4\_B6. Si tel est le cas, je pense qu'ils seront en
+nombre très limité.
+
+Toujours est-il que l'on peut compter sur vraisemblablement au moins 750
+spectres et 1600 molécules pour la configuration A4\_B8. Je ne m'attendais
+pas à un tel nombre.
+
+Également, jusqu'à présent, je ne connaissais que des cas de figure où
+les deux molécules solutions d'un jeu différaient l'une de l'autre par un
+seul atome. En d'autres termes, des molécules qui pouvaient occasionner
+un malus de 5 points. Grâce à mes programmes, j'ai obtenu des groupes spectraux
+dans lesquels il y a au moins deux molécules qui diffèrent l'une de l'autre
+par deux atomes, ce qui donnerait un malus de 10 points.
+
+Pour les statistiques sur la longueur des trajets et le nombre de virages,
+il est impossible d'extrapoler les résultats de la configuration A4\_B6
+à ceux que l'on aurait avec la configuration A4\_B8. Mais c'est un but secondaire.
+Le but primaire est atteint rien qu'en analysant la configuration A4\_B6.

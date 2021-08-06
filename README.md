@@ -11,7 +11,8 @@ Collection.
 So the  project generates all  635376 possible atoms  combinations and
 computes statistics  on these  combinations. For a  smaller processing
 time, you  can reduce the  number of atoms or  the size of  the square
-board.
+board. For example,  you can examine all combinations of  3 atoms in a
+4×4 box (only 560 of them).
 
 Installation
 ============

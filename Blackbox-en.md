@@ -189,6 +189,10 @@ position. So we will call each configuration a _molecule_.
 Likewise, all 32 rays are grouped together in what is called
 a _spectrum_.
 
+The metaphor has its limits. In the real world, a spectrum is a bunch
+of rays over a wide range of wavelengths. Here, a spectrum is a bunch
+or rays over a wide range of geometric positions.
+
 With these definitions, the main purpose of this project is to
 find different molecules with the same spectrum.
 
@@ -378,7 +382,6 @@ as a 32-char string. The traditional Black-Box game uses this
  8 - - - - - - - - 17 
    9 1 1 1 1 1 1 1
      0 1 2 3 4 5 6
-
 ```
 
 The 32-char string will store the peripheral positions in the
@@ -1031,3 +1034,49 @@ complete.
 
 Since I already had the intention to add `begin transaction` / `commit transaction`,
 I did not tried the other fixes.
+
+Conclusion
+==========
+
+I write this conclusion after running my programmes on the A4\_B6 configuration.
+I have not yet run the programmes on the A4\_B8 standard configuration, but
+the findings on the A4\_B6 configuration are interesting and in most cases can
+be extended to the A4\_B8 configuration.
+
+Before starting to develop this project, I knew of two ambiguous spectrums
+(actually 16 spectrums, because of symmetries and rotations). Each one would
+lead to two molecules. So I was expecting to find several other spectrums with
+2 molecules, a few ones with 3 molecules and possibly, but hardly probably, one
+spectrum with 4 molecules (actually 8 spectrums because of symmetries and rotations).
+
+Here is what I found with configuration A4\_B6:
+```
+number of molecules     spectrums       spectrums       molecules
+for each spectrum     w/o  rot / sym  with rot / sym  with rot / sym
+       2                    89            696             1392
+       3                     6             36              108
+       4                     4             24               96
+       5                     1              8               40
+total                      100            764             1636
+```
+I checked the spectral groups with 4 or 5 molecules and I found they
+can easily be extrapolated to the A4\_B8 configuration, by inserting
+two empty lines and two empty columns at the right place. I think this
+is the case also for most spectral groups with 2 or 3 molecules.
+It may also happen that the A4\_B8 will give a few more ambiguous cases,
+with no corresponding case in the A4\_B6 configuration, but in my opinion,
+this will be very rare.
+
+Anyhow, we can suppose that the A4\_B8 configuration will provide at least
+750 spectrums and 1600 molecules leading to ambiguity. I did not expect
+such a big number.
+
+Also, up to now, I had only found spectral groups where the molecules
+would differ by only one atom, that is, which would give a 5-point penalty
+to the player. With the programmes, I have found a few spectral groups where
+two molecules differ by two atoms, for a 10-point penalty.
+
+About statistics on the lengths of paths and the number of turns, we cannot
+extrapolate the A4\_B6 findings to the A4\_B8 configuration. But this is
+a secondary topic. The main purpose of the project is reached with the A4\_B6 configuration.
+
