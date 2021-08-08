@@ -7,7 +7,8 @@ This project is an complete exploration of the game
 Black Box (with 4 atoms). This is not yet another
 implementation of the game. When I just want to play
 the game, I use Emacs or Simon Tatham's Puzzles Collection.
-
+This project produces a database which can be used to
+produce statistics about Black Box.
 
 The main purpose of the project
 -------------------------------
@@ -16,7 +17,12 @@ The main purpose of the project
 is a puzzle game in which the hider player sets
 up 4 or 5 atoms in a black box and in which the
 seeker player shoots rays from the sides of the black
-box to locate the hidden atoms. This is also a luck game, because there are
+box to locate the hidden atoms.
+As all deduction games, there is a luck factor because
+some answers from the hider player can be more interesting than
+others and thus lead to a shorter solution. Or the answers are
+more mundane and give fewer informations to the seeker player.
+Another luck factor is that there are 
 some configurations where the seeker player cannot
 guess all the atom positions, even if he has shot all
 possible rays from the outside of the box. A well-known
@@ -51,7 +57,7 @@ but not in the 4-atom variant. This opinion is wrong.
 Ambiguous 4-atom positions exists, just read my
 answer to the forum discussion.
 
-For the moment, in the 4-atom game, I had found only
+For the moment (before writing the programmes), in the 4-atom game, I had found only
 situations where the ambiguous situations are grouped
 by two. The purpose of this project is to determine
 whether situations exist in groups of 3 or 4.
@@ -280,9 +286,11 @@ have the key "A4\_B8".
 
 The project is divided in two parts. The first part will explore all the 635376 possible
 molecules and store them, compute their spectrums (or spectra?) and store them into a database.
-The programmes from the second part read this database and display
-synthetic results in a pleasing way (possibly in HTML form with convenient links;
-or I may limit myself to text output).
+The programmes from the second part read this database,
+extract the spectrums associated with several different molecules
+and store these spectrums into another database table.
+Lastly, a programme extract data from the database and
+displays these data in a readable fashion.
 
 About the programme from the first part: the programme will not process
 all 635376 molecules in one go. It will be able to stop at any moment
@@ -1078,4 +1086,10 @@ two molecules differ by two atoms, for a 10-point penalty.
 About statistics on the lengths of paths and the number of turns, we cannot
 extrapolate the A4\_B6 findings to the A4\_B8 configuration. But this is
 a secondary topic. The main purpose of the project is reached with the A4\_B6 configuration.
+
+License
+=======
+
+This text is licensed under the terms of Creative Commons, with
+attribution and share-alike (CC-BY-SA).
 

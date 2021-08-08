@@ -4,10 +4,11 @@ Présentation
 ============
 
 Ce projet est une exploration exhaustive
-du jeu Black Box avec 4 atomes. Ce n'est pas
-une _n_+1 ème implémentation du jeu. Pour jouer à Black Box,
+du jeu Black Box avec 4 atomes. Il ne s'agit pas
+d'une _n_+1 ème implémentation du jeu. Pour jouer à Black Box,
 j'utilise soit Emacs, soit la collection de
-jeux de Simon Tatham.
+jeux de Simon Tatham. Il s'agit plutôt d'alimenter une base
+de données permettant de produire des statistiques sur le jeu Black Box.
 
 But principal du projet
 -----------------------
@@ -18,8 +19,11 @@ le joueur "codeur" place 4 ou 5 atomes dans
 une boîte noire et où le joueur "décodeur" tente
 de les localiser en lançant des rayons depuis
 la périphérie de cette boîte noire.
-C'est aussi un jeu de hasard dans la mesure
-où certaines configurations d'atomes
+C'est bien sûr un jeu de hasard dans la mesure où selon
+la qualité des réponses, la partie sera gagnée rapidement
+ou nécessitera un plus long temps d'analyse.
+C'est aussi un jeu de hasard car
+certaines configurations d'atomes
 sont complètement indiscernables par le décodeur,
 même s'il a utilisé toutes les possibilités
 pour lancer les rayons. Un exemple très connu est
@@ -59,7 +63,7 @@ situations indiscernables à 4 atomes, ainsi
 que je l'ai exposé dans ma réponse à la
 discussion sus-mentionnée.
 
-Pour l'instant, dans le cadre du jeu à 4 atomes,
+Pour l'instant (avant l'écriture des programmes), dans le cadre du jeu à 4 atomes,
 je ne connais que des cas où les situations
 indiscernables vont 2 par 2. Le but de ce projet est de voir
 s'il existe des cas plus complexes avec 3 ou 4 situations
@@ -296,9 +300,15 @@ sera identifiée par "A4\_B8".
 Le projet est divisé en deux parties. Un premier programme
 examine les 635376 molécules, calcule leur spectre et les stocke
 dans une base de données. Dans la deuxième partie,
+les programmes examinent les spectres obtenus et cherchent
+ceux qui sont associés à plusieurs molécules. Les spectres
+sont alors stockés dans une autre table de la base de données.
+Enfin, un programme permet d'extraire des informations de la base
+de données et de les afficher sous forme intelligible.
 quelques programmes accèdent à la base de données
-et génèrent des fichiers textes ou des pages web affichant les données sous
-forme synthétique. Le premier programme ne traitera pas
+
+Remarque : compte tenu du temps possible de taitement,
+le premier programme ne traitera pas forcément
 les 635376 molécules d'une traite. Il pourra
 s'interrompre à n'importe quel moment et reprendre
 là où il s'était arrêté.
@@ -1128,3 +1138,9 @@ Pour les statistiques sur la longueur des trajets et le nombre de virages,
 il est impossible d'extrapoler les résultats de la configuration A4\_B6
 à ceux que l'on aurait avec la configuration A4\_B8. Mais c'est un but secondaire.
 Le but primaire est atteint rien qu'en analysant la configuration A4\_B6.
+
+Licence
+=======
+
+Ce texte est diffusé avec la licence Creative Commons Attribution -
+Partage dans les Mêmes Conditions CC BY-SA
