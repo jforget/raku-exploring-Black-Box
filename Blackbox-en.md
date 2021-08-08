@@ -289,8 +289,8 @@ molecules and store them, compute their spectrums (or spectra?) and store them i
 The programmes from the second part read this database,
 extract the spectrums associated with several different molecules
 and store these spectrums into another database table.
-Lastly, a programme extract data from the database and
-displays these data in a readable fashion.
+Lastly, a programme will extract data from the database and
+display these data in a readable fashion.
 
 About the programme from the first part: the programme will not process
 all 635376 molecules in one go. It will be able to stop at any moment
