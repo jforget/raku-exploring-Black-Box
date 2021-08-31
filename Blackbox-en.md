@@ -7,7 +7,7 @@ This project is an complete exploration of the game
 Black Box (with 4 atoms). This is not yet another
 implementation of the game. When I just want to play
 the game, I use Emacs or Simon Tatham's Puzzles Collection.
-This project produces a database which can be used to
+This project feeds a database which can be used to
 produce statistics about Black Box.
 
 The main purpose of the project
@@ -284,15 +284,25 @@ A configuration will be identified by the An\_Bp code, where _n_ is the number o
 atoms and _p_ is the size of the box. So the "normal" configuration will
 have the key "A4\_B8".
 
-The project is divided in two parts. The first part will explore all the 635376 possible
-molecules and store them, compute their spectrums (or spectra?) and store them into a database.
-The programmes from the second part read this database,
-extract the spectrums associated with several different molecules
-and store these spectrums into another database table.
-Lastly, a programme will extract data from the database and
-display these data in a readable fashion.
+The project includes several programmes.
 
-About the programme from the first part: the programme will not process
+1. The first programme is initialisation, which cleans up the contents of the
+database for a given configuration.
+
+2. The exploration programme, which generates all possible molecules for
+a given configuration, computes the spectrum for each molecule and store
+them into the database.
+
+3. A programme summarising the findings of the exploration programme, extracting
+the spectrums which appear in two molecules or more.
+
+4. A programme updating the spectrums created by the previous programme, filling the
+attributes that could not be computed before.
+
+5. A programme extracting some molecules from the database and displaying
+in a human-friendly fashion.
+
+About the exploration programme: the programme will not process
 all 635376 molecules in one go. It will be able to stop at any moment
 and restart later from the point where it stopped.
 
@@ -466,12 +476,12 @@ First Optimisation
 ------------------
 
 When I write that the programme will shoot all 32 possible rays, this is not
-quite true. The rays obey to the "invariant return path of light". If the
+quite true. The rays follow the "invariant return path of light". If the
 ray shot from position 1 comes out in position 24, then the ray shot from
-position 24 would come out in position 1. For configuration A4\_B8, you need
+position 24 will come out in position 1. For configuration A4\_B8, you need
 to shoot only 18 to 28 rays. See the examples below: either 14 coming-out rays
 and 4 absorbed rays, or 4 coming-out rays, 16 absorbed rays and 8 reflected rays.
-These examples show a situation with the maximim number of out-coming rays
+These examples show a situation with the maximum number of out-coming rays
 and a situation with the minimum number.
 
 ```
@@ -619,7 +629,7 @@ At this time, the record will be updated to:
 Exhaustive Search of All the Molecules
 --------------------------------------
 
-in the extraction programme, the main loop extracts all 635376
+In the exploration programme, the main loop extracts all 635376
 molecules. So why bother about rotations and symmetries?
 Actually, on each iteration, the programme begins by checking
 whether the molecule is already in the database. If so, it just
@@ -928,8 +938,8 @@ A4_B5     12650      2 min  4.514 s     1 min 56.635 s
 A4_B6     58905     26 min 39.339 s    21 min 40.528 s
 ```
 
-Problems with SQLite
---------------------
+Programming with SQLite
+-----------------------
 
 I had a few problems when developing the SQLite version.
 First, kebab case. In Raku, kebab case is usually preferred 
