@@ -7,7 +7,7 @@ Ce projet est une exploration exhaustive
 du jeu Black Box avec 4 atomes. Il ne s'agit pas
 d'une _n_+1 ème implémentation du jeu. Pour jouer à Black Box,
 j'utilise soit Emacs, soit la collection de
-jeux de Simon Tatham. Il s'agit plutôt d'alimenter une base
+jeux de Simon Tatham. Dans ce projet, il s'agit plutôt d'alimenter une base
 de données permettant de produire des statistiques sur le jeu Black Box.
 
 But principal du projet
@@ -294,21 +294,28 @@ dans le jeu 5×5.
 
 Une configuration simplifiée sera identifiée par un code An\_Bp, où _n_ est le nombre
 d'atomes et _p_ la longueur d'un côté de la boîte ("A" pour "atomes",
-"B" pour "Black Box" ou pour "boîte"). Ainsi, la configurations "normale"
+"B" pour "Black Box" ou pour "boîte"). Ainsi, la configuration "normale"
 sera identifiée par "A4\_B8".
 
-Le projet est divisé en deux parties. Un premier programme
-examine les 635376 molécules, calcule leur spectre et les stocke
-dans une base de données. Dans la deuxième partie,
-les programmes examinent les spectres obtenus et cherchent
-ceux qui sont associés à plusieurs molécules. Les spectres
-sont alors stockés dans une autre table de la base de données.
-Enfin, un programme permet d'extraire des informations de la base
-de données et de les afficher sous forme intelligible.
-quelques programmes accèdent à la base de données
+Le projet comporte plusieurs programmes.
+
+1. Un programme d'initialisation, qui nettoie le contenu initial
+de la base de données pour une configuration.
+
+2. Un programme d'exploration, qui génère toutes les molécules
+possibles pour une configuration, calcule le spectre pour chaque
+molécule ainsi générée et les stocke en base de données.
+
+3. Un programme effectuant la synthèse du résultat du programme
+précédent et extrayant les spectres associés à plusieurs molécules.
+
+4. Un programme complétant les mises à jour du programme précédent
+
+5. Un programme extrayant des molécules de la base de données
+et les affichant sous une forme lisible pour un humain.
 
 Remarque : compte tenu du temps possible de taitement,
-le premier programme ne traitera pas forcément
+le programme d'exploration ne traitera pas forcément
 les 635376 molécules d'une traite. Il pourra
 s'interrompre à n'importe quel moment et reprendre
 là où il s'était arrêté.
@@ -984,8 +991,8 @@ A4_B5     12650      2 min  4,514 s     1 min 56,635 s
 A4_B6     58905     26 min 39,339 s    21 min 40,528 s
 ```
 
-Problèmes avec SQLite
----------------------
+Programmation avec SQLite
+-------------------------
 
 J'ai eu quelques problèmes lors du développement de la version SQLite.
 Tout d'abord, le _kebab case_. Le _kebab case_ est le style privilégié
@@ -1103,7 +1110,8 @@ Avant de commencer le développement de ces programmes, je connaissais deux spec
 ambigus pour la configuration A4\_B8 (en fait 16, à cause des rotations et des symétries).
 Ces deux (ou 16) spectres offrent chacun deux solutions. Je m'attendais à en trouver
 d'autres avec deux solutions, une poignée avec trois solutions et peut-être, vraiment
-peut-être, un avec quatre solutions (en fait 8 compte tenu des rotations et symétries).
+peut-être, un avec quatre solutions (en fait 8 spectres avec 4 molécules
+chacun, compte tenu des rotations et symétries).
 
 Voici ce que j'ai trouvé pour la configuration A4\_B6 :
 ```
