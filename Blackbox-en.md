@@ -938,8 +938,19 @@ A4_B5     12650      2 min  4.514 s     1 min 56.635 s
 A4_B6     58905     26 min 39.339 s    21 min 40.528 s
 ```
 
-Programming with SQLite
------------------------
+Programming with Raku
+---------------------
+
+This is not my first Raku project, so I did not need to install
+Raku. If you need to install it, maybe you should take a look at
+[the documentation of this previous project](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod),
+especially the chapter about
+[compiling Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#Compilation-and-Installation-of-Rakudo)
+and the chapter about
+[using Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#usage).
+
+Programming with Raku and SQLite
+--------------------------------
 
 I had a few problems when developing the SQLite version.
 First, kebab case. In Raku, kebab case is usually preferred 
