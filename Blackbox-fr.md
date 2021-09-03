@@ -1110,6 +1110,25 @@ n'y ait pas un `commit` en plein milieu du traitement d'un groupe d'énantiomèr
 Comme j'avais déjà planifié la mise  en place les `begin transaction` / `commit transaction`,
 je n'ai pas cherché à programmer la méthode 1 ou la méthode 2.
 
+Programmation avec Raku et MongoDB
+----------------------------------
+
+Comme je l'ai indiqué plus haut, ce n'est pas mon premier projet
+avec Raku et MongoDB, ils étaient déjà installés. Si vous avez
+besoin de les installer, veuillez vous reporter à
+[la documentation du projet antérieur](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod).
+Lisez en particulier les paragraphes sur
+[l'installation des prérequis](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-de-modules-rakudo)
+(ne tenez pas compte de Bailador ni de Template::Anti), sur
+[l'installation de MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-de-mongodb)
+et sur [l'installation du module MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-du-module-mongodb).
+
+
+Programmation avec Raku, SQLite et MongoDB
+------------------------------------------
+
+
+
 Conclusion
 ==========
 

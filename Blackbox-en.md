@@ -1063,6 +1063,21 @@ complete.
 Since I already had the intention to add `begin transaction` / `commit transaction`,
 I did not tried the other fixes.
 
+Programming with Raku and MongoDB
+---------------------------------
+
+As stated above, this is not my first Raku+MongoDB project, so the software was
+already installed. If you need to install them, please see
+[the documentation of said project](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod).
+Be sure to read the paragraphs on
+[prerequisite installation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installing-rakudo-modules)
+(do not bother with Bailador and Templace::Anti), on
+[installing the MongoDB software](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installing-mongodb)
+and [installing the MongoDB Raku module](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installation-of-the-mongodb-module).
+
+Programming with Raku, SQLite and MongoDB
+-----------------------------------------
+
 Conclusion
 ==========
 
