@@ -1075,6 +1075,25 @@ Be sure to read the paragraphs on
 [installing the MongoDB software](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installing-mongodb)
 and [installing the MongoDB Raku module](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installation-of-the-mongodb-module).
 
+I have explained how the features missing from the MongoDB module
+made me develop the SQLite version. Yet, I did not try to find a solution
+to nevertheless use these advanced MongoDB features. If the `aggregate` function
+is available in the Mongo shell, but not in the `MongoDB` Raku module, I build
+a Mongo shell (or JavaScript) source which extracts the data and aggregates them,
+I run this Mongo shell programme as an external process, I gather the standard output
+and I store it into a Raku variable.
+
+You should notice that, when building the Mongo shell source, I need to mention
+the `An_Bp` value of the configuration in this source. Unlike what I explained in
+the SQLite chapter, this is really a
+["Bobby Tables"](https://xkcd.com/327/)
+[problem](https://bobby-tables.com/),
+because the `An_Bp` value is specified by the user.
+So the programme filters, examines, checks, sanitises and validates the value
+with a very restrictive regex: an anchor at both ends, to ensure the whole value
+is checked, only 3 literal chars `A_B` and the digits `0` to `9`, with a limited
+number of occurrences (no more than 99 atoms and the box not larger than 9×9).
+
 Programming with Raku, SQLite and MongoDB
 -----------------------------------------
 

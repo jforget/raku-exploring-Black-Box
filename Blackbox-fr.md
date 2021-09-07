@@ -918,7 +918,7 @@ SQL ou de la fonction  `aggregate` de MongoDB.
 Ensuite, on rectifie les propriétés `transform` et `canonical-number`. Pour ce faire, le programme
 extrait toutes les molécules canoniques (`transform: 'id'`) associées à
 un spectre de la table Spectrums. Puis le programme lit ce spectre.
-S'il n'a pas encoré été modifié, alors le programme lit le groupe d'énantiomères
+S'il n'a pas encore été modifié, alors le programme lit le groupe d'énantiomères
 complet de la molécule traitée, lit les spectres correspondants dans la
 table Spectrums, copie le champ `transform` et le champ `canonical-number` de chaque molécule vers le spectre
 associé et modifie cet enregistrement.
@@ -999,9 +999,9 @@ Je n'ai donc pas été obligé d'installer Raku. Si, en revanche,
 c'est votre cas, je vous suggère de vous reporter à
 [la documentation dudit projet](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod),
 notamment
-[comment compiler Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#compilation-et-installation-de-raku)
-et [l'utilisation de Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#utilisation).
-
+[la compilation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#compilation-et-installation-de-raku)
+et [l'utilisation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#utilisation)
+de Raku.
 
 Programmation avec Raku et SQLite
 ---------------------------------
@@ -1080,7 +1080,7 @@ Et lors de mes tests, je n'ai jamais vu de cas où le programme aurait inséré 
 deux documents sur les huit avant d'être interrompu par `Ctrl-C`. À chaque fois, le groupe d'énantiomères
 était complet.
 
-Lorsque j'ai développé la version SQLite, je n'ai pas tout de suite mis en place
+D'autre part, lorsque j'ai développé la version SQLite, je n'ai pas tout de suite mis en place
 les `begin transaction`/ `commit transaction`. Et les `insert` se faisaient un par un,
 je n'avais pas cherché s'il existait des
 [`bulk insert`](https://www.educba.com/sqlite-bulk-insert/)
@@ -1122,6 +1122,27 @@ Lisez en particulier les paragraphes sur
 (ne tenez pas compte de Bailador ni de Template::Anti), sur
 [l'installation de MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-de-mongodb)
 et sur [l'installation du module MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-du-module-mongodb).
+
+J'ai expliqué comment les lacunes du module MongoDB m'ont incité
+à prévoir l'utilisation de SQLite. Paradoxalement, cela ne m'a pas empêché
+de chercher une solution pour utiliser quand même les fonctionnalités évoluées
+de MongoDB. Si une fonctionnalité comme `aggregate` est disponible avec le
+shell Mongo, mais pas avec le module Raku `MongoDB`, alors je construis le source
+Mongo shell (ou JavaScript) extrayant les données avec cette fonctionnalité avancée,
+je le lance en tant que processus externe, je récupère la sortie standard dans
+une variable Raku et je traite le contenu de cette variable.
+
+Notons que pour ce faire, j'ai besoin de transmettre le code `An_Bp` de la configuration
+au script Mongo shell. Contrairement à ce que j'ai expliqué pour les `insert` de SQLite,
+il faut faire attention avec le  
+[problème](https://xkcd.com/327/)
+[« Bobby Tables »](https://bobby-tables.com/),
+car la valeur `An_Bp` de la configuration est fournie par l'utilisateur.
+Donc le programme filtre, teste, vérifie, épure et valide la valeur avec une
+regex très sélective : une ancre au début et à la fin pour tester la valeur
+en totalité, les trois caractères fixes `A_B` et les chiffres `0` à `9`, avec
+un nombre limité de répétitions (pas plus de 99 atomes, pas plus de 9×9 pour la boîte).
+
 
 
 Programmation avec Raku, SQLite et MongoDB
