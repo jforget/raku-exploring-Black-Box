@@ -1097,6 +1097,33 @@ number of occurrences (no more than 99 atoms and the box not larger than 9×9).
 Programming with Raku, SQLite and MongoDB
 -----------------------------------------
 
+The programmes are split in a fashion similar to the MVC principle (Model,
+View, Controller). For example, to display a molecule or a list of molecules,
+you have:
+
+1. The `display-sql.raku` programme, which contains the model (invoking
+the `DBIish` Raku module and the SQLite database access functions) and the
+parameter parsing (in the `MAIN` multi-sub).
+
+2. The `display-mongo.raku` programme, which contains too the model (invoking
+the various `Mongo::xx` Raku modules and the MongoDB database access functions) and the
+parameter parsing (in the `MAIN` multi-sub).
+
+3. The `lib/display-common.rakumod` module, which contains the controller (the
+internal logic of the process) and the view (to format and display the data).
+
+When initialising the `Spectrums` table / collection, the process logic is very
+basic: first deleting any existing records / documents, then creating all
+the records / documents in a single database access. So, there is no module
+for this step, only the two programmes.
+
+When a programme calls a function defined in the module, this is very basic.
+The necessary module functions are flagged with `is export`, calling these
+functions is straightforward. When the module calls a function defined in the
+programme, it is a bit more difficult. The main programme has initialised a
+dispatch table and this dispatch table is transmitted as a parameter to each
+function in the module which needs it.
+
 Conclusion
 ==========
 

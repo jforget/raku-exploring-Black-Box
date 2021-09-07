@@ -1143,12 +1143,37 @@ regex très sélective : une ancre au début et à la fin pour tester la valeur
 en totalité, les trois caractères fixes `A_B` et les chiffres `0` à `9`, avec
 un nombre limité de répétitions (pas plus de 99 atomes, pas plus de 9×9 pour la boîte).
 
-
-
 Programmation avec Raku, SQLite et MongoDB
 ------------------------------------------
 
+Les programmes sont découpés d'une façon qui évoque le principe MVC
+(Modèle, Vue, Contrôleur). Par exemple, pour afficher une molécule ou
+une série de molécules, on a :
 
+1. Un programme `display-sql.raku`, qui contient le modèle (l'appel du
+module `DBIish`et les fonctions d'accès à la base SQLite) et l'analyse
+des paramètres d'appel (la multi-fonction `MAIN`, le « croupion syntaxique »
+comme l'appelait l'enseignant qui m'a appris C il y a presque 40 ans).
+
+2. Un programme `display-mongo.raku`, qui contient lui aussi le modèle (l'appel des
+modules `MongoDB::xx` et les fonctions d'accès à la base MongoDB) et l'analyse
+des paramètres d'appel dans `MAIN`.
+
+3. Un module `lib/display-common.rakumod` qui contient le contrôleur (la
+logique interne du processus) et la vue (le formattage et l'affichage des
+données).
+
+Dans le cas de l'initialisation de la table / collection `Spectrums`, la logique
+de traitement est inexistante et les programmes se résument à une suppression initiale,
+suivie d'une insertion  massive. Il n'y a donc pas de module pour cette étape, seulement
+les deux programmes pour SQLite et MongoDB respectivement.
+
+Un programme appelle une fonction du module associé de façon très simple. Les
+fonctions du module sont marquées `export`, l'appel se fait donc tout seul.
+C'est un peu plus compliqué lorsque le module appelle une fonction du
+programme principal. Cela se fait par l'intermédaire d'une table de dispatch,
+initialisée dans le programme principal et transmise à chacune des fonctions du module
+qui en a besoin.
 
 Conclusion
 ==========
