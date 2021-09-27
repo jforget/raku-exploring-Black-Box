@@ -1134,14 +1134,21 @@ une variable Raku et je traite le contenu de cette variable.
 
 Notons que pour ce faire, j'ai besoin de transmettre le code `An_Bp` de la configuration
 au script Mongo shell. Contrairement à ce que j'ai expliqué pour les `insert` de SQLite,
-il faut faire attention avec le  
-[problème](https://xkcd.com/327/)
+il faut faire attention avec le [problème](https://xkcd.com/327/)
 [« Bobby Tables »](https://bobby-tables.com/),
 car la valeur `An_Bp` de la configuration est fournie par l'utilisateur.
 Donc le programme filtre, teste, vérifie, épure et valide la valeur avec une
 regex très sélective : une ancre au début et à la fin pour tester la valeur
 en totalité, les trois caractères fixes `A_B` et les chiffres `0` à `9`, avec
 un nombre limité de répétitions (pas plus de 99 atomes, pas plus de 9×9 pour la boîte).
+
+Une fois, lors de l'exécution du programme initialisant la collection
+des spectres, j'ai eu une erreur, un débordement de capacité de traitement.
+Les documents `Molecules` étaient trop nombreux et trop volumineux pour
+faire tourner la fonction d'agrégation de MongoDB. Ainsi que l'indiquait
+le message d'erreur, pour passer outre cette limite, il suffit d'ajouter
+un index approprié sur la collection `Molecules`. D'où l'écriture et l'utilisation
+du script `add-index-mongo.sh`.
 
 Programmation avec Raku, SQLite et MongoDB
 ------------------------------------------

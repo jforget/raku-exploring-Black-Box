@@ -1094,6 +1094,12 @@ with a very restrictive regex: an anchor at both ends, to ensure the whole value
 is checked, only 3 literal chars `A_B` and the digits `0` to `9`, with a limited
 number of occurrences (no more than 99 atoms and the box not larger than 9×9).
 
+Once, when running the programme building the `Spectrums` collection, I encountered
+an error, because of insufficient memory to process and aggregate all the
+`Molecules` documents. As explained by the error message, overcoming this limit
+is rather simple, you just have to add a proper index to the `Molecules` collection.
+Therefore the `add-index-mongo.sh` script.
+
 Programming with Raku, SQLite and MongoDB
 -----------------------------------------
 
@@ -1106,7 +1112,7 @@ the `DBIish` Raku module and the SQLite database access functions) and the
 parameter parsing (in the `MAIN` multi-sub).
 
 2. The `display-mongo.raku` programme, which contains too the model (invoking
-the various `Mongo::xx` Raku modules and the MongoDB database access functions) and the
+the various `MongoDB::xx` Raku modules and the MongoDB database access functions) and the
 parameter parsing (in the `MAIN` multi-sub).
 
 3. The `lib/display-common.rakumod` module, which contains the controller (the
