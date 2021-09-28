@@ -193,6 +193,92 @@ Jusqu'à présent, lorsque je devais écrire du texte, mon format
 préféré était le POD de Perl. J'ai décidé d'essayer autre chose.
 Et ce texte est ainsi écrit en Markdown.
 
+Pour les impatients
+===================
+
+En supposant que vous avez tous les pré-requis (Raku, modules,
+base de données), voici comment explorer les jeux de Black-Box
+avec 4 atomes dans une boîte 8×8.
+
+Version pour SQLite
+-------------------
+
+Commencez par éditer le contenu du fichier `lib/db-conf-sql.rakumod`.
+Ce fichier contient le chemin d'accès de la base de données dans
+_ma_ machine. Il y a de fortes chances que _votre_ machine soit configurée
+de façon légèrement différente. Remplacez le chemin d'accès actuel par
+un chemin d'accès compatible avec _votre_ hiérarchie de répertoires.
+
+Ensuite, il faut taper :
+
+```
+raku init-conf-sql.raku --config=A4_B8
+raku explore-conf-sql.raku --config=A4_B8
+```
+
+Pour cette dernière commande, il ne vaut mieux pas rediriger
+la sortie standard. En effet, le programme affiche une centaine
+de lignes pour vous faire patienter pendant qu'il est en train
+de tourner.
+
+Continuez avec
+
+```
+raku init-spectrum-sql.raku --config=A4_B8
+raku upd-spectrum-sql.raku --config=A4_B8 > some.logfile.txt
+```
+
+Ce dernier programme affiche un nombre énorme de messages
+de débugage. Il est préférable de rediriger la sortie
+standard vers un fichier texte (voire vers `/dev/null`)
+et d'attendre la fin du programme.
+
+La base de données est alors complète et vuos pouvez la consulter
+avec `sqlite3`. Mais pour afficher les parties possibles 
+avec un formattage correct, lancez des commandes du style
+
+```
+raku display-sql.raku --config=A4_B8  5 6 7 8 9 10
+raku display-sql.raku --config=A4_B8  --from=5 --to=10
+```
+
+Version pour MongoDB
+--------------------
+
+Commencez par taper :
+
+```
+./add-index-mongo.sh
+raku init-conf-mongo.raku --config=A4_B8
+raku explore-conf-mongo.raku --config=A4_B8
+```
+
+Pour cette dernière commande, il ne vaut mieux pas rediriger
+la sortie standard. En effet, le programme affiche une centaine
+de lignes pour vous faire patienter pendant qu'il est en train
+de tourner.
+
+Continuez avec
+
+```
+raku init-spectrum-mongo.raku --config=A4_B8
+raku upd-spectrum-mongo.raku --config=A4_B8 > some.logfile.txt
+```
+
+Ce dernier programme affiche un nombre énorme de messages
+de débugage. Il est préférable de rediriger la sortie
+standard vers un fichier texte (voire vers `/dev/null`)
+et d'attendre la fin du programme.
+
+La base de données est alors complète et vous pouvez la consulter
+avec le shell `mongo`. Mais pour afficher les parties possibles 
+avec un formattage correct, lancez des commandes du style
+
+```
+raku display-mongo.raku --config=A4_B8  5 6 7 8 9 10
+raku display-mongo.raku --config=A4_B8  --from=5 --to=10
+```
+
 Organisation du développement
 =============================
 

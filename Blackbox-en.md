@@ -183,6 +183,91 @@ Up to now, my mark-up language of choice was Perl's POD. I have
 decided to try another possibility. So this text is written in
 Markdown.
 
+For the Impatients
+==================
+
+Supposing everything is installed (Raku, modules, database),
+here is how you explore all possible games with 4 atoms within
+a 8×8 box.
+
+SQLite version
+--------------
+
+First, edit and update the content of the `lib/db-conf-sql.rakumod` file.
+This file holds the fully qualified pathname of the database in
+_my_ computer. The directory structure of _your_ computer is most
+certainly a bit different. So you have to replace the fully qualified
+pathname of the database by another qualified pathname compatible
+with _your_ computer.
+
+Then please run:
+
+```
+raku init-conf-sql.raku --config=A4_B8
+raku explore-conf-sql.raku --config=A4_B8
+```
+
+For the last command, do not redirect the standard output.
+There will be about 100 lines which will keep you
+a bit entertained while waiting for the programme to finish.
+
+Go on with
+
+```
+raku init-spectrum-sql.raku --config=A4_B8
+raku upd-spectrum-sql.raku --config=A4_B8 > some.logfile.txt
+```
+
+The last programme prints a bunch of debug statements.
+You will be more comfortable by redirecting the output to
+a text file (or to `/dev/null`) and waiting for the programme
+to finish.
+
+Now the database is ready and you can query it with `sqlite3`.
+If you want to display the records in a user-friendly format,
+run commands like these:
+
+```
+raku display-sql.raku --config=A4_B8  5 6 7 8 9 10
+raku display-sql.raku --config=A4_B8  --from=5 --to=10
+```
+
+MongoDB version
+---------------
+
+Please type
+
+```
+./add-index-mongo.sh
+raku init-conf-mongo.raku --config=A4_B8
+raku explore-conf-mongo.raku --config=A4_B8
+```
+
+For the last command, do not redirect the standard output.
+There will be about 100 lines which will keep you
+a bit entertained while waiting for the programme to finish.
+
+Go on with
+
+```
+raku init-spectrum-mongo.raku --config=A4_B8
+raku upd-spectrum-mongo.raku --config=A4_B8 > some.logfile.txt
+```
+
+The last programme prints a bunch of debug statements.
+You will be more comfortable by redirecting the output to
+a text file (or to `/dev/null`) and waiting for the programme
+to finish.
+
+Now the database is ready and you can query it with the `mongo` shell.
+If you want to display the records in a user-friendly format,
+run commands like these:
+
+```
+raku display-mongo.raku --config=A4_B8  5 6 7 8 9 10
+raku display-mongo.raku --config=A4_B8  --from=5 --to=10
+```
+
 Project Organisation
 ====================
 
