@@ -1031,13 +1031,13 @@ sélection du type `≥` :
   { cle: { '$gte': valeur-min }}
 ```
 
-On ne peut faire que des sélections de type `=`, pas des comparaisons
-par inégalités ou par intervalle. De même, pour trier le résultat d'une
-recherche, il faut le faire dans le programme Raku, il n'y a pas moyen de
-demander à MongoDB de trier les documents extraits avant de les transmettre
-au programme Raku. Cela ne m'a pas trop gêné pour le programme d'exploration,
-cela risque de poser plus de problèmes pour les programmes d'affichage (qui
-ne sont pas encore écrits).
+On ne peut faire que des  sélections de type `=`, pas des comparaisons
+par  inégalités ou  par intervalle.  De même,  pour trier  le résultat
+d'une recherche, il faut le faire dans le programme Raku, il n'y a pas
+moyen de demander  à MongoDB de trier les documents  extraits avant de
+les transmettre au  programme Raku. Cela ne m'a pas  trop gêné pour le
+programme d'exploration,  c'était impossible  d'écrire en pur  Raku le
+programme alimentant la collection `Spectrums`.
 
 Le deuxième problème est un  problème de performances. Voici les temps
 relevés pour le programme d'exploration avec un stockage dans MongoDB,

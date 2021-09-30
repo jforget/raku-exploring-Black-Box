@@ -979,11 +979,12 @@ For example, I do not know how to code in Raku a `≥` selection:
   { key: { '$gte': min-value }}
 ```
 
-I can only code `=` selections. Likewise, I do not know how to
-ask MongoDB to sort the retrieved documents. If I need to sort the documents,
-I must do it within the Raku program. These problems did not hinder
-me much when writing the exploration program, but this may change with
-the retrieval programs (not yet written).
+I can  only code `=`  selections. Likewise, I do  not know how  to ask
+MongoDB  to sort  the  retrieved  documents. If  I  need  to sort  the
+documents, I must do it within  the Raku programme. These problems did
+not  hinder me  much when  writing the  exploration programme.  On the
+other hand, it  was impossible to write a pure  Raku programme filling
+the `Spectrums` collection.
 
 The  other  problem  is  performances.  Here are  the  times  for  the
 exploration programme using a MongoDB  backend, with various Black Box
