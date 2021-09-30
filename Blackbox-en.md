@@ -963,10 +963,13 @@ molecule to the spectrum and updates the spectrum record.
 Physical Implementation
 -----------------------
 
-Which kind of database? SQL or MongoDB? As I write these words, the
-exploration program is fully functional over a MongoDB database.
-Yet, the question is still pending.
-There are two problems with MongoDB programming.
+Which kind of database? SQL or MongoDB? I began this work as a MongoDB
+project.  Then, because  of  two problems  with  the existing  MongoDB
+module, I  switched to SQLite,  while ensuring the MongoDB  code would
+still  work.  And  after  the  SQLite  project  was  fully  functional
+(including the update of the `Spectrums` table), I finally found a way
+to bypass the  MongoDB module limitations and I  completed the MongoDB
+version.
 
 The first problem is that the Raku module for MongoDB does not
 implement the full set of functionalities available for MongoDB.
@@ -982,8 +985,9 @@ I must do it within the Raku program. These problems did not hinder
 me much when writing the exploration program, but this may change with
 the retrieval programs (not yet written).
 
-The other problem, maybe, is performances. Here are the times for
-exploration of various configurations, using a MongoDB backend:
+The  other  problem  is  performances.  Here are  the  times  for  the
+exploration programme using a MongoDB  backend, with various Black Box
+configurations:
 
 ```
          nb_mol          real             user 
@@ -992,13 +996,8 @@ A4_B5     12650     16 min 45.232 s    19 min 29.010 s
 A4_B6     58905    132 min 22.944 s    94 min 55.280 s
 ```
 
-Maybe SQLite will be faster. Maybe not. I have to experiment. I am reluctant to
-remove the MongoDB code and replace it by SQLite. I will try to
-provide both backends at once. So if someone else is interested by my
-code, this person can still opt for a SQLite solution or a MongoDB solution.
-
-Post-scriptum: the SQLite version is functional. Here are the
-timing results before implementing `begin`/ `commit`:
+With a SQLite backend and  before implementing `begin`/ `commit`, here
+are a few timing results:
 
 ```
          nb_mol          real             user 

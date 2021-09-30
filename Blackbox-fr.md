@@ -233,7 +233,7 @@ de débugage. Il est préférable de rediriger la sortie
 standard vers un fichier texte (voire vers `/dev/null`)
 et d'attendre la fin du programme.
 
-La base de données est alors complète et vuos pouvez la consulter
+La base de données est alors complète et vous pouvez la consulter
 avec `sqlite3`. Mais pour afficher les parties possibles 
 avec un formattage correct, lancez des commandes du style
 
@@ -1013,10 +1013,14 @@ associé et modifie cet enregistrement.
 Implémentation physique
 -----------------------
 
-Quelle base de données ? Une base SQL ou MongoDB ? J'écris ces mots
-alors que le programme d'exploration fonctionne parfaitement avec
-MongoDB et pourtant, la question continue à se poser.
-Il y a deux problèmes avec MongoDB.
+Quelle base de  données ? Une base  SQL ou MongoDB ?  J'ai commencé en
+écrivant le  code uniquement  pour MongoDB.  Puis j'ai  rencontré deux
+problèmes avec  le module  MongoDB, ce  qui m'a  conduit à  refaire le
+travail en SQLite, tout en  m'assurant que la partie utilisant MongoDB
+continuait  à fonctionner.  J'ai  donc programmé  une variante  SQLite
+complète, avec la  mise à jour de la table  `Spectrums`. C'est ensuite
+que j'ai trouvé  un moyen de contourner les limites  du module MongoDB
+et que j'ai pu achever la variante MongoDB.
 
 Le premier problème est que le module Raku
 pour MongoDB n'implémente pas toutes les options disponibles avec
@@ -1035,8 +1039,9 @@ au programme Raku. Cela ne m'a pas trop gêné pour le programme d'exploration,
 cela risque de poser plus de problèmes pour les programmes d'affichage (qui
 ne sont pas encore écrits).
 
-Le deuxième problème, peut-être, est un problème de performances. Voici les
-temps relevés pour diverses configurations, avec un stockage dans MongoDB. 
+Le deuxième problème est un  problème de performances. Voici les temps
+relevés pour le programme d'exploration avec un stockage dans MongoDB,
+pour diverses configurations.
 
 ```
          nb_mol          real             user 
@@ -1045,14 +1050,8 @@ A4_B5     12650     16 min 45,232 s    19 min 29,010 s
 A4_B6     58905    132 min 22,944 s    94 min 55,280 s
 ```
 
-Peut-être que SQLite sera plus rapide. Ou peut-être pas. Il faut essayer.
-Je ne vais pas supprimer le code MongoDB pour le remplacer par du
-code SQLite. Je vais m'arranger pour faire cohabiter les deux.
-Ainsi, si quelqu'un d'autre est intéressé par mon code, il pourra
-choisir une base de données SQLite ou une base de données MongoDB.
-
-Post scriptum : la version SQLite est opérationnelle. Voici les
-résultats avant mise en place des `begin` / `commit`.
+Avec un  stockage dans  SQLite et  avant mise en  place des  `begin` /
+`commit`, voici les temps relevés pour le programme d'exploration.
 
 ```
          nb_mol          real             user 
