@@ -229,7 +229,7 @@ raku upd-spectrum-sql.raku  --config=A4_B8
 ```
 
 La base de données est alors complète et vous pouvez la consulter
-avec `sqlite3`. Mais pour afficher les parties possibles 
+avec `sqlite3`. Mais pour afficher les parties possibles
 avec un formattage correct, lancez des commandes du style
 
 ```
@@ -261,7 +261,7 @@ raku upd-spectrum-mongo.raku  --config=A4_B8
 ```
 
 La base de données est alors complète et vous pouvez la consulter
-avec le shell `mongo`. Mais pour afficher les parties possibles 
+avec le shell `mongo`. Mais pour afficher les parties possibles
 avec un formattage correct, lancez des commandes du style
 
 ```
@@ -584,7 +584,7 @@ Lorsque j'écris que le programme lance les 32 rayons possibles,
 ce n'est pas tout-à-fait vrai. Les rayons suivent ce que l'on
 appelle la "loi du retour inverse de la lumière". Si le rayon
 lancé en 1 sort en 24, alors pour la même molécule, le
-rayon lancé en 24 sera ressorti en 1. Pour la configuration A4\_B8,
+rayon lancé en 24 ressortira en 1. Pour la configuration A4\_B8,
 il suffira de lancer entre 18 et 28 rayons. Les exemples
 ci-dessous montrent que l'on peut avoir 14 rayons sortants
 plus 4 rayons absorbés, ou bien 4 rayons sortants, plus 16
@@ -824,7 +824,7 @@ A, la boucle suivante sur les positions possibles de l'atome B et ainsi
 de suite jusqu'à la boucle interne sur les positions de l'atome F.
 Mais le programme est censé fonctionner pour des configurations avec
 des nombres d'atomes différents. Il est probable que l'on aboutirait
-à un code digne de figurer dans le 
+à un code digne de figurer dans le
 [site web](https://thedailywtf.com/articles/classic-wtf-the-great-code-spawn)
 [Daily WTF](https://thedailywtf.com/articles/just-a-few-questions).
 
@@ -956,14 +956,14 @@ examiner pour avoir un aperçu complet.
 Ainsi, avec les quatre molécules :
 
 ```
-   @ & @ & c d             @ & @ & c d             c d b @ a @             c d b @ a @  
+   @ & @ & c d             @ & @ & c d             c d b @ a @             c d b @ a @
  @ O - O - - - @         @ - - O - - - @         a - - - - - - &         a - - - - - - 1
  & - - - - - - &         & - - - - - - &         @ - - - - - O @         @ - - - - - O 2
  @ - - O - - - @         @ O - O - - - @         b - - - - - - &         b - - - - - - &
  & - - - - - - b         & - - - - - - b         @ - - - O - O @         @ - - - O - - @
  @ O - - - - - @         @ O - - - - - @         & - - - - - - &         & - - - - - - &
  & - - - - - - a         & - - - - - - a         @ - - - O - - @         @ - - - O - O @
-   @ a @ b c d             @ a @ b c d             c d & @ & @             c d & @ & @  
+   @ a @ b c d             @ a @ b c d             c d & @ & @             c d & @ & @
 
 There are 4 balls in the box
 ```
@@ -1015,7 +1015,7 @@ et que j'ai pu achever la variante MongoDB.
 Le premier problème est que le module Raku
 pour MongoDB n'implémente pas toutes les options disponibles avec
 MongoDB. Par exemple, je ne sais pas comment faire des
-sélection du type `≥` :
+sélections du type `≥` :
 
 ```
   { cle: { '$gte': valeur-min }}
@@ -1034,7 +1034,7 @@ relevés pour le programme d'exploration avec un stockage dans MongoDB,
 pour diverses configurations.
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      2 min  2,201 s     2 min 46,945 s
 A4_B5     12650     16 min 45,232 s    19 min 29,010 s
 A4_B6     58905    132 min 22,944 s    94 min 55,280 s
@@ -1044,25 +1044,25 @@ Avec un  stockage dans  SQLite et  avant mise en  place des  `begin` /
 `commit`, voici les temps relevés pour le programme d'exploration.
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      0 min 47,436 s     0 min 21,424 s
-A4_B5     12650      6 min 15,180 s     2 min 50,238 s 
+A4_B5     12650      6 min 15,180 s     2 min 50,238 s
 ```
 
 Les résultats avec des `commit` toutes les 50 mises à jour.
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      0 min 15,031 s     0 min 15,463 s
-A4_B5     12650      2 min 16,277 s     2 min  0,199 s 
+A4_B5     12650      2 min 16,277 s     2 min  0,199 s
 ```
 
 Les résultats avec des `commit` toutes les 500 mises à jour.
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      0 min 19,017 s     0 min 18,053 s
-A4_B5     12650      2 min  4,514 s     1 min 56,635 s 
+A4_B5     12650      2 min  4,514 s     1 min 56,635 s
 A4_B6     58905     26 min 39,339 s    21 min 40,528 s
 ```
 
@@ -1105,7 +1105,7 @@ codée ainsi :
             , dh2)
      values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
-            , $molecule<config                  >    
+            , $molecule<config                  >
             , $molecule<number                  >
             , $molecule<canonical-number        >
             [...]
@@ -1261,7 +1261,7 @@ Conclusion
 ==========
 
 J'écris cette conclusion après avoir lancé l'exploration sur une configuration
-A4\_B6. Je n'ai pas encore essayé la configuration standard A4\_B8, mais 
+A4\_B6. Je n'ai pas encore essayé la configuration standard A4\_B8, mais
 les conclusions tirées de la configuration A4\_B6 sont intéressantes et peuvent
 en grande partie s'extrapoler à la configuration A4\_B8.
 

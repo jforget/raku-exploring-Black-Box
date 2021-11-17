@@ -22,23 +22,23 @@ As all deduction games, there is a luck factor because
 some answers from the hider player can be more interesting than
 others and thus lead to a shorter solution. Or the answers are
 more mundane and give fewer informations to the seeker player.
-Another luck factor is that there are 
+Another luck factor is that there are
 some configurations where the seeker player cannot
 guess all the atom positions, even if he has shot all
 possible rays from the outside of the box. A well-known
 example is this 5-atom situation:
 
 
-```                     
-   - - - - - - - -   
-   - - O - - O - -   
-   - - - ? ? - - -   
-   - - - ? ? - - -   
-   - - O - - O - -   
-   - - - - - - - -   
-   - - - - - - - -   
-   - - - - - - - -   
-```                     
+```
+   - - - - - - - -
+   - - O - - O - -
+   - - - ? ? - - -
+   - - - ? ? - - -
+   - - O - - O - -
+   - - - - - - - -
+   - - - - - - - -
+   - - - - - - - -
+```
 
 The O-atoms are easily located. But they form a "no-ray's land"
 represented by question marks. The 5th atom can be in any
@@ -93,56 +93,56 @@ Secondary Purpose
 
 Here are 4 games I played within Emacs.
 
-```                     
-             3       
- 1 - - - - - - - - 1 
- R - - - - - - - -   
- H O - - O - - - -   
-   - - - - - - - -   
- 3 - - - - - - - -   
-   - - - - - - O -   
- R - - - - - - - - 2 
- H O - - - - - - -   
-       4     4   2   
+```
+             3
+ 1 - - - - - - - - 1
+ R - - - - - - - -
+ H O - - O - - - -
+   - - - - - - - -
+ 3 - - - - - - - -
+   - - - - - - O -
+ R - - - - - - - - 2
+ H O - - - - - - -
+       4     4   2
 
 There are 4 balls in the box
 
-           6 2   1   
- H O - - - - - - -   
-   - - - - - - - - 4 
- 3 - - - - - - - - 3 
-   - - - - - - - - 6 
-   - - - O - - - -   
- 4 - - - - - - - - 5 
-   - - - - - - - - 5 
- H O - - O - - - - H 
-   H     H R 2   1   
+           6 2   1
+ H O - - - - - - -
+   - - - - - - - - 4
+ 3 - - - - - - - - 3
+   - - - - - - - - 6
+   - - - O - - - -
+ 4 - - - - - - - - 5
+   - - - - - - - - 5
+ H O - - O - - - - H
+   H     H R 2   1
 
 There are 4 balls in the box
 
-     4 3   2         
- H - - - - - - O -   
- 5 - - - - - - - - 6 
-   - - - - - - - - 4 
-   O - - - - - - -   
-   - - - - - - - - 5 
-   - - - - - - - - 6 
-   O - - - - - O -   
- R - - - - - - - - 1 
-       3   2     1   
+     4 3   2
+ H - - - - - - O -
+ 5 - - - - - - - - 6
+   - - - - - - - - 4
+   O - - - - - - -
+   - - - - - - - - 5
+   - - - - - - - - 6
+   O - - - - - O -
+ R - - - - - - - - 1
+       3   2     1
 
 There are 4 balls in the box
 
-   1   7 5 4 6 7     
- 1 - - - - - - - -   
-   - O - - - - - O   
-   - - - - - - - -   
- H - O - - - - - -   
- 3 - - - - - - - -   
- R - - - - - - - -   
- H - - - - - - - O   
- 2 - - - - - - - -   
-   3     5 4 6 2     
+   1   7 5 4 6 7
+ 1 - - - - - - - -
+   - O - - - - - O
+   - - - - - - - -
+ H - O - - - - - -
+ 3 - - - - - - - -
+ R - - - - - - - -
+ H - - - - - - - O
+ 2 - - - - - - - -
+   3     5 4 6 2
 
 There are 4 balls in the box
 ```
@@ -160,14 +160,14 @@ as in the following situation:
 
 ```
      1
-   - + - - - - - O   
-   - + + + + + + -   
-   O - - - - - + -   
-   - + + + + + + -   
-   - + - - - - - O   
-   - + + + + + + -   
-   O - - - - - + -   
-   - - - - - - + -   
+   - + - - - - - O
+   - + + + + + + -
+   O - - - - - + -
+   - + + + + + + -
+   - + - - - - - O
+   - + + + + + + -
+   O - - - - - + -
+   - - - - - - + -
                1
 
 There are 4 balls in the box
@@ -273,12 +273,12 @@ a _spectrum_.
 
 The metaphor has its limits. In the real world, a spectrum is a bunch
 of rays over a wide range of wavelengths. Here, a spectrum is a bunch
-or rays over a wide range of geometric positions.
+of rays over a wide range of geometric positions.
 
 With these definitions, the main purpose of this project is to
 find different molecules with the same spectrum.
 
-In our 3-D real world, when given a molecule, its enantiomer is its mirror
+In our 3-D real world, for a given molecule, its enantiomer is its mirror
 image, provided the first molecule is asymmetrical. In the 2-D abstract Black
 Box world, I will use the word enantiomer to designate a molecule obtained from
 the first one by a rotation around the square's center or a symmetry with respect
@@ -397,7 +397,7 @@ Actually, I have used the Emacs notation, with a "O" and an hyphen.
 For the peripheral area (lines and columns 0 and 9), I will not use
 Emacs' notation. Firstly, the rays which come out will be shown as
 lower-caps letters, not 1-to-9 digits. A competitive player seldom
-shoot all possible rays, so 1-to-9 is sufficient for nearly all competitive games.
+shoots all possible rays, so 1-to-9 is sufficient for nearly all competitive games.
 But here, the exploration is based on shooting all possible rays.
 The digits 1 to 9, or even 0 to 9, are not sufficient. Here is an
 example (without "0"):
@@ -406,12 +406,12 @@ example (without "0"):
    8 2 1 H
  1 - - - - - - - -
  2 - - - O - - - -
- H - - O - O - - - H 
+ H - - O - O - - - H
  3 - - - O - - - -
- 4 - - - - - - - - 9 
- 5 - - - - - - - - 5 
- 6 - - - - - - - - 6 
- 7 - - - - - - - - 7 
+ 4 - - - - - - - - 9
+ 5 - - - - - - - - 5
+ 6 - - - - - - - - 6
+ 7 - - - - - - - - 7
    8 3 4 H 9
 
 There are 4 balls in the box
@@ -420,14 +420,14 @@ The game is rewritten as:
 
 ```
    h b a H n m k l
- a - - - - - - - - n 
- b - - - O - - - - m 
- H - - O - O - - - H 
- c - - - O - - - - j 
- d - - - - - - - - i 
- e - - - - - - - - e 
- f - - - - - - - - f 
- g - - - - - - - - g 
+ a - - - - - - - - n
+ b - - - O - - - - m
+ H - - O - O - - - H
+ c - - - O - - - - j
+ d - - - - - - - - i
+ e - - - - - - - - e
+ f - - - - - - - - f
+ g - - - - - - - - g
    h c d H i j k l
 
 There are 4 balls in the box
@@ -439,14 +439,14 @@ for hitting rays and "&" for reflected rays.
 
 ```
    h b a @ n m k l
- a - - - - - - - - n 
- b - - - O - - - - m 
- @ - - O - O - - - @ 
- c - - - O - - - - j 
- d - - - - - - - - i 
- e - - - - - - - - e 
- f - - - - - - - - f 
- g - - - - - - - - g 
+ a - - - - - - - - n
+ b - - - O - - - - m
+ @ - - O - O - - - @
+ c - - - O - - - - j
+ d - - - - - - - - i
+ e - - - - - - - - e
+ f - - - - - - - - f
+ g - - - - - - - - g
    h c d @ i j k l
 
 There are 4 balls in the box
@@ -473,7 +473,7 @@ as a 32-char string. The traditional Black-Box game uses this
  5 - - - - - - - - 20
  6 - - - - - - - - 19
  7 - - - - - - - - 18
- 8 - - - - - - - - 17 
+ 8 - - - - - - - - 17
    9 1 1 1 1 1 1 1
      0 1 2 3 4 5 6
 ```
@@ -561,7 +561,7 @@ These examples show a situation with the maximum number of out-coming rays
 and a situation with the minimum number.
 
 ```
-   h b a @ n m k l         & @ & c d @ @ @  
+   h b a @ n m k l         & @ & c d @ @ @
  a - - - - - - - - n     @ - O - - - - - - &
  b - - - O - - - - m     @ - - - - - - - O @
  @ - - O - O - - - @     @ - - - - - - - - &
@@ -570,7 +570,7 @@ and a situation with the minimum number.
  e - - - - - - - - e     & - - - - - - - - @
  f - - - - - - - - f     @ O - - - - - - - @
  g - - - - - - - - g     & - - - - - - O - @
-   h c d @ i j k l         @ @ @ c d & @ &  
+   h c d @ i j k l         @ @ @ c d & @ &
 
 There are 4 balls in the box
 ```
@@ -629,7 +629,7 @@ the renaming is this:
  b - - - - b
  c - - - - &
  @ - O - O @
-   & @ & @  
+   & @ & @
 
 There are 2 balls in the box
 ```
@@ -639,12 +639,12 @@ labels, whose only purpose is to distinguish each out-coming ray from
 the others. The three cases below are basically the same spectrum:
 
 ```
-   c @ & @          c @ & @         b @ & @  
+   c @ & @          c @ & @         b @ & @
  b - - - - b      a - - - - a     c - - - - c
  a - - - - a      b - - - - b     a - - - - a
  c - - - - &      c - - - - &     b - - - - &
  @ - O - O @      @ - O - O @     @ - O - O @
-   & @ & @          & @ & @         & @ & @  
+   & @ & @          & @ & @         & @ & @
 
 There are 2 balls in the box
 ```
@@ -725,7 +725,7 @@ We begin with a molecule where all the atoms are packed on the left:
 1 ABCDEF----------
 ```
 
-For the next 10 iterations, the rightmost atom, or atom F, 
+For the next 10 iterations, the rightmost atom, or atom F,
 shifts to the right step by step:
 
 ```
@@ -759,7 +759,7 @@ leftward to atom E.
 22 ABCD--EF--------
 ```
 
-The 8 steps rightward
+Then 8 steps rightward
 
 ```
 23 ABCD--E-F-------
@@ -909,14 +909,14 @@ and the like, we know which spectrums we need to study.
 So with:
 
 ```
-   @ & @ & c d             @ & @ & c d             c d b @ a @             c d b @ a @  
+   @ & @ & c d             @ & @ & c d             c d b @ a @             c d b @ a @
  @ O - O - - - @         @ - - O - - - @         a - - - - - - &         a - - - - - - 1
  & - - - - - - &         & - - - - - - &         @ - - - - - O @         @ - - - - - O 2
  @ - - O - - - @         @ O - O - - - @         b - - - - - - &         b - - - - - - &
  & - - - - - - b         & - - - - - - b         @ - - - O - O @         @ - - - O - - @
  @ O - - - - - @         @ O - - - - - @         & - - - - - - &         & - - - - - - &
  & - - - - - - a         & - - - - - - a         @ - - - O - - @         @ - - - O - O @
-   @ a @ b c d             @ a @ b c d             c d & @ & @             c d & @ & @  
+   @ a @ b c d             @ a @ b c d             c d & @ & @             c d & @ & @
 
 There are 4 balls in the box
 ```
@@ -945,7 +945,7 @@ SQL clause or of the MongoDB function `aggregate`.
 
 Then, we fix the `transform` and `canonical-number` attributes. For this, the programme scans all
 canonical molecules (`transform: 'id'`) whose spectrum exists in the
-Spectrums table. Then the programme reads this spectrum record. If 
+Spectrums table. Then the programme reads this spectrum record. If
 the spectrum record is not already updated, the programmes reads the
 whole enantiomer group of the current molecule, and the corresponding
 records from the Spectrums table, copies the `transform` and `canonical-number` values from the
@@ -982,7 +982,7 @@ exploration programme using a MongoDB  backend, with various Black Box
 configurations:
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      2 min  2.201 s     2 min 46.945 s
 A4_B5     12650     16 min 45.232 s    19 min 29.010 s
 A4_B6     58905    132 min 22.944 s    94 min 55.280 s
@@ -992,25 +992,25 @@ With a SQLite backend and  before implementing `begin`/ `commit`, here
 are a few timing results:
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      0 min 47.436 s     0 min 21.424 s
-A4_B5     12650      6 min 15.180 s     2 min 50.238 s 
+A4_B5     12650      6 min 15.180 s     2 min 50.238 s
 ```
 
 The results with a `commit` every 50 updates:
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      0 min 15.031 s     0 min 15.463 s
-A4_B5     12650      2 min 16.277 s     2 min  0.199 s 
+A4_B5     12650      2 min 16.277 s     2 min  0.199 s
 ```
 
 The results with a `commit` every 500 updates:
 
 ```
-         nb_mol          real             user 
+         nb_mol          real             user
 A4_B4      1820      0 min 19.017 s     0 min 18.053 s
-A4_B5     12650      2 min  4.514 s     1 min 56.635 s 
+A4_B5     12650      2 min  4.514 s     1 min 56.635 s
 A4_B6     58905     26 min 39.339 s    21 min 40.528 s
 ```
 
@@ -1029,7 +1029,7 @@ Programming with Raku and SQLite
 --------------------------------
 
 I had a few problems when developing the SQLite version.
-First, kebab case. In Raku, kebab case is usually preferred 
+First, kebab case. In Raku, kebab case is usually preferred
 to snake case and to camel case, and it is compatible with
 JSON/BSON and MongoDB. But you cannot use kebab case for SQLite
 column names. So there was no immediate link between the
@@ -1052,7 +1052,7 @@ of the main `insert` statement looked like:
             , dh2)
      values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
-            , $molecule<config                  >    
+            , $molecule<config                  >
             , $molecule<number                  >
             , $molecule<canonical-number        >
             [...]
@@ -1152,7 +1152,7 @@ Be sure to read the paragraphs on
 and [installing the MongoDB Raku module](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installation-of-the-mongodb-module).
 
 I have explained how the features missing from the MongoDB module
-made me develop the SQLite version. Yet, I did not try to find a solution
+made me develop the SQLite version. Yet, I still tried to find a solution
 to nevertheless use these advanced MongoDB features. If the `aggregate` function
 is available in the Mongo shell, but not in the `MongoDB` Raku module, I build
 a Mongo shell (or JavaScript) source which extracts the data and aggregates them,
@@ -1232,7 +1232,7 @@ total                      100            764             1636
 ```
 I checked the spectral groups with 4 or 5 molecules and I found they
 can easily be extrapolated to the A4\_B8 configuration, by inserting
-two empty lines and two empty columns at the right place. I think this
+two empty lines and two empty columns at the right places. I think this
 is the case also for most spectral groups with 2 or 3 molecules.
 It may also happen that the A4\_B8 will give a few more ambiguous cases,
 with no corresponding case in the A4\_B6 configuration, but in my opinion,
