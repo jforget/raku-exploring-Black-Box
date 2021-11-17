@@ -212,7 +212,7 @@ un chemin d'accès compatible avec _votre_ hiérarchie de répertoires.
 Ensuite, il faut taper :
 
 ```
-raku init-conf-sql.raku --config=A4_B8
+raku init-conf-sql.raku    --config=A4_B8
 raku explore-conf-sql.raku --config=A4_B8
 ```
 
@@ -225,13 +225,8 @@ Continuez avec
 
 ```
 raku init-spectrum-sql.raku --config=A4_B8
-raku upd-spectrum-sql.raku --config=A4_B8 > some.logfile.txt
+raku upd-spectrum-sql.raku  --config=A4_B8
 ```
-
-Ce dernier programme affiche un nombre énorme de messages
-de débugage. Il est préférable de rediriger la sortie
-standard vers un fichier texte (voire vers `/dev/null`)
-et d'attendre la fin du programme.
 
 La base de données est alors complète et vous pouvez la consulter
 avec `sqlite3`. Mais pour afficher les parties possibles 
@@ -249,7 +244,7 @@ Commencez par taper :
 
 ```
 ./add-index-mongo.sh
-raku init-conf-mongo.raku --config=A4_B8
+raku init-conf-mongo.raku    --config=A4_B8
 raku explore-conf-mongo.raku --config=A4_B8
 ```
 
@@ -262,13 +257,8 @@ Continuez avec
 
 ```
 raku init-spectrum-mongo.raku --config=A4_B8
-raku upd-spectrum-mongo.raku --config=A4_B8 > some.logfile.txt
+raku upd-spectrum-mongo.raku  --config=A4_B8
 ```
-
-Ce dernier programme affiche un nombre énorme de messages
-de débugage. Il est préférable de rediriger la sortie
-standard vers un fichier texte (voire vers `/dev/null`)
-et d'attendre la fin du programme.
 
 La base de données est alors complète et vous pouvez la consulter
 avec le shell `mongo`. Mais pour afficher les parties possibles 

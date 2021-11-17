@@ -203,7 +203,7 @@ with _your_ computer.
 Then please run:
 
 ```
-raku init-conf-sql.raku --config=A4_B8
+raku init-conf-sql.raku    --config=A4_B8
 raku explore-conf-sql.raku --config=A4_B8
 ```
 
@@ -215,13 +215,8 @@ Go on with
 
 ```
 raku init-spectrum-sql.raku --config=A4_B8
-raku upd-spectrum-sql.raku --config=A4_B8 > some.logfile.txt
+raku upd-spectrum-sql.raku  --config=A4_B8
 ```
-
-The last programme prints a bunch of debug statements.
-You will be more comfortable by redirecting the output to
-a text file (or to `/dev/null`) and waiting for the programme
-to finish.
 
 Now the database is ready and you can query it with `sqlite3`.
 If you want to display the records in a user-friendly format,
@@ -239,7 +234,7 @@ Please type
 
 ```
 ./add-index-mongo.sh
-raku init-conf-mongo.raku --config=A4_B8
+raku init-conf-mongo.raku    --config=A4_B8
 raku explore-conf-mongo.raku --config=A4_B8
 ```
 
@@ -251,13 +246,9 @@ Go on with
 
 ```
 raku init-spectrum-mongo.raku --config=A4_B8
-raku upd-spectrum-mongo.raku --config=A4_B8 > some.logfile.txt
+raku upd-spectrum-mongo.raku  --config=A4_B8
 ```
 
-The last programme prints a bunch of debug statements.
-You will be more comfortable by redirecting the output to
-a text file (or to `/dev/null`) and waiting for the programme
-to finish.
 
 Now the database is ready and you can query it with the `mongo` shell.
 If you want to display the records in a user-friendly format,

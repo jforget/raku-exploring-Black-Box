@@ -19,7 +19,7 @@ use BSON::Document;
 my Int $nb_atoms;
 my Int $width;
 
-sub upd-spectrum (Str $config, %dispatch) is export {
+sub upd-spectrum (Str $config, %dispatch, Bool $verbose) is export {
   my Str $cf = $config.uc;
   unless $cf ~~ / ^ 'A' (<[0..9]> ** 1..2) '_B' (<[0..9]>) $ / {
     die "Wrong configuration $config";
@@ -36,15 +36,21 @@ sub upd-spectrum (Str $config, %dispatch) is export {
     # No type for @enantiomer-group: array of hashes for SQL, array of BSON::Document for MongoDB
     #say @enantiomer-group;
 
-    say '-------', $canonical-number;
+    if $verbose {
+      say '-------', $canonical-number;
+    }
     for @enantiomer-group -> $mol {
       my $callback = %dispatch<read-spectrum>;
       my BSON::Document $spectrum-doc = $callback($cf, $mol<spectrum>);
       if $spectrum-doc<transform> ne '??' {
-        say "no change on spectrum $cf $mol<spectrum> $spectrum-doc<transform>";
+        if $verbose {
+          say "no change on spectrum $cf $mol<spectrum> $spectrum-doc<transform>";
+        }
       }
       else {
-        say "change on spectrum $cf $mol<spectrum> $spectrum-doc<transform> $mol<transform>";
+        if $verbose {
+          say "change on spectrum $cf $mol<spectrum> $spectrum-doc<transform> $mol<transform>";
+        }
         $spectrum-doc<transform>        = $mol<transform>;
         $spectrum-doc<canonical-number> = $canonical-number;
         my $callback = %dispatch<update-spectrum>;
@@ -79,6 +85,12 @@ or
   raku upd-spectrum-mongo.raku a4_b8
 
 =head2 Parameters
+
+=item verbose switch
+
+By using C<--verbose>,  the user can request a verbose  mode where the
+programme  gives a  detailed description  of  the choices  and of  the
+updates it makes.
 
 =item configuration code
 

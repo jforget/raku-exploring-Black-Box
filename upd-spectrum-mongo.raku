@@ -36,9 +36,9 @@ my %dispatch = canonical-molecules => &canonical-molecules
              , update-spectrum     => &update-spectrum
              ;
 
-sub MAIN (Str $config) {
+sub MAIN (Str $config, Bool :$verbose) {
   my Str $cf = $config.uc;
-  upd-spectrum($cf, %dispatch);
+  upd-spectrum($cf, %dispatch, $verbose);
 }
 
 sub canonical-molecules(Str $cf) {
@@ -137,7 +137,17 @@ spectrum through a rotation or a symmetry.
 
   raku upd-spectrum-mongo.raku a4_b8
 
+or
+
+  raku upd-spectrum-mongo.raku --verbose a4_b8
+
 =head2 Parameters
+
+=item verbose switch
+
+By using C<--verbose>,  the user can request a verbose  mode where the
+programme  gives a  detailed description  of  the choices  and of  the
+updates it makes.
 
 =item configuration code
 

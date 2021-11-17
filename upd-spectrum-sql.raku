@@ -25,10 +25,10 @@ my %dispatch = canonical-molecules => &canonical-molecules
              , update-spectrum     => &update-spectrum
              ;
 
-sub MAIN (Str $config) {
+sub MAIN (Str $config, Bool :$verbose) {
   my $cf = $config.uc;
   $dbh.execute('begin transaction');
-  upd-spectrum($cf, %dispatch);
+  upd-spectrum($cf, %dispatch, $verbose);
   $dbh.execute('commit transaction');
 }
 
@@ -112,7 +112,17 @@ spectrum through a rotation or a symmetry.
 
   raku upd-spectrum-sql.raku a4_b8
 
+or
+
+  raku upd-spectrum-sql.raku --verbose a4_b8
+
 =head2 Parameters
+
+=item verbose switch
+
+By using C<--verbose>,  the user can request a verbose  mode where the
+programme  gives a  detailed description  of  the choices  and of  the
+updates it makes.
 
 =item configuration code
 
