@@ -36,7 +36,7 @@ sub init (Str $config, $purge-Configurations, $purge-Molecules, $store-Configura
 
   my BSON::Document $configuration .= new: (
               config => $cf,
-	      nb_mol => $nb_mol,
+              nb_mol => $nb_mol,
               dh1    => time-stamp,
   );
 

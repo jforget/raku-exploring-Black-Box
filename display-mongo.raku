@@ -61,10 +61,10 @@ multi sub MAIN (Str :$config, *@num) {
 
   for (@num) -> Int $num {
     my MongoDB::Cursor $cursor = $molecules.find(
-	  criteria   => ( config => $cf
-			, number => + $num
-			),
-	);
+          criteria   => ( config => $cf
+                        , number => + $num
+                        ),
+        );
     while $cursor.fetch -> BSON::Document $doc {
       push @doc, $doc;
     }
