@@ -4,7 +4,7 @@
 #
 #     Initialisation de la table Spectrums pour une configuration de Black Box (base de données MongoDB)
 #     Initialising the Spectrums table for a Black Box configuration (MongoDB database)
-#     Copyright (C) 2021 Jean Forget
+#     Copyright (C) 2021, 2022 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -122,7 +122,7 @@ atoms and I<p> is the width of the box.
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright (C) 2021, Jean Forget, all rights reserved
+Copyright (C) 2021, 2022, Jean Forget, all rights reserved
 
 This  program is  published under  the  same conditions  as Raku:  the
 Artistic License version 2.0.

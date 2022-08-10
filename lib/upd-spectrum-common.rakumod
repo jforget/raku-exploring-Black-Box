@@ -4,7 +4,7 @@
 #
 #     Recherche des symétries entre les spectres de la table Spectrums
 #     Looking for symmetries between the records from the Spectrums table
-#     Copyright (C) 2021 Jean Forget
+#     Copyright (C) 2021, 2022 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -100,7 +100,7 @@ C<b> can be converted to upper-case.
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright (C) 2021, Jean Forget, all rights reserved
+Copyright (C) 2021, 2022, Jean Forget, all rights reserved
 
 This program  is published under  the same conditions as  Raku: the
 Artistic License version 2.0.

@@ -483,7 +483,7 @@ C<b> can be converted to upper-case.
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright (C) 2021, Jean Forget, all rights reserved
+Copyright (C) 2021, 2022, Jean Forget, all rights reserved
 
 This program  is published under  the same conditions as  Raku: the
 Artistic License version 2.0.
