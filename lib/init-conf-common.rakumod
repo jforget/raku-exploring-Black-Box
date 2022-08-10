@@ -4,7 +4,7 @@
 #
 #     Initialisation d'une configuration de Black Box
 #     Initialising a Black Box configuration
-#     Copyright (C) 2021 Jean Forget
+#     Copyright (C) 2021, 2022 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -35,9 +35,11 @@ sub init (Str $config, $purge-Configurations, $purge-Molecules, $store-Configura
   my Int $nb_mol = ($num / $den).Int;
 
   my BSON::Document $configuration .= new: (
-              config => $cf,
-              nb_mol => $nb_mol,
-              dh1    => time-stamp,
+              config   => $cf,
+              nb_mol   => $nb_mol,
+              nb_atoms => $nb_atoms,
+              width    => $width,
+              dh1      => time-stamp,
   );
 
   $purge-Configurations($cf);

@@ -4,7 +4,7 @@
 #
 #     Initialisation d'une configuration de Black Box (base de données SQLite)
 #     Initialising a Black Box configuration (SQLite database)
-#     Copyright (C) 2021 Jean Forget
+#     Copyright (C) 2021, 2022 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -30,6 +30,8 @@ sub create-database {
 create table if not exists Configurations (
               config
             , nb_mol
+            , nb_atoms
+            , width
             , dh1
             );
 SQL
@@ -76,10 +78,12 @@ sub purge-Molecules(Str $cf) {
 sub store-Configuration(BSON::Document $doc) {
   $dbh.execute(q:to/SQL/,
   insert into Configurations
-     values (?, ?, ?)
+     values (?, ?, ?, ?, ?)
 SQL
            $doc<config>,
            $doc<nb_mol>,
+           $doc<nb_atoms>,
+           $doc<width>,
            $doc<dh1>);
 }
 

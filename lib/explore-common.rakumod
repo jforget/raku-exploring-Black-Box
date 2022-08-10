@@ -4,7 +4,7 @@
 #
 #     Exploration exhaustive des molécules dans Black Box
 #     Exploring all the molecules for a Black Box configuration
-#     Copyright (C) 2021 Jean Forget
+#     Copyright (C) 2021, 2022 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -196,7 +196,7 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , spectrum           => $spectrum
             , transform          => 'id'
             , dh1                => time-stamp()
-            , dh2                => time-stamp
+            , dh2                => ''
   );
 
   my Str @boxes = $molecule.comb;
@@ -211,7 +211,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule.flip
             , spectrum           => substr($spectrum, 2 × $width) ~ substr($spectrum, 0, 2 × $width)
             , transform          => 'rot180'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule.flip} //= $rotated180;
 
@@ -223,7 +224,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule-rot90
             , spectrum           => substr($spectrum, 3 × $width) ~ substr($spectrum, 0, 3 × $width)
             , transform          => 'rot90'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule-rot90} //= $rotated90;
 
@@ -234,7 +236,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule-rot90.flip
             , spectrum           => substr($spectrum, $width) ~ substr($spectrum, 0, $width)
             , transform          => 'rot270'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule-rot90.flip} //= $rotated270;
 
@@ -246,7 +249,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule-symmh
             , spectrum           => substr($spectrum-diag1, $width) ~ substr($spectrum-diag1, 0, $width)
             , transform          => 'symm-h'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule-symmh} //= $symm-h;
 
@@ -257,7 +261,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule-symmh.flip
             , spectrum           => substr($spectrum-diag1, 3 × $width) ~ substr($spectrum-diag1, 0, 3 × $width)
             , transform          => 'symm-v'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule-symmh.flip} //= $symm-v;
 
@@ -269,7 +274,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule-diag
             , spectrum           => $spectrum-diag1
             , transform          => 'diag-1'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule-diag} //= $diag_1;
 
@@ -280,7 +286,8 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
             , molecule           => $molecule-diag.flip
             , spectrum           => substr($spectrum-diag1, 2 × $width) ~ substr($spectrum-diag1, 0, 2 × $width)
             , transform          => 'diag-2'
-            , dh1                => time-stamp
+            , dh1                => time-stamp()
+            , dh2                => ''
   );
   %group{$molecule-diag.flip} //= $diag_2;
 
@@ -289,11 +296,11 @@ sub new-molecule (Str $cf, Int $number, Str $molecule, %dispatch) {
     $doc<spectrum> = normalise($doc<spectrum>);
     # statistics
     $doc<absorbed-number>      = $absorbed-number     ;
-    $doc<absorbed-max-length>  = $absorbed-max-length ;
-    $doc<absorbed-max-turns>   = $absorbed-max-turns  ;
-    $doc<absorbed-tot-length>  = $absorbed-tot-length ;
-    $doc<absorbed-tot-turns>   = $absorbed-tot-turns  ;
-    $doc<reflected-number>     = $reflected-number    ;
+    $doc<absorbed-max-length > = $absorbed-max-length ;
+    $doc<absorbed-max-turns  > = $absorbed-max-turns  ;
+    $doc<absorbed-tot-length > = $absorbed-tot-length ;
+    $doc<absorbed-tot-turns  > = $absorbed-tot-turns  ;
+    $doc<reflected-number    > = $reflected-number    ;
     $doc<reflected-edge      > = $reflected-edge      ;
     $doc<reflected-deep      > = $reflected-deep      ;
     $doc<reflected-max-length> = $reflected-max-length;
