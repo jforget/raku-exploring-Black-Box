@@ -4,7 +4,7 @@
 #
 #     Exploration exhaustive des molécules dans Black Box
 #     Exploring all the molecules for a Black Box configuration
-#     Copyright (C) 2021, 2022 Jean Forget
+#     Copyright (C) 2021, 2022, 2023 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -445,7 +445,7 @@ sub normalise(Str $str) {
     unless %trans{$letter} {
       %trans{$letter} = $symbol++;
     }
-    $letter = %trans{$letter};      
+    $letter = %trans{$letter};
   }
   return @letters.join;
 }
@@ -483,7 +483,7 @@ C<b> can be converted to upper-case.
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright (C) 2021, 2022, Jean Forget, all rights reserved
+Copyright (C) 2021, 2022, 2023, Jean Forget, all rights reserved
 
 This program  is published under  the same conditions as  Raku: the
 Artistic License version 2.0.

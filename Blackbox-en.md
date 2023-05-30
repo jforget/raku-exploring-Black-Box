@@ -710,9 +710,9 @@ molecules. So why bother about rotations and symmetries?
 Actually, on each iteration, the programme begins by checking
 whether the molecule is already in the database. If so, it just
 fills the `number` property with the right value, updates the record
-in the database and skip to the next iteration. If no, it computes
+in the database and skips to the next iteration. If no, it computes
 the full spectrum of the current molecule, looks for enantiomers,
-compute the spectrum of each enantiomer and stores all that into
+computes the spectrum of each enantiomer and stores all that into
 the database.
 
 How do we find exhaustively the molecules?

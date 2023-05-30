@@ -390,7 +390,7 @@ précédent et extrayant les spectres associés à plusieurs molécules.
 5. Un programme extrayant des molécules de la base de données
 et les affichant sous une forme lisible pour un humain.
 
-Remarque : compte tenu du temps possible de taitement,
+Remarque : compte tenu du temps possible de traitement,
 le programme d'exploration ne traitera pas forcément
 les 635376 molécules d'une traite. Il pourra
 s'interrompre à n'importe quel moment et reprendre

@@ -4,7 +4,7 @@
 #
 #     Initialisation d'une configuration de Black Box (base SQLite)
 #     Initialising a Black Box configuration (in a SQLite database)
-#     Copyright (C) 2021, 2022 Jean Forget
+#     Copyright (C) 2021, 2022, 2023 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -30,30 +30,30 @@ my %dispatch = load-configuration      => &load-configuration
              , remove-enantiomer-group => &remove-enantiomer-group
              ;
 
-my @key-doc = < config               
-                number               
-                canonical-number     
-                molecule             
-                spectrum             
-                transform            
-                absorbed-number      
-                absorbed-max-length  
-                absorbed-max-turns   
-                absorbed-tot-length  
-                absorbed-tot-turns   
-                reflected-number     
+my @key-doc = < config
+                number
+                canonical-number
+                molecule
+                spectrum
+                transform
+                absorbed-number
+                absorbed-max-length
+                absorbed-max-turns
+                absorbed-tot-length
+                absorbed-tot-turns
+                reflected-number
                 reflected-edge
                 reflected-deep
-                reflected-max-length 
-                reflected-max-turns  
-                reflected-tot-length 
-                reflected-tot-turns  
-                out-number           
-                out-max-length       
-                out-max-turns        
-                out-tot-length       
-                out-tot-turns        
-                dh1                  
+                reflected-max-length
+                reflected-max-turns
+                reflected-tot-length
+                reflected-tot-turns
+                out-number
+                out-max-length
+                out-max-turns
+                out-tot-length
+                out-tot-turns
+                dh1
                 dh2
                 >;
 @key-doc ==> map { .trans('-' => '_') } ==> my @sql-columns;
@@ -212,7 +212,7 @@ running the F<init-conf-sql.raku> program.
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright (C) 2021, 2022, Jean Forget, all rights reserved
+Copyright (C) 2021, 2022, 2023, Jean Forget, all rights reserved
 
 This program  is published under  the same conditions as  Raku: the
 Artistic License version 2.0.

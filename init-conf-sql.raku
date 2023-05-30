@@ -4,7 +4,7 @@
 #
 #     Initialisation d'une configuration de Black Box (base de données SQLite)
 #     Initialising a Black Box configuration (SQLite database)
-#     Copyright (C) 2021, 2022 Jean Forget
+#     Copyright (C) 2021, 2022, 2023 Jean Forget
 #
 #     Voir la licence dans la documentation incluse ci-dessous.
 #     See the license in the embedded documentation below.
@@ -121,7 +121,7 @@ running the F<init-conf-sql.raku> program.
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright (C) 2021, 2022, Jean Forget, all rights reserved
+Copyright (C) 2021, 2022, 2023, Jean Forget, all rights reserved
 
 This  program is  published under  the  same conditions  as Raku:  the
 Artistic License version 2.0.
