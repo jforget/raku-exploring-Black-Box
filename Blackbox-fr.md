@@ -1072,10 +1072,10 @@ Programmation avec Raku
 Ce n'est pas le premier projet que j'ai effectué avec Raku.
 Je n'ai donc pas été obligé d'installer Raku. Si, en revanche,
 c'est votre cas, je vous suggère de vous reporter à
-[la documentation dudit projet](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod),
+[la documentation dudit projet](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md),
 notamment
-[la compilation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#compilation-et-installation-de-raku)
-et [l'utilisation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#utilisation)
+[la compilation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md#compilation-et-installation-de-raku)
+et [l'utilisation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md#utilisation)
 de Raku.
 
 Programmation avec Raku et SQLite
@@ -1191,12 +1191,12 @@ Programmation avec Raku et MongoDB
 Comme je l'ai indiqué plus haut, ce n'est pas mon premier projet
 avec Raku et MongoDB, ils étaient déjà installés. Si vous avez
 besoin de les installer, veuillez vous reporter à
-[la documentation du projet antérieur](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod).
+[la documentation du projet antérieur](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md).
 Lisez en particulier les paragraphes sur
-[l'installation des prérequis](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-de-modules-rakudo)
+[l'installation des prérequis](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md#installation-de-modules-rakudo)
 (ne tenez pas compte de Bailador ni de Template::Anti), sur
-[l'installation de MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-de-mongodb)
-et sur [l'installation du module MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.pod#installation-du-module-mongodb).
+[l'installation de MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md#installation-de-mongodb)
+et sur [l'installation du module MongoDB](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-fr.md#installation-du-module-mongodb).
 
 J'ai expliqué comment les lacunes du module MongoDB m'ont incité
 à prévoir l'utilisation de SQLite. Paradoxalement, cela ne m'a pas empêché
@@ -1235,7 +1235,7 @@ une série de molécules, on a :
 1. Un programme `display-sql.raku`, qui contient le modèle (l'appel du
 module `DBIish`et les fonctions d'accès à la base SQLite) et l'analyse
 des paramètres d'appel (la multi-fonction `MAIN`, le « croupion syntaxique »
-comme l'appelait l'enseignant qui m'a appris C il y a presque 40 ans).
+comme l'appelait l'enseignant qui m'a appris C dans les années 1980).
 
 2. Un programme `display-mongo.raku`, qui contient lui aussi le modèle (l'appel des
 modules `MongoDB::xx` et les fonctions d'accès à la base MongoDB) et l'analyse

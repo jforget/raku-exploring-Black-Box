@@ -710,7 +710,7 @@ molecules. So why bother about rotations and symmetries?
 Actually, on each iteration, the programme begins by checking
 whether the molecule is already in the database. If so, it just
 fills the `number` property with the right value, updates the record
-in the database and skips to the next iteration. If no, it computes
+in the database and skips to the next iteration. If not, it computes
 the full spectrum of the current molecule, looks for enantiomers,
 computes the spectrum of each enantiomer and stores all that into
 the database.
@@ -719,7 +719,8 @@ How do we find exhaustively the molecules?
 
 I will illustrate this with a A6\_B4 configuration and by naming
 the atoms "A" to "F", instead of the anonymous "O".
-We begin with a molecule where all the atoms are packed on the left:
+We begin with a molecule where all the atoms are packed on the left
+(using the linearised string instead of the square array):
 
 ```
 1 ABCDEF----------
@@ -737,7 +738,7 @@ shifts to the right step by step:
 11 ABCDE----------F
 ```
 
-At iteration 12, atom F can no longer move. So atom E shift one
+At iteration 12, atom F can no longer move. So atom E shifts one
 step to the right and atom F comes back all the way to atom E.
 
 ```
@@ -1019,11 +1020,11 @@ Programming with Raku
 
 This is not my first Raku project, so I did not need to install
 Raku. If you need to install it, maybe you should take a look at
-[the documentation of this previous project](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod),
+[the documentation of this previous project](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md),
 especially the chapter about
-[compiling Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#Compilation-and-Installation-of-Rakudo)
+[compiling Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md#Compilation-and-Installation-of-Rakudo)
 and the chapter about
-[using Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#usage).
+[using Raku](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md#usage).
 
 Programming with Raku and SQLite
 --------------------------------
@@ -1144,12 +1145,12 @@ Programming with Raku and MongoDB
 
 As stated above, this is not my first Raku+MongoDB project, so the software was
 already installed. If you need to install them, please see
-[the documentation of said project](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod).
+[the documentation of said project](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md).
 Be sure to read the paragraphs on
-[prerequisite installation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installing-rakudo-modules)
+[prerequisite installation](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md#installing-rakudo-modules)
 (do not bother with Bailador and Templace::Anti), on
-[installing the MongoDB software](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installing-mongodb)
-and [installing the MongoDB Raku module](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.pod#installation-of-the-mongodb-module).
+[installing the MongoDB software](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md#installing-mongodb)
+and [installing the MongoDB Raku module](https://github.com/jforget/Perl6-Alpha-As-des-As-Zero/blob/master/Description/description-en.md#installation-of-the-mongodb-module).
 
 I have explained how the features missing from the MongoDB module
 made me develop the SQLite version. Yet, I still tried to find a solution
